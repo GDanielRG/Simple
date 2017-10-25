@@ -1,0 +1,1063 @@
+Created by PLY version 3.10 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    NOT
+    AND
+    OR
+    TOGGLE
+    IF
+    ENDIF
+    WHILE
+    ENDWHILE
+    ELSE
+    DISPLAY
+    TRUE
+    FALSE
+    RETURN
+    GREATER
+    LESSER
+    EQUALITY
+    NEWLINE
+    OBRACKETS
+    CBRACKETS
+
+Grammar
+
+Rule 0     S' -> simple
+Rule 1     simple -> PROGRAM program ENDPROGRAM
+Rule 2     empty -> <empty>
+Rule 3     program -> variables blocks main
+Rule 4     variables -> VARIABLES declaration ENDVARIABLES
+Rule 5     variables -> empty
+Rule 6     declaration -> variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration
+Rule 7     declaration -> empty
+Rule 8     declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression declarationExtra
+Rule 9     declarationExtra -> empty
+Rule 10    blocks -> BLOCKS block ENDBLOCKS
+Rule 11    blocks -> empty
+Rule 12    block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
+Rule 13    block -> empty
+Rule 14    blockExtra -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
+Rule 15    blockExtra -> empty
+Rule 16    blockType -> PROCEDURE
+Rule 17    blockType -> variableType
+Rule 18    blockType -> empty
+Rule 19    variableType -> NUMBER
+Rule 20    variableType -> WORDS
+Rule 21    variableType -> LETTER
+Rule 22    parameters -> OPARENTHESIS parameter CPARENTHESIS
+Rule 23    parameter -> variableType IDENTIFIER parameterNext
+Rule 24    parameter -> empty
+Rule 25    parameterNext -> COMMA variableType IDENTIFIER parameterNext
+Rule 26    parameterNext -> empty
+Rule 27    statute -> empty
+Rule 28    main -> START variables statute FINISH
+Rule 29    expression -> expression PLUS term
+Rule 30    expression -> expression MINUS term
+Rule 31    expression -> term
+Rule 32    term -> term MULTIPLICATION factor
+Rule 33    term -> term DIVISION factor
+Rule 34    term -> factor
+Rule 35    factor -> NUMBERVALUE
+Rule 36    factor -> WORDSVALUE
+Rule 37    factor -> LETTERVALUE
+Rule 38    factor -> OPARENTHESIS expression CPARENTHESIS
+
+Terminals, with rules where they appear
+
+AND                  : 
+ASSIGNATION          : 6 8
+BLOCKS               : 10
+CBRACKETS            : 
+COMMA                : 8 25
+CPARENTHESIS         : 22 38
+DEFINE               : 12 14
+DISPLAY              : 
+DIVISION             : 33
+ELSE                 : 
+ENDBLOCKS            : 10
+ENDDEFINE            : 12 14
+ENDIF                : 
+ENDPROGRAM           : 1
+ENDVARIABLES         : 4
+ENDWHILE             : 
+EQUALITY             : 
+FALSE                : 
+FINISH               : 28
+GREATER              : 
+IDENTIFIER           : 6 8 12 14 23 25
+IF                   : 
+LESSER               : 
+LETTER               : 21
+LETTERVALUE          : 37
+MINUS                : 30
+MULTIPLICATION       : 32
+NEWLINE              : 
+NOT                  : 
+NUMBER               : 19
+NUMBERVALUE          : 35
+OBRACKETS            : 
+OPARENTHESIS         : 22 38
+OR                   : 
+PLUS                 : 29
+PROCEDURE            : 16
+PROGRAM              : 1
+RETURN               : 
+SEMICOLON            : 6
+START                : 28
+TOGGLE               : 
+TRUE                 : 
+VARIABLES            : 4
+WHILE                : 
+WORDS                : 20
+WORDSVALUE           : 36
+error                : 
+
+Nonterminals, with rules where they appear
+
+block                : 10
+blockExtra           : 12 14
+blockType            : 12 14
+blocks               : 3
+declaration          : 4 6
+declarationExtra     : 6 8
+empty                : 5 7 9 11 13 15 18 24 26 27
+expression           : 6 8 29 30 38
+factor               : 32 33 34
+main                 : 3
+parameter            : 22
+parameterNext        : 23 25
+parameters           : 12 14
+program              : 1
+simple               : 0
+statute              : 28
+term                 : 29 30 31 32 33
+variableType         : 6 17 23 25
+variables            : 3 12 14 28
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . simple
+    (1) simple -> . PROGRAM program ENDPROGRAM
+
+    PROGRAM         shift and go to state 2
+
+    simple                         shift and go to state 1
+
+state 1
+
+    (0) S' -> simple .
+
+
+
+state 2
+
+    (1) simple -> PROGRAM . program ENDPROGRAM
+    (3) program -> . variables blocks main
+    (4) variables -> . VARIABLES declaration ENDVARIABLES
+    (5) variables -> . empty
+    (2) empty -> .
+
+    VARIABLES       shift and go to state 5
+    BLOCKS          reduce using rule 2 (empty -> .)
+    START           reduce using rule 2 (empty -> .)
+
+    program                        shift and go to state 3
+    variables                      shift and go to state 4
+    empty                          shift and go to state 6
+
+state 3
+
+    (1) simple -> PROGRAM program . ENDPROGRAM
+
+    ENDPROGRAM      shift and go to state 7
+
+
+state 4
+
+    (3) program -> variables . blocks main
+    (10) blocks -> . BLOCKS block ENDBLOCKS
+    (11) blocks -> . empty
+    (2) empty -> .
+
+    BLOCKS          shift and go to state 9
+    START           reduce using rule 2 (empty -> .)
+
+    blocks                         shift and go to state 8
+    empty                          shift and go to state 10
+
+state 5
+
+    (4) variables -> VARIABLES . declaration ENDVARIABLES
+    (6) declaration -> . variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration
+    (7) declaration -> . empty
+    (19) variableType -> . NUMBER
+    (20) variableType -> . WORDS
+    (21) variableType -> . LETTER
+    (2) empty -> .
+
+    NUMBER          shift and go to state 14
+    WORDS           shift and go to state 15
+    LETTER          shift and go to state 16
+    ENDVARIABLES    reduce using rule 2 (empty -> .)
+
+    declaration                    shift and go to state 11
+    variableType                   shift and go to state 12
+    empty                          shift and go to state 13
+
+state 6
+
+    (5) variables -> empty .
+
+    BLOCKS          reduce using rule 5 (variables -> empty .)
+    START           reduce using rule 5 (variables -> empty .)
+    FINISH          reduce using rule 5 (variables -> empty .)
+    ENDDEFINE       reduce using rule 5 (variables -> empty .)
+
+
+state 7
+
+    (1) simple -> PROGRAM program ENDPROGRAM .
+
+    $end            reduce using rule 1 (simple -> PROGRAM program ENDPROGRAM .)
+
+
+state 8
+
+    (3) program -> variables blocks . main
+    (28) main -> . START variables statute FINISH
+
+    START           shift and go to state 18
+
+    main                           shift and go to state 17
+
+state 9
+
+    (10) blocks -> BLOCKS . block ENDBLOCKS
+    (12) block -> . DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
+    (13) block -> . empty
+    (2) empty -> .
+
+    DEFINE          shift and go to state 20
+    ENDBLOCKS       reduce using rule 2 (empty -> .)
+
+    block                          shift and go to state 19
+    empty                          shift and go to state 21
+
+state 10
+
+    (11) blocks -> empty .
+
+    START           reduce using rule 11 (blocks -> empty .)
+
+
+state 11
+
+    (4) variables -> VARIABLES declaration . ENDVARIABLES
+
+    ENDVARIABLES    shift and go to state 22
+
+
+state 12
+
+    (6) declaration -> variableType . IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration
+
+    IDENTIFIER      shift and go to state 23
+
+
+state 13
+
+    (7) declaration -> empty .
+
+    ENDVARIABLES    reduce using rule 7 (declaration -> empty .)
+
+
+state 14
+
+    (19) variableType -> NUMBER .
+
+    IDENTIFIER      reduce using rule 19 (variableType -> NUMBER .)
+
+
+state 15
+
+    (20) variableType -> WORDS .
+
+    IDENTIFIER      reduce using rule 20 (variableType -> WORDS .)
+
+
+state 16
+
+    (21) variableType -> LETTER .
+
+    IDENTIFIER      reduce using rule 21 (variableType -> LETTER .)
+
+
+state 17
+
+    (3) program -> variables blocks main .
+
+    ENDPROGRAM      reduce using rule 3 (program -> variables blocks main .)
+
+
+state 18
+
+    (28) main -> START . variables statute FINISH
+    (4) variables -> . VARIABLES declaration ENDVARIABLES
+    (5) variables -> . empty
+    (2) empty -> .
+
+    VARIABLES       shift and go to state 5
+    FINISH          reduce using rule 2 (empty -> .)
+
+    variables                      shift and go to state 24
+    empty                          shift and go to state 6
+
+state 19
+
+    (10) blocks -> BLOCKS block . ENDBLOCKS
+
+    ENDBLOCKS       shift and go to state 25
+
+
+state 20
+
+    (12) block -> DEFINE . blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
+    (16) blockType -> . PROCEDURE
+    (17) blockType -> . variableType
+    (18) blockType -> . empty
+    (19) variableType -> . NUMBER
+    (20) variableType -> . WORDS
+    (21) variableType -> . LETTER
+    (2) empty -> .
+
+    PROCEDURE       shift and go to state 27
+    NUMBER          shift and go to state 14
+    WORDS           shift and go to state 15
+    LETTER          shift and go to state 16
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    blockType                      shift and go to state 26
+    variableType                   shift and go to state 28
+    empty                          shift and go to state 29
+
+state 21
+
+    (13) block -> empty .
+
+    ENDBLOCKS       reduce using rule 13 (block -> empty .)
+
+
+state 22
+
+    (4) variables -> VARIABLES declaration ENDVARIABLES .
+
+    BLOCKS          reduce using rule 4 (variables -> VARIABLES declaration ENDVARIABLES .)
+    START           reduce using rule 4 (variables -> VARIABLES declaration ENDVARIABLES .)
+    FINISH          reduce using rule 4 (variables -> VARIABLES declaration ENDVARIABLES .)
+    ENDDEFINE       reduce using rule 4 (variables -> VARIABLES declaration ENDVARIABLES .)
+
+
+state 23
+
+    (6) declaration -> variableType IDENTIFIER . ASSIGNATION expression declarationExtra SEMICOLON declaration
+
+    ASSIGNATION     shift and go to state 30
+
+
+state 24
+
+    (28) main -> START variables . statute FINISH
+    (27) statute -> . empty
+    (2) empty -> .
+
+    FINISH          reduce using rule 2 (empty -> .)
+
+    statute                        shift and go to state 31
+    empty                          shift and go to state 32
+
+state 25
+
+    (10) blocks -> BLOCKS block ENDBLOCKS .
+
+    START           reduce using rule 10 (blocks -> BLOCKS block ENDBLOCKS .)
+
+
+state 26
+
+    (12) block -> DEFINE blockType . IDENTIFIER parameters variables ENDDEFINE blockExtra
+
+    IDENTIFIER      shift and go to state 33
+
+
+state 27
+
+    (16) blockType -> PROCEDURE .
+
+    IDENTIFIER      reduce using rule 16 (blockType -> PROCEDURE .)
+
+
+state 28
+
+    (17) blockType -> variableType .
+
+    IDENTIFIER      reduce using rule 17 (blockType -> variableType .)
+
+
+state 29
+
+    (18) blockType -> empty .
+
+    IDENTIFIER      reduce using rule 18 (blockType -> empty .)
+
+
+state 30
+
+    (6) declaration -> variableType IDENTIFIER ASSIGNATION . expression declarationExtra SEMICOLON declaration
+    (29) expression -> . expression PLUS term
+    (30) expression -> . expression MINUS term
+    (31) expression -> . term
+    (32) term -> . term MULTIPLICATION factor
+    (33) term -> . term DIVISION factor
+    (34) term -> . factor
+    (35) factor -> . NUMBERVALUE
+    (36) factor -> . WORDSVALUE
+    (37) factor -> . LETTERVALUE
+    (38) factor -> . OPARENTHESIS expression CPARENTHESIS
+
+    NUMBERVALUE     shift and go to state 37
+    WORDSVALUE      shift and go to state 38
+    LETTERVALUE     shift and go to state 39
+    OPARENTHESIS    shift and go to state 40
+
+    expression                     shift and go to state 34
+    term                           shift and go to state 35
+    factor                         shift and go to state 36
+
+state 31
+
+    (28) main -> START variables statute . FINISH
+
+    FINISH          shift and go to state 41
+
+
+state 32
+
+    (27) statute -> empty .
+
+    FINISH          reduce using rule 27 (statute -> empty .)
+
+
+state 33
+
+    (12) block -> DEFINE blockType IDENTIFIER . parameters variables ENDDEFINE blockExtra
+    (22) parameters -> . OPARENTHESIS parameter CPARENTHESIS
+
+    OPARENTHESIS    shift and go to state 43
+
+    parameters                     shift and go to state 42
+
+state 34
+
+    (6) declaration -> variableType IDENTIFIER ASSIGNATION expression . declarationExtra SEMICOLON declaration
+    (29) expression -> expression . PLUS term
+    (30) expression -> expression . MINUS term
+    (8) declarationExtra -> . COMMA IDENTIFIER ASSIGNATION expression declarationExtra
+    (9) declarationExtra -> . empty
+    (2) empty -> .
+
+    PLUS            shift and go to state 45
+    MINUS           shift and go to state 46
+    COMMA           shift and go to state 47
+    SEMICOLON       reduce using rule 2 (empty -> .)
+
+    declarationExtra               shift and go to state 44
+    empty                          shift and go to state 48
+
+state 35
+
+    (31) expression -> term .
+    (32) term -> term . MULTIPLICATION factor
+    (33) term -> term . DIVISION factor
+
+    PLUS            reduce using rule 31 (expression -> term .)
+    MINUS           reduce using rule 31 (expression -> term .)
+    COMMA           reduce using rule 31 (expression -> term .)
+    SEMICOLON       reduce using rule 31 (expression -> term .)
+    CPARENTHESIS    reduce using rule 31 (expression -> term .)
+    MULTIPLICATION  shift and go to state 49
+    DIVISION        shift and go to state 50
+
+
+state 36
+
+    (34) term -> factor .
+
+    MULTIPLICATION  reduce using rule 34 (term -> factor .)
+    DIVISION        reduce using rule 34 (term -> factor .)
+    PLUS            reduce using rule 34 (term -> factor .)
+    MINUS           reduce using rule 34 (term -> factor .)
+    COMMA           reduce using rule 34 (term -> factor .)
+    SEMICOLON       reduce using rule 34 (term -> factor .)
+    CPARENTHESIS    reduce using rule 34 (term -> factor .)
+
+
+state 37
+
+    (35) factor -> NUMBERVALUE .
+
+    MULTIPLICATION  reduce using rule 35 (factor -> NUMBERVALUE .)
+    DIVISION        reduce using rule 35 (factor -> NUMBERVALUE .)
+    PLUS            reduce using rule 35 (factor -> NUMBERVALUE .)
+    MINUS           reduce using rule 35 (factor -> NUMBERVALUE .)
+    COMMA           reduce using rule 35 (factor -> NUMBERVALUE .)
+    SEMICOLON       reduce using rule 35 (factor -> NUMBERVALUE .)
+    CPARENTHESIS    reduce using rule 35 (factor -> NUMBERVALUE .)
+
+
+state 38
+
+    (36) factor -> WORDSVALUE .
+
+    MULTIPLICATION  reduce using rule 36 (factor -> WORDSVALUE .)
+    DIVISION        reduce using rule 36 (factor -> WORDSVALUE .)
+    PLUS            reduce using rule 36 (factor -> WORDSVALUE .)
+    MINUS           reduce using rule 36 (factor -> WORDSVALUE .)
+    COMMA           reduce using rule 36 (factor -> WORDSVALUE .)
+    SEMICOLON       reduce using rule 36 (factor -> WORDSVALUE .)
+    CPARENTHESIS    reduce using rule 36 (factor -> WORDSVALUE .)
+
+
+state 39
+
+    (37) factor -> LETTERVALUE .
+
+    MULTIPLICATION  reduce using rule 37 (factor -> LETTERVALUE .)
+    DIVISION        reduce using rule 37 (factor -> LETTERVALUE .)
+    PLUS            reduce using rule 37 (factor -> LETTERVALUE .)
+    MINUS           reduce using rule 37 (factor -> LETTERVALUE .)
+    COMMA           reduce using rule 37 (factor -> LETTERVALUE .)
+    SEMICOLON       reduce using rule 37 (factor -> LETTERVALUE .)
+    CPARENTHESIS    reduce using rule 37 (factor -> LETTERVALUE .)
+
+
+state 40
+
+    (38) factor -> OPARENTHESIS . expression CPARENTHESIS
+    (29) expression -> . expression PLUS term
+    (30) expression -> . expression MINUS term
+    (31) expression -> . term
+    (32) term -> . term MULTIPLICATION factor
+    (33) term -> . term DIVISION factor
+    (34) term -> . factor
+    (35) factor -> . NUMBERVALUE
+    (36) factor -> . WORDSVALUE
+    (37) factor -> . LETTERVALUE
+    (38) factor -> . OPARENTHESIS expression CPARENTHESIS
+
+    NUMBERVALUE     shift and go to state 37
+    WORDSVALUE      shift and go to state 38
+    LETTERVALUE     shift and go to state 39
+    OPARENTHESIS    shift and go to state 40
+
+    expression                     shift and go to state 51
+    term                           shift and go to state 35
+    factor                         shift and go to state 36
+
+state 41
+
+    (28) main -> START variables statute FINISH .
+
+    ENDPROGRAM      reduce using rule 28 (main -> START variables statute FINISH .)
+
+
+state 42
+
+    (12) block -> DEFINE blockType IDENTIFIER parameters . variables ENDDEFINE blockExtra
+    (4) variables -> . VARIABLES declaration ENDVARIABLES
+    (5) variables -> . empty
+    (2) empty -> .
+
+    VARIABLES       shift and go to state 5
+    ENDDEFINE       reduce using rule 2 (empty -> .)
+
+    variables                      shift and go to state 52
+    empty                          shift and go to state 6
+
+state 43
+
+    (22) parameters -> OPARENTHESIS . parameter CPARENTHESIS
+    (23) parameter -> . variableType IDENTIFIER parameterNext
+    (24) parameter -> . empty
+    (19) variableType -> . NUMBER
+    (20) variableType -> . WORDS
+    (21) variableType -> . LETTER
+    (2) empty -> .
+
+    NUMBER          shift and go to state 14
+    WORDS           shift and go to state 15
+    LETTER          shift and go to state 16
+    CPARENTHESIS    reduce using rule 2 (empty -> .)
+
+    parameter                      shift and go to state 53
+    variableType                   shift and go to state 54
+    empty                          shift and go to state 55
+
+state 44
+
+    (6) declaration -> variableType IDENTIFIER ASSIGNATION expression declarationExtra . SEMICOLON declaration
+
+    SEMICOLON       shift and go to state 56
+
+
+state 45
+
+    (29) expression -> expression PLUS . term
+    (32) term -> . term MULTIPLICATION factor
+    (33) term -> . term DIVISION factor
+    (34) term -> . factor
+    (35) factor -> . NUMBERVALUE
+    (36) factor -> . WORDSVALUE
+    (37) factor -> . LETTERVALUE
+    (38) factor -> . OPARENTHESIS expression CPARENTHESIS
+
+    NUMBERVALUE     shift and go to state 37
+    WORDSVALUE      shift and go to state 38
+    LETTERVALUE     shift and go to state 39
+    OPARENTHESIS    shift and go to state 40
+
+    term                           shift and go to state 57
+    factor                         shift and go to state 36
+
+state 46
+
+    (30) expression -> expression MINUS . term
+    (32) term -> . term MULTIPLICATION factor
+    (33) term -> . term DIVISION factor
+    (34) term -> . factor
+    (35) factor -> . NUMBERVALUE
+    (36) factor -> . WORDSVALUE
+    (37) factor -> . LETTERVALUE
+    (38) factor -> . OPARENTHESIS expression CPARENTHESIS
+
+    NUMBERVALUE     shift and go to state 37
+    WORDSVALUE      shift and go to state 38
+    LETTERVALUE     shift and go to state 39
+    OPARENTHESIS    shift and go to state 40
+
+    term                           shift and go to state 58
+    factor                         shift and go to state 36
+
+state 47
+
+    (8) declarationExtra -> COMMA . IDENTIFIER ASSIGNATION expression declarationExtra
+
+    IDENTIFIER      shift and go to state 59
+
+
+state 48
+
+    (9) declarationExtra -> empty .
+
+    SEMICOLON       reduce using rule 9 (declarationExtra -> empty .)
+
+
+state 49
+
+    (32) term -> term MULTIPLICATION . factor
+    (35) factor -> . NUMBERVALUE
+    (36) factor -> . WORDSVALUE
+    (37) factor -> . LETTERVALUE
+    (38) factor -> . OPARENTHESIS expression CPARENTHESIS
+
+    NUMBERVALUE     shift and go to state 37
+    WORDSVALUE      shift and go to state 38
+    LETTERVALUE     shift and go to state 39
+    OPARENTHESIS    shift and go to state 40
+
+    factor                         shift and go to state 60
+
+state 50
+
+    (33) term -> term DIVISION . factor
+    (35) factor -> . NUMBERVALUE
+    (36) factor -> . WORDSVALUE
+    (37) factor -> . LETTERVALUE
+    (38) factor -> . OPARENTHESIS expression CPARENTHESIS
+
+    NUMBERVALUE     shift and go to state 37
+    WORDSVALUE      shift and go to state 38
+    LETTERVALUE     shift and go to state 39
+    OPARENTHESIS    shift and go to state 40
+
+    factor                         shift and go to state 61
+
+state 51
+
+    (38) factor -> OPARENTHESIS expression . CPARENTHESIS
+    (29) expression -> expression . PLUS term
+    (30) expression -> expression . MINUS term
+
+    CPARENTHESIS    shift and go to state 62
+    PLUS            shift and go to state 45
+    MINUS           shift and go to state 46
+
+
+state 52
+
+    (12) block -> DEFINE blockType IDENTIFIER parameters variables . ENDDEFINE blockExtra
+
+    ENDDEFINE       shift and go to state 63
+
+
+state 53
+
+    (22) parameters -> OPARENTHESIS parameter . CPARENTHESIS
+
+    CPARENTHESIS    shift and go to state 64
+
+
+state 54
+
+    (23) parameter -> variableType . IDENTIFIER parameterNext
+
+    IDENTIFIER      shift and go to state 65
+
+
+state 55
+
+    (24) parameter -> empty .
+
+    CPARENTHESIS    reduce using rule 24 (parameter -> empty .)
+
+
+state 56
+
+    (6) declaration -> variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON . declaration
+    (6) declaration -> . variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration
+    (7) declaration -> . empty
+    (19) variableType -> . NUMBER
+    (20) variableType -> . WORDS
+    (21) variableType -> . LETTER
+    (2) empty -> .
+
+    NUMBER          shift and go to state 14
+    WORDS           shift and go to state 15
+    LETTER          shift and go to state 16
+    ENDVARIABLES    reduce using rule 2 (empty -> .)
+
+    variableType                   shift and go to state 12
+    declaration                    shift and go to state 66
+    empty                          shift and go to state 13
+
+state 57
+
+    (29) expression -> expression PLUS term .
+    (32) term -> term . MULTIPLICATION factor
+    (33) term -> term . DIVISION factor
+
+    PLUS            reduce using rule 29 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 29 (expression -> expression PLUS term .)
+    COMMA           reduce using rule 29 (expression -> expression PLUS term .)
+    SEMICOLON       reduce using rule 29 (expression -> expression PLUS term .)
+    CPARENTHESIS    reduce using rule 29 (expression -> expression PLUS term .)
+    MULTIPLICATION  shift and go to state 49
+    DIVISION        shift and go to state 50
+
+
+state 58
+
+    (30) expression -> expression MINUS term .
+    (32) term -> term . MULTIPLICATION factor
+    (33) term -> term . DIVISION factor
+
+    PLUS            reduce using rule 30 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 30 (expression -> expression MINUS term .)
+    COMMA           reduce using rule 30 (expression -> expression MINUS term .)
+    SEMICOLON       reduce using rule 30 (expression -> expression MINUS term .)
+    CPARENTHESIS    reduce using rule 30 (expression -> expression MINUS term .)
+    MULTIPLICATION  shift and go to state 49
+    DIVISION        shift and go to state 50
+
+
+state 59
+
+    (8) declarationExtra -> COMMA IDENTIFIER . ASSIGNATION expression declarationExtra
+
+    ASSIGNATION     shift and go to state 67
+
+
+state 60
+
+    (32) term -> term MULTIPLICATION factor .
+
+    MULTIPLICATION  reduce using rule 32 (term -> term MULTIPLICATION factor .)
+    DIVISION        reduce using rule 32 (term -> term MULTIPLICATION factor .)
+    PLUS            reduce using rule 32 (term -> term MULTIPLICATION factor .)
+    MINUS           reduce using rule 32 (term -> term MULTIPLICATION factor .)
+    COMMA           reduce using rule 32 (term -> term MULTIPLICATION factor .)
+    SEMICOLON       reduce using rule 32 (term -> term MULTIPLICATION factor .)
+    CPARENTHESIS    reduce using rule 32 (term -> term MULTIPLICATION factor .)
+
+
+state 61
+
+    (33) term -> term DIVISION factor .
+
+    MULTIPLICATION  reduce using rule 33 (term -> term DIVISION factor .)
+    DIVISION        reduce using rule 33 (term -> term DIVISION factor .)
+    PLUS            reduce using rule 33 (term -> term DIVISION factor .)
+    MINUS           reduce using rule 33 (term -> term DIVISION factor .)
+    COMMA           reduce using rule 33 (term -> term DIVISION factor .)
+    SEMICOLON       reduce using rule 33 (term -> term DIVISION factor .)
+    CPARENTHESIS    reduce using rule 33 (term -> term DIVISION factor .)
+
+
+state 62
+
+    (38) factor -> OPARENTHESIS expression CPARENTHESIS .
+
+    MULTIPLICATION  reduce using rule 38 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    DIVISION        reduce using rule 38 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    PLUS            reduce using rule 38 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    MINUS           reduce using rule 38 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    COMMA           reduce using rule 38 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    SEMICOLON       reduce using rule 38 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    CPARENTHESIS    reduce using rule 38 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+
+
+state 63
+
+    (12) block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE . blockExtra
+    (14) blockExtra -> . DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
+    (15) blockExtra -> . empty
+    (2) empty -> .
+
+    DEFINE          shift and go to state 68
+    ENDBLOCKS       reduce using rule 2 (empty -> .)
+
+    blockExtra                     shift and go to state 69
+    empty                          shift and go to state 70
+
+state 64
+
+    (22) parameters -> OPARENTHESIS parameter CPARENTHESIS .
+
+    VARIABLES       reduce using rule 22 (parameters -> OPARENTHESIS parameter CPARENTHESIS .)
+    ENDDEFINE       reduce using rule 22 (parameters -> OPARENTHESIS parameter CPARENTHESIS .)
+
+
+state 65
+
+    (23) parameter -> variableType IDENTIFIER . parameterNext
+    (25) parameterNext -> . COMMA variableType IDENTIFIER parameterNext
+    (26) parameterNext -> . empty
+    (2) empty -> .
+
+    COMMA           shift and go to state 72
+    CPARENTHESIS    reduce using rule 2 (empty -> .)
+
+    parameterNext                  shift and go to state 71
+    empty                          shift and go to state 73
+
+state 66
+
+    (6) declaration -> variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration .
+
+    ENDVARIABLES    reduce using rule 6 (declaration -> variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration .)
+
+
+state 67
+
+    (8) declarationExtra -> COMMA IDENTIFIER ASSIGNATION . expression declarationExtra
+    (29) expression -> . expression PLUS term
+    (30) expression -> . expression MINUS term
+    (31) expression -> . term
+    (32) term -> . term MULTIPLICATION factor
+    (33) term -> . term DIVISION factor
+    (34) term -> . factor
+    (35) factor -> . NUMBERVALUE
+    (36) factor -> . WORDSVALUE
+    (37) factor -> . LETTERVALUE
+    (38) factor -> . OPARENTHESIS expression CPARENTHESIS
+
+    NUMBERVALUE     shift and go to state 37
+    WORDSVALUE      shift and go to state 38
+    LETTERVALUE     shift and go to state 39
+    OPARENTHESIS    shift and go to state 40
+
+    expression                     shift and go to state 74
+    term                           shift and go to state 35
+    factor                         shift and go to state 36
+
+state 68
+
+    (14) blockExtra -> DEFINE . blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
+    (16) blockType -> . PROCEDURE
+    (17) blockType -> . variableType
+    (18) blockType -> . empty
+    (19) variableType -> . NUMBER
+    (20) variableType -> . WORDS
+    (21) variableType -> . LETTER
+    (2) empty -> .
+
+    PROCEDURE       shift and go to state 27
+    NUMBER          shift and go to state 14
+    WORDS           shift and go to state 15
+    LETTER          shift and go to state 16
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    blockType                      shift and go to state 75
+    variableType                   shift and go to state 28
+    empty                          shift and go to state 29
+
+state 69
+
+    (12) block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra .
+
+    ENDBLOCKS       reduce using rule 12 (block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra .)
+
+
+state 70
+
+    (15) blockExtra -> empty .
+
+    ENDBLOCKS       reduce using rule 15 (blockExtra -> empty .)
+
+
+state 71
+
+    (23) parameter -> variableType IDENTIFIER parameterNext .
+
+    CPARENTHESIS    reduce using rule 23 (parameter -> variableType IDENTIFIER parameterNext .)
+
+
+state 72
+
+    (25) parameterNext -> COMMA . variableType IDENTIFIER parameterNext
+    (19) variableType -> . NUMBER
+    (20) variableType -> . WORDS
+    (21) variableType -> . LETTER
+
+    NUMBER          shift and go to state 14
+    WORDS           shift and go to state 15
+    LETTER          shift and go to state 16
+
+    variableType                   shift and go to state 76
+
+state 73
+
+    (26) parameterNext -> empty .
+
+    CPARENTHESIS    reduce using rule 26 (parameterNext -> empty .)
+
+
+state 74
+
+    (8) declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression . declarationExtra
+    (29) expression -> expression . PLUS term
+    (30) expression -> expression . MINUS term
+    (8) declarationExtra -> . COMMA IDENTIFIER ASSIGNATION expression declarationExtra
+    (9) declarationExtra -> . empty
+    (2) empty -> .
+
+    PLUS            shift and go to state 45
+    MINUS           shift and go to state 46
+    COMMA           shift and go to state 47
+    SEMICOLON       reduce using rule 2 (empty -> .)
+
+    declarationExtra               shift and go to state 77
+    empty                          shift and go to state 48
+
+state 75
+
+    (14) blockExtra -> DEFINE blockType . IDENTIFIER parameters variables ENDDEFINE blockExtra
+
+    IDENTIFIER      shift and go to state 78
+
+
+state 76
+
+    (25) parameterNext -> COMMA variableType . IDENTIFIER parameterNext
+
+    IDENTIFIER      shift and go to state 79
+
+
+state 77
+
+    (8) declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression declarationExtra .
+
+    SEMICOLON       reduce using rule 8 (declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression declarationExtra .)
+
+
+state 78
+
+    (14) blockExtra -> DEFINE blockType IDENTIFIER . parameters variables ENDDEFINE blockExtra
+    (22) parameters -> . OPARENTHESIS parameter CPARENTHESIS
+
+    OPARENTHESIS    shift and go to state 43
+
+    parameters                     shift and go to state 80
+
+state 79
+
+    (25) parameterNext -> COMMA variableType IDENTIFIER . parameterNext
+    (25) parameterNext -> . COMMA variableType IDENTIFIER parameterNext
+    (26) parameterNext -> . empty
+    (2) empty -> .
+
+    COMMA           shift and go to state 72
+    CPARENTHESIS    reduce using rule 2 (empty -> .)
+
+    parameterNext                  shift and go to state 81
+    empty                          shift and go to state 73
+
+state 80
+
+    (14) blockExtra -> DEFINE blockType IDENTIFIER parameters . variables ENDDEFINE blockExtra
+    (4) variables -> . VARIABLES declaration ENDVARIABLES
+    (5) variables -> . empty
+    (2) empty -> .
+
+    VARIABLES       shift and go to state 5
+    ENDDEFINE       reduce using rule 2 (empty -> .)
+
+    variables                      shift and go to state 82
+    empty                          shift and go to state 6
+
+state 81
+
+    (25) parameterNext -> COMMA variableType IDENTIFIER parameterNext .
+
+    CPARENTHESIS    reduce using rule 25 (parameterNext -> COMMA variableType IDENTIFIER parameterNext .)
+
+
+state 82
+
+    (14) blockExtra -> DEFINE blockType IDENTIFIER parameters variables . ENDDEFINE blockExtra
+
+    ENDDEFINE       shift and go to state 83
+
+
+state 83
+
+    (14) blockExtra -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE . blockExtra
+    (14) blockExtra -> . DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
+    (15) blockExtra -> . empty
+    (2) empty -> .
+
+    DEFINE          shift and go to state 68
+    ENDBLOCKS       reduce using rule 2 (empty -> .)
+
+    blockExtra                     shift and go to state 84
+    empty                          shift and go to state 70
+
+state 84
+
+    (14) blockExtra -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra .
+
+    ENDBLOCKS       reduce using rule 14 (blockExtra -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra .)
+

@@ -3,15 +3,14 @@
 import ply.yacc as yacc
 
 # Get the token map from the lexer.  This is required.
-import calclex
-tokens = calclex.tokens
-
-def p_start(p):
-  'start : expression'
+import simpleTokens
+tokens = simpleTokens.tokens
+quadruples = list()
 
 def p_simple(p):
     'simple : PROGRAM program ENDPROGRAM'
     p[0] = ('simple')
+    quadruples.append(('simple'))
 
 def p_empty(p):
     'empty :'
@@ -165,7 +164,6 @@ def p_error(p):
 
 # Build the parser
 parser = yacc.yacc()
-
 # Test it out
 data = '''program
 variables
@@ -176,7 +174,6 @@ endvariables
 blocks
 define procedure imprimeMultiplicacion(number a, number b)
 enddefine
-
 define number multiplicarConDanielito(number a)
 enddefine
 define number juan(number a)
@@ -198,20 +195,8 @@ start
 
 finish
 endprogram
-
 '''
 
-# yacc.parse(data)
-
-# result = parser.parse(data)
-# print(result)
-
-
-
-while True:
-   try:
-       s = input('calc > ')
-   except EOFError:
-       break
-   if not s: continue
-   result = yacc.parse(s)
+result = yacc.parse(data)
+for quadruple in quadruples:
+    print(quadruple)
