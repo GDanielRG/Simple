@@ -5,128 +5,107 @@ import ply.yacc as yacc
 # Get the token map from the lexer.  This is required.
 import simpleTokens
 tokens = simpleTokens.tokens
-quadruples = list()
+
 
 def p_simple(p):
     'simple : PROGRAM program ENDPROGRAM'
-    p[0] = ('simple')
-    quadruples.append(('simple'))
+    p[0] = ('simple', p[2])
 
 def p_empty(p):
     'empty :'
-    pass
+    p[0] = None
 
 def p_program(p):
     'program : variables blocks main'
-    p[0] = ('program')
+    p[0] = ('program', p[1], p[2], p[3])
 
 def p_variables(p):
-    '''variables : VARIABLES declaration ENDVARIABLES
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty variables')  
-    # else:
-    p[0] = ('variables')   
+    'variables : VARIABLES declaration ENDVARIABLES' 
+    p[0] = ('variables', p[2])
+
+def p_empty_variables(p):
+    'variables : empty'
+    p[0] = p[1]
 
 def p_declaration(p):
-    '''declaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty declaration')  
-    # else:
-    #   p[0] = ('declaration', p[2], p[3])  
-    p[0] = ('declaration')  
+    'declaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration' 
+    p[0] = ('declaration', p[1], p[2], p[4], p[5], p[7])  
+
+def p_empty_declaration(p):
+    'declaration : empty'
+    p[0] = p[1]    
 
 def p_declarationExtra(p):
-    '''declarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtra
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty declarationExtra')  
-    # else:    
-    #   p[0] = ('declarationExtra', p[2], p[3])             
-    p[0] = ('declarationExtra')  
+    'declarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtra'
+    p[0] = ('declarationExtra', p[2], p[4], p[5])  
+
+def p_empty_declarationExtra(p):
+    'declarationExtra : empty'
+    p[0] = p[1]
 
 def p_blocks(p):
-    '''blocks : BLOCKS block ENDBLOCKS
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty variables')  
-    # else:
-    p[0] = ('variables')  
+    'blocks : BLOCKS block ENDBLOCKS' 
+    p[0] = ('blocks', p[2])
+
+def p_empty_blocks(p):
+    'blocks : empty' 
+    p[0] = p[1]
 
 def p_block(p):
-    '''block : DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty block')  
-    # else:
-    #   p[0] = ('block', p[3])  
-    p[0] = ('block') 
+    'block : DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block' 
+    p[0] = ('block', p[2], p[3], p[4], p[5], p[6]) 
 
-def p_blockExtra(p):
-    '''blockExtra : DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockExtra
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty block')  
-    # else:
-    #   p[0] = ('block', p[3])  
-    p[0] = ('block')   
+def p_empty_block(p):
+    'block : empty' 
+    p[0] = p[1]
+
 
 def p_blockType(p):
     '''blockType : PROCEDURE
-                  | variableType
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty blockType')  
-    # else:
-    p[0] = ('blockType')   
+                  | variableType''' 
+    p[0] = ('blockType', p[1])   
 
 def p_variableType(p):
     '''variableType : NUMBER 
                   | WORDS
                   | LETTER''' 
-    p[0] = ('variableType', p[1])                     
+    p[0] = ('variableType', p[1])                  
 
 def p_parameters(p):
     'parameters : OPARENTHESIS parameter CPARENTHESIS '
-    # if p[1] == empty:
-    #    p[0] = ('empty parameters')  
-    # else:
-    p[0] = ('parameters')   
+    p[0] = ('parameters', p[2])   
 
 def p_parameter(p):
-    '''parameter : variableType IDENTIFIER parameterNext
-                  | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty parameter')  
-    # else :
-    #   p[0] = ('parameter', p[2]) 
-    p[0] = ('parameter')    
+    'parameter : variableType IDENTIFIER parameterExtra' 
+    p[0] = ('parameter', p[1], p[2], p[3])    
 
-def p_parameterNext(p):
-    '''parameterNext : COMMA variableType IDENTIFIER parameterNext
-                      | empty''' 
-    # if p[1] == empty:
-    #    p[0] = ('empty parameterNext')  
-    # else :
-    #   p[0] = ('parameterNext', p[3]) 
-    p[0] = ('parameterNext') 
+def p_empty_parameter(p):
+    'parameter : empty' 
+    p[0] = p[1]
+
+def p_parameterExtra(p):
+    'parameterExtra : COMMA variableType IDENTIFIER parameterExtra' 
+    p[0] = ('parameterExtra', p[2], p[3], p[4]) 
+
+def p_empty_parameterExtra(p):
+    'parameterExtra : empty' 
+    p[0] = p[1]
 
 def p_statute(p):
     'statute : empty'
-    p[0] = ('emptyStatute') 
+    p[0] = ('statue', p[1]) 
 
 def p_main(p):
     'main : START variables statute FINISH '
-    p[0] = ('main') 
+    p[0] = ('main', p[2], p[3]) 
 
 def p_expression_plus(p):
     'expression : expression PLUS term'
-    p[0] = ("+", p[1],p[3])
+    p[0] = ("+", p[1], p[3])
 
 def p_expression_minus(p):
     'expression : expression MINUS term'
-    p[0] = ("-", p[1],p[3])
+    p[0] = ("-", p[1], p[3])
 
 def p_expression_term(p):
     'expression : term'
@@ -134,11 +113,11 @@ def p_expression_term(p):
 
 def p_term_times(p):
     'term : term MULTIPLICATION factor'
-    p[0] = ("*", p[1],p[3])
+    p[0] = ("*", p[1], p[3])
 
 def p_term_div(p):
     'term : term DIVISION factor'
-    p[0] = ("/", p[1],p[3])
+    p[0] = ("/", p[1], p[3])
 
 def p_term_factor(p):
     'term : factor'
@@ -198,5 +177,4 @@ endprogram
 '''
 
 result = yacc.parse(data)
-for quadruple in quadruples:
-    print(quadruple)
+print(result)
