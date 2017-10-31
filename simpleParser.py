@@ -140,7 +140,7 @@ def p_location(p):
     'location : IDENTIFIER'
 
 def p_locationBracket(p):
-    'location : expression OBRACKETS expression CBRACKETS'
+    'location : expression OBRACKETS arrayIndexes CBRACKETS'
 
 def p_call(p):
     'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'

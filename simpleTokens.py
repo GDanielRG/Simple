@@ -68,13 +68,6 @@ def t_NUMBERVALUE(t):
     t.value = float(t.value)    
     return t
 
-
-# Whitespace
-# def t_WHITESPACE(t):
-#     r'\s+'
-#     t.lexer.lineno += t.value.count("\n")
-#     return t
-
 # Define a rule so we can track line numbers
 def t_NEWLINE(t):
     r'\n+'
@@ -91,12 +84,6 @@ def t_IDENTIFIER(t):
     r'[A-Za-z_][\w_]*'
     t.type = reserved_map.get(t.value, "IDENTIFIER")
     return t
-    
-#def t_ID(t):
-#    r'[A-Z][A-Z0-9]*'
-#    if t.value in keywords:
-#        t.type = t.value
-#    return t  
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t'
