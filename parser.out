@@ -56,7 +56,7 @@ Rule 31    parameterExtra -> empty
 Rule 32    statement -> empty
 Rule 33    assign -> location ASSIGNATION expression
 Rule 34    location -> IDENTIFIER
-Rule 35    location -> expression OBRACKETS expression CBRACKETS
+Rule 35    location -> expression OBRACKETS arrayIndexes CBRACKETS
 Rule 36    call -> IDENTIFIER OPARENTHESIS actuals CPARENTHESIS
 Rule 37    actuals -> expression commaExpressionList
 Rule 38    commaExpressionList -> empty
@@ -130,7 +130,7 @@ error                :
 Nonterminals, with rules where they appear
 
 actuals              : 36
-arrayIndexes         : 7 11 13
+arrayIndexes         : 7 11 13 35
 arrayIndexesExtra    : 15 16
 assign               : 
 block                : 18 20
@@ -142,7 +142,7 @@ commaExpressionList  : 37
 declaration          : 4 6 7 8
 declarationExtra     : 6 7 8 10 11 12 13
 empty                : 5 9 14 17 19 21 29 31 32 38
-expression           : 6 7 10 11 33 35 35 37 39 41 43 44 53
+expression           : 6 7 10 11 33 35 37 39 41 43 44 53
 factor               : 46 47 48
 location             : 33
 main                 : 3
