@@ -15,6 +15,7 @@ reserved = (
 
 # List of token names.   This is always required
 tokens = reserved + (
+   'NONZEROINT',
    'GREATER',
    'LESSER',
    'EQUALITY',
@@ -57,10 +58,16 @@ t_CBRACKETS  = r'\]'
 
 
 # A regular expression rule with some action code
+def t_NONZEROINT(t):
+    r'[1-9][0-9]*'
+    t.value = int(t.value)    
+    return t
+
 def t_NUMBERVALUE(t):
     r'\d+(\.(\d)+)?'
     t.value = float(t.value)    
     return t
+
 
 # Whitespace
 # def t_WHITESPACE(t):
@@ -101,53 +108,4 @@ def t_error(t):
 
 # Build the lexer
 lexer = lex.lex()
-
-# Test it out
-data = '''
-program
-variables
-number x = 3, y = 5.4, danielito = 4.20;
-words mundial = "hola mundo";
-endvariables
-blocks
-define procedure imprimeMultiplicacion(number a, number b)
-
-enddefine
-define number multiplicarConDanielito(number a)
-
-enddefine
-define number juan(number a)
-variables
-number k = 10;
-number x = 0;
-endvariables
-
-enddefine
-define words agregarMundial(words s)
-
-enddefine
-endblocks
-start
-  variables
-    number n = 2;
-    words palabra = "";
-  endvariables
-
-finish
-endprogram
-
-'''
-
-
-# Give the lexer some input
-lexer.input(data)
-
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok: 
-        break      # No more input
-    #print(tok)
-
-    #print(tok.type, tok.value, tok.lineno, tok.lexpos)
 
