@@ -5,9 +5,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'NOT AND OR START FINISH WORDS NUMBER LETTER PROCEDURE TOGGLE IF ENDIF DEFINE ENDDEFINE WHILE ENDWHILE ELSE BLOCKS ENDBLOCKS VARIABLES ENDVARIABLES PROGRAM ENDPROGRAM DISPLAY TRUE FALSE RETURN GREATER LESSER EQUALITY ASSIGNATION PLUS MINUS MULTIPLICATION DIVISION NUMBERVALUE LETTERVALUE WORDSVALUE IDENTIFIER NEWLINE COMMA SEMICOLON OPARENTHESIS CPARENTHESIS OBRACKETS CBRACKETSsimple : PROGRAM program ENDPROGRAMempty :program : variables blocks mainvariables : VARIABLES declaration ENDVARIABLESvariables : emptydeclaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declarationdeclaration : emptydeclarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtradeclarationExtra : emptyblocks : BLOCKS block ENDBLOCKSblocks : emptyblock : DEFINE blockType IDENTIFIER parameters variables ENDDEFINE blockblock : emptyblockType : PROCEDURE\n                  | variableTypevariableType : NUMBER \n                  | WORDS\n                  | LETTERparameters : OPARENTHESIS parameter CPARENTHESIS parameter : variableType IDENTIFIER parameterExtraparameter : emptyparameterExtra : COMMA variableType IDENTIFIER parameterExtraparameterExtra : emptystatute : emptymain : START variables statute FINISH expression : expression PLUS termexpression : expression MINUS termexpression : termterm : term MULTIPLICATION factorterm : term DIVISION factorterm : factorfactor : NUMBERVALUE\n                  | WORDSVALUE\n                  | LETTERVALUEfactor : OPARENTHESIS expression CPARENTHESIS'
+_lr_signature = 'NOT AND OR START FINISH WORDS NUMBER LETTER PROCEDURE TOGGLE IF ENDIF DEFINE ENDDEFINE WHILE ENDWHILE ELSE BLOCKS ENDBLOCKS VARIABLES ENDVARIABLES PROGRAM ENDPROGRAM DISPLAY TRUE FALSE RETURN GREATER LESSER EQUALITY ASSIGNATION PLUS MINUS MULTIPLICATION DIVISION NUMBERVALUE LETTERVALUE WORDSVALUE IDENTIFIER NEWLINE COMMA SEMICOLON OPARENTHESIS CPARENTHESIS OBRACKETS CBRACKETSsimple : PROGRAM program ENDPROGRAMempty :program : variables blocks mainvariables : VARIABLES declaration ENDVARIABLESvariables : emptydeclaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declarationdeclaration : emptydeclarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtradeclarationExtra : emptyblocks : BLOCKS block ENDBLOCKSblocks : emptyblock : DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE blockblock : emptyblockType : PROCEDURE\n                  | variableTypevariableType : NUMBER \n                  | WORDS\n                  | LETTERparameters : OPARENTHESIS parameter CPARENTHESIS parameter : variableType IDENTIFIER parameterExtraparameter : emptyparameterExtra : COMMA variableType IDENTIFIER parameterExtraparameterExtra : emptystatement : emptymain : START variables statement FINISH expression : expression PLUS termexpression : expression MINUS termexpression : termterm : term MULTIPLICATION factorterm : term DIVISION factorterm : factorfactor : NUMBERVALUE\n                  | WORDSVALUE\n                  | LETTERVALUEfactor : OPARENTHESIS expression CPARENTHESIS'
     
-_lr_action_items = {'PROGRAM':([0,],[2,]),'$end':([1,7,],[0,-1,]),'VARIABLES':([2,18,41,63,],[5,5,5,-19,]),'BLOCKS':([2,4,6,22,],[-2,9,-5,-4,]),'START':([2,4,6,8,10,22,25,],[-2,-2,-5,18,-11,-4,-10,]),'ENDPROGRAM':([3,17,40,],[7,-3,-25,]),'NUMBER':([5,20,42,55,69,],[14,14,14,14,14,]),'WORDS':([5,20,42,55,69,],[15,15,15,15,15,]),'LETTER':([5,20,42,55,69,],[16,16,16,16,16,]),'ENDVARIABLES':([5,11,13,55,65,],[-2,22,-7,-2,-6,]),'FINISH':([6,18,22,24,30,31,],[-5,-2,-4,-2,40,-24,]),'ENDDEFINE':([6,22,41,51,63,],[-5,-4,-2,62,-19,]),'DEFINE':([9,62,],[20,20,]),'ENDBLOCKS':([9,19,21,62,67,],[-2,25,-13,-2,-12,]),'IDENTIFIER':([12,14,15,16,26,27,28,46,53,72,],[23,-16,-17,-18,32,-14,-15,58,64,74,]),'PROCEDURE':([20,],[27,]),'ASSIGNATION':([23,58,],[29,66,]),'NUMBERVALUE':([29,39,44,45,48,49,66,],[36,36,36,36,36,36,36,]),'WORDSVALUE':([29,39,44,45,48,49,66,],[37,37,37,37,37,37,37,]),'LETTERVALUE':([29,39,44,45,48,49,66,],[38,38,38,38,38,38,38,]),'OPARENTHESIS':([29,32,39,44,45,48,49,66,],[39,42,39,39,39,39,39,39,]),'PLUS':([33,34,35,36,37,38,50,56,57,59,60,61,71,],[44,-28,-31,-32,-33,-34,44,-26,-27,-29,-30,-35,44,]),'MINUS':([33,34,35,36,37,38,50,56,57,59,60,61,71,],[45,-28,-31,-32,-33,-34,45,-26,-27,-29,-30,-35,45,]),'COMMA':([33,34,35,36,37,38,56,57,59,60,61,64,71,74,],[46,-28,-31,-32,-33,-34,-26,-27,-29,-30,-35,69,46,69,]),'SEMICOLON':([33,34,35,36,37,38,43,47,56,57,59,60,61,71,73,],[-2,-28,-31,-32,-33,-34,55,-9,-26,-27,-29,-30,-35,-2,-8,]),'CPARENTHESIS':([34,35,36,37,38,42,50,52,54,56,57,59,60,61,64,68,70,74,75,],[-28,-31,-32,-33,-34,-2,61,63,-21,-26,-27,-29,-30,-35,-2,-20,-23,-2,-22,]),'MULTIPLICATION':([34,35,36,37,38,56,57,59,60,61,],[48,-31,-32,-33,-34,48,48,-29,-30,-35,]),'DIVISION':([34,35,36,37,38,56,57,59,60,61,],[49,-31,-32,-33,-34,49,49,-29,-30,-35,]),}
+_lr_action_items = {'PROGRAM':([0,],[2,]),'$end':([1,7,],[0,-1,]),'VARIABLES':([2,18,41,63,],[5,5,5,-19,]),'BLOCKS':([2,4,6,22,],[-2,9,-5,-4,]),'START':([2,4,6,8,10,22,25,],[-2,-2,-5,18,-11,-4,-10,]),'ENDPROGRAM':([3,17,40,],[7,-3,-25,]),'NUMBER':([5,20,42,55,69,],[14,14,14,14,14,]),'WORDS':([5,20,42,55,69,],[15,15,15,15,15,]),'LETTER':([5,20,42,55,69,],[16,16,16,16,16,]),'ENDVARIABLES':([5,11,13,55,65,],[-2,22,-7,-2,-6,]),'FINISH':([6,18,22,24,30,31,],[-5,-2,-4,-2,40,-24,]),'ENDDEFINE':([6,22,31,41,51,62,63,],[-5,-4,-24,-2,-2,67,-19,]),'DEFINE':([9,67,],[20,20,]),'ENDBLOCKS':([9,19,21,67,72,],[-2,25,-13,-2,-12,]),'IDENTIFIER':([12,14,15,16,26,27,28,46,53,73,],[23,-16,-17,-18,32,-14,-15,58,64,75,]),'PROCEDURE':([20,],[27,]),'ASSIGNATION':([23,58,],[29,66,]),'NUMBERVALUE':([29,39,44,45,48,49,66,],[36,36,36,36,36,36,36,]),'WORDSVALUE':([29,39,44,45,48,49,66,],[37,37,37,37,37,37,37,]),'LETTERVALUE':([29,39,44,45,48,49,66,],[38,38,38,38,38,38,38,]),'OPARENTHESIS':([29,32,39,44,45,48,49,66,],[39,42,39,39,39,39,39,39,]),'PLUS':([33,34,35,36,37,38,50,56,57,59,60,61,71,],[44,-28,-31,-32,-33,-34,44,-26,-27,-29,-30,-35,44,]),'MINUS':([33,34,35,36,37,38,50,56,57,59,60,61,71,],[45,-28,-31,-32,-33,-34,45,-26,-27,-29,-30,-35,45,]),'COMMA':([33,34,35,36,37,38,56,57,59,60,61,64,71,75,],[46,-28,-31,-32,-33,-34,-26,-27,-29,-30,-35,69,46,69,]),'SEMICOLON':([33,34,35,36,37,38,43,47,56,57,59,60,61,71,74,],[-2,-28,-31,-32,-33,-34,55,-9,-26,-27,-29,-30,-35,-2,-8,]),'CPARENTHESIS':([34,35,36,37,38,42,50,52,54,56,57,59,60,61,64,68,70,75,76,],[-28,-31,-32,-33,-34,-2,61,63,-21,-26,-27,-29,-30,-35,-2,-20,-23,-2,-22,]),'MULTIPLICATION':([34,35,36,37,38,56,57,59,60,61,],[48,-31,-32,-33,-34,48,48,-29,-30,-35,]),'DIVISION':([34,35,36,37,38,56,57,59,60,61,],[49,-31,-32,-33,-34,49,49,-29,-30,-35,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'simple':([0,],[1,]),'program':([2,],[3,]),'variables':([2,18,41,],[4,24,51,]),'empty':([2,4,5,9,18,24,33,41,42,55,62,64,71,74,],[6,10,13,21,6,31,47,6,54,13,21,70,47,70,]),'blocks':([4,],[8,]),'declaration':([5,55,],[11,65,]),'variableType':([5,20,42,55,69,],[12,28,53,12,72,]),'main':([8,],[17,]),'block':([9,62,],[19,67,]),'blockType':([20,],[26,]),'statute':([24,],[30,]),'expression':([29,39,66,],[33,50,71,]),'term':([29,39,44,45,66,],[34,34,56,57,34,]),'factor':([29,39,44,45,48,49,66,],[35,35,35,35,59,60,35,]),'parameters':([32,],[41,]),'declarationExtra':([33,71,],[43,73,]),'parameter':([42,],[52,]),'parameterExtra':([64,74,],[68,75,]),}
+_lr_goto_items = {'simple':([0,],[1,]),'program':([2,],[3,]),'variables':([2,18,41,],[4,24,51,]),'empty':([2,4,5,9,18,24,33,41,42,51,55,64,67,71,75,],[6,10,13,21,6,31,47,6,54,31,13,70,21,47,70,]),'blocks':([4,],[8,]),'declaration':([5,55,],[11,65,]),'variableType':([5,20,42,55,69,],[12,28,53,12,73,]),'main':([8,],[17,]),'block':([9,67,],[19,72,]),'blockType':([20,],[26,]),'statement':([24,51,],[30,62,]),'expression':([29,39,66,],[33,50,71,]),'term':([29,39,44,45,66,],[34,34,56,57,34,]),'factor':([29,39,44,45,48,49,66,],[35,35,35,35,59,60,35,]),'parameters':([32,],[41,]),'declarationExtra':([33,71,],[43,74,]),'parameter':([42,],[52,]),'parameterExtra':([64,75,],[68,76,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -37,7 +37,7 @@ _lr_productions = [
   ('declarationExtra -> empty','declarationExtra',1,'p_empty_declarationExtra','simpleParser.py',43),
   ('blocks -> BLOCKS block ENDBLOCKS','blocks',3,'p_blocks','simpleParser.py',47),
   ('blocks -> empty','blocks',1,'p_empty_blocks','simpleParser.py',51),
-  ('block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block','block',7,'p_block','simpleParser.py',55),
+  ('block -> DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block','block',8,'p_block','simpleParser.py',55),
   ('block -> empty','block',1,'p_empty_block','simpleParser.py',59),
   ('blockType -> PROCEDURE','blockType',1,'p_blockType','simpleParser.py',64),
   ('blockType -> variableType','blockType',1,'p_blockType','simpleParser.py',65),
@@ -49,16 +49,16 @@ _lr_productions = [
   ('parameter -> empty','parameter',1,'p_empty_parameter','simpleParser.py',83),
   ('parameterExtra -> COMMA variableType IDENTIFIER parameterExtra','parameterExtra',4,'p_parameterExtra','simpleParser.py',87),
   ('parameterExtra -> empty','parameterExtra',1,'p_empty_parameterExtra','simpleParser.py',91),
-  ('statute -> empty','statute',1,'p_statute','simpleParser.py',95),
-  ('main -> START variables statute FINISH','main',4,'p_main','simpleParser.py',99),
-  ('expression -> expression PLUS term','expression',3,'p_expression_plus','simpleParser.py',103),
-  ('expression -> expression MINUS term','expression',3,'p_expression_minus','simpleParser.py',107),
-  ('expression -> term','expression',1,'p_expression_term','simpleParser.py',111),
-  ('term -> term MULTIPLICATION factor','term',3,'p_term_times','simpleParser.py',115),
-  ('term -> term DIVISION factor','term',3,'p_term_div','simpleParser.py',119),
-  ('term -> factor','term',1,'p_term_factor','simpleParser.py',123),
-  ('factor -> NUMBERVALUE','factor',1,'p_factor_num','simpleParser.py',127),
-  ('factor -> WORDSVALUE','factor',1,'p_factor_num','simpleParser.py',128),
-  ('factor -> LETTERVALUE','factor',1,'p_factor_num','simpleParser.py',129),
-  ('factor -> OPARENTHESIS expression CPARENTHESIS','factor',3,'p_factor_expr','simpleParser.py',133),
+  ('statement -> empty','statement',1,'p_statement','simpleParser.py',95),
+  ('main -> START variables statement FINISH','main',4,'p_main','simpleParser.py',103),
+  ('expression -> expression PLUS term','expression',3,'p_expression_plus','simpleParser.py',107),
+  ('expression -> expression MINUS term','expression',3,'p_expression_minus','simpleParser.py',111),
+  ('expression -> term','expression',1,'p_expression_term','simpleParser.py',115),
+  ('term -> term MULTIPLICATION factor','term',3,'p_term_times','simpleParser.py',119),
+  ('term -> term DIVISION factor','term',3,'p_term_div','simpleParser.py',123),
+  ('term -> factor','term',1,'p_term_factor','simpleParser.py',127),
+  ('factor -> NUMBERVALUE','factor',1,'p_factor_num','simpleParser.py',131),
+  ('factor -> WORDSVALUE','factor',1,'p_factor_num','simpleParser.py',132),
+  ('factor -> LETTERVALUE','factor',1,'p_factor_num','simpleParser.py',133),
+  ('factor -> OPARENTHESIS expression CPARENTHESIS','factor',3,'p_factor_expr','simpleParser.py',137),
 ]

@@ -52,8 +52,8 @@ def p_empty_blocks(p):
     p[0] = p[1]
 
 def p_block(p):
-    'block : DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block' 
-    p[0] = ('block', p[2], p[3], p[4], p[5], p[6]) 
+    'block : DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block' 
+    p[0] = ('block', p[2], p[3], p[4], p[5], p[6], p[8]) 
 
 def p_empty_block(p):
     'block : empty' 
@@ -91,12 +91,16 @@ def p_empty_parameterExtra(p):
     'parameterExtra : empty' 
     p[0] = p[1]
 
-def p_statute(p):
-    'statute : empty'
-    p[0] = ('statue', p[1]) 
+def p_statement(p):
+    '''statement : assign SEMICOLON 
+                  | call SEMICOLON
+                  | return  SEMICOLON
+                  | ifStmt
+                  | whileStmt''' 
+    p[0] = ('statement', p[1]) 
 
 def p_main(p):
-    'main : START variables statute FINISH '
+    'main : START variables statement FINISH '
     p[0] = ('main', p[2], p[3]) 
 
 def p_expression_plus(p):

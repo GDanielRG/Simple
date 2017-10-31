@@ -36,7 +36,7 @@ Rule 8     declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression declarati
 Rule 9     declarationExtra -> empty
 Rule 10    blocks -> BLOCKS block ENDBLOCKS
 Rule 11    blocks -> empty
-Rule 12    block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block
+Rule 12    block -> DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block
 Rule 13    block -> empty
 Rule 14    blockType -> PROCEDURE
 Rule 15    blockType -> variableType
@@ -48,8 +48,8 @@ Rule 20    parameter -> variableType IDENTIFIER parameterExtra
 Rule 21    parameter -> empty
 Rule 22    parameterExtra -> COMMA variableType IDENTIFIER parameterExtra
 Rule 23    parameterExtra -> empty
-Rule 24    statute -> empty
-Rule 25    main -> START variables statute FINISH
+Rule 24    statement -> empty
+Rule 25    main -> START variables statement FINISH
 Rule 26    expression -> expression PLUS term
 Rule 27    expression -> expression MINUS term
 Rule 28    expression -> term
@@ -127,7 +127,7 @@ parameterExtra       : 20 22
 parameters           : 12
 program              : 1
 simple               : 0
-statute              : 25
+statement            : 12 25
 term                 : 26 27 28 29 30
 variableType         : 6 15 20 22
 variables            : 3 12 25
@@ -224,7 +224,7 @@ state 7
 state 8
 
     (3) program -> variables blocks . main
-    (25) main -> . START variables statute FINISH
+    (25) main -> . START variables statement FINISH
 
     START           shift and go to state 18
 
@@ -233,7 +233,7 @@ state 8
 state 9
 
     (10) blocks -> BLOCKS . block ENDBLOCKS
-    (12) block -> . DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block
+    (12) block -> . DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block
     (13) block -> . empty
     (2) empty -> .
 
@@ -301,7 +301,7 @@ state 17
 
 state 18
 
-    (25) main -> START . variables statute FINISH
+    (25) main -> START . variables statement FINISH
     (4) variables -> . VARIABLES declaration ENDVARIABLES
     (5) variables -> . empty
     (2) empty -> .
@@ -321,7 +321,7 @@ state 19
 
 state 20
 
-    (12) block -> DEFINE . blockType IDENTIFIER parameters variables ENDDEFINE block
+    (12) block -> DEFINE . blockType IDENTIFIER parameters variables statement ENDDEFINE block
     (14) blockType -> . PROCEDURE
     (15) blockType -> . variableType
     (16) variableType -> . NUMBER
@@ -362,13 +362,13 @@ state 23
 
 state 24
 
-    (25) main -> START variables . statute FINISH
-    (24) statute -> . empty
+    (25) main -> START variables . statement FINISH
+    (24) statement -> . empty
     (2) empty -> .
 
     FINISH          reduce using rule 2 (empty -> .)
 
-    statute                        shift and go to state 30
+    statement                      shift and go to state 30
     empty                          shift and go to state 31
 
 state 25
@@ -380,7 +380,7 @@ state 25
 
 state 26
 
-    (12) block -> DEFINE blockType . IDENTIFIER parameters variables ENDDEFINE block
+    (12) block -> DEFINE blockType . IDENTIFIER parameters variables statement ENDDEFINE block
 
     IDENTIFIER      shift and go to state 32
 
@@ -424,21 +424,22 @@ state 29
 
 state 30
 
-    (25) main -> START variables statute . FINISH
+    (25) main -> START variables statement . FINISH
 
     FINISH          shift and go to state 40
 
 
 state 31
 
-    (24) statute -> empty .
+    (24) statement -> empty .
 
-    FINISH          reduce using rule 24 (statute -> empty .)
+    FINISH          reduce using rule 24 (statement -> empty .)
+    ENDDEFINE       reduce using rule 24 (statement -> empty .)
 
 
 state 32
 
-    (12) block -> DEFINE blockType IDENTIFIER . parameters variables ENDDEFINE block
+    (12) block -> DEFINE blockType IDENTIFIER . parameters variables statement ENDDEFINE block
     (19) parameters -> . OPARENTHESIS parameter CPARENTHESIS
 
     OPARENTHESIS    shift and go to state 42
@@ -554,14 +555,14 @@ state 39
 
 state 40
 
-    (25) main -> START variables statute FINISH .
+    (25) main -> START variables statement FINISH .
 
-    ENDPROGRAM      reduce using rule 25 (main -> START variables statute FINISH .)
+    ENDPROGRAM      reduce using rule 25 (main -> START variables statement FINISH .)
 
 
 state 41
 
-    (12) block -> DEFINE blockType IDENTIFIER parameters . variables ENDDEFINE block
+    (12) block -> DEFINE blockType IDENTIFIER parameters . variables statement ENDDEFINE block
     (4) variables -> . VARIABLES declaration ENDVARIABLES
     (5) variables -> . empty
     (2) empty -> .
@@ -693,10 +694,14 @@ state 50
 
 state 51
 
-    (12) block -> DEFINE blockType IDENTIFIER parameters variables . ENDDEFINE block
+    (12) block -> DEFINE blockType IDENTIFIER parameters variables . statement ENDDEFINE block
+    (24) statement -> . empty
+    (2) empty -> .
 
-    ENDDEFINE       shift and go to state 62
+    ENDDEFINE       reduce using rule 2 (empty -> .)
 
+    statement                      shift and go to state 62
+    empty                          shift and go to state 31
 
 state 52
 
@@ -816,16 +821,10 @@ state 61
 
 state 62
 
-    (12) block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE . block
-    (12) block -> . DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block
-    (13) block -> . empty
-    (2) empty -> .
+    (12) block -> DEFINE blockType IDENTIFIER parameters variables statement . ENDDEFINE block
 
-    DEFINE          shift and go to state 20
-    ENDBLOCKS       reduce using rule 2 (empty -> .)
+    ENDDEFINE       shift and go to state 67
 
-    block                          shift and go to state 67
-    empty                          shift and go to state 21
 
 state 63
 
@@ -880,10 +879,16 @@ state 66
 
 state 67
 
-    (12) block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block .
+    (12) block -> DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE . block
+    (12) block -> . DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block
+    (13) block -> . empty
+    (2) empty -> .
 
-    ENDBLOCKS       reduce using rule 12 (block -> DEFINE blockType IDENTIFIER parameters variables ENDDEFINE block .)
+    DEFINE          shift and go to state 20
+    ENDBLOCKS       reduce using rule 2 (empty -> .)
 
+    block                          shift and go to state 72
+    empty                          shift and go to state 21
 
 state 68
 
@@ -903,7 +908,7 @@ state 69
     WORDS           shift and go to state 15
     LETTER          shift and go to state 16
 
-    variableType                   shift and go to state 72
+    variableType                   shift and go to state 73
 
 state 70
 
@@ -926,24 +931,31 @@ state 71
     COMMA           shift and go to state 46
     SEMICOLON       reduce using rule 2 (empty -> .)
 
-    declarationExtra               shift and go to state 73
+    declarationExtra               shift and go to state 74
     empty                          shift and go to state 47
 
 state 72
 
-    (22) parameterExtra -> COMMA variableType . IDENTIFIER parameterExtra
+    (12) block -> DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block .
 
-    IDENTIFIER      shift and go to state 74
+    ENDBLOCKS       reduce using rule 12 (block -> DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block .)
 
 
 state 73
+
+    (22) parameterExtra -> COMMA variableType . IDENTIFIER parameterExtra
+
+    IDENTIFIER      shift and go to state 75
+
+
+state 74
 
     (8) declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression declarationExtra .
 
     SEMICOLON       reduce using rule 8 (declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression declarationExtra .)
 
 
-state 74
+state 75
 
     (22) parameterExtra -> COMMA variableType IDENTIFIER . parameterExtra
     (22) parameterExtra -> . COMMA variableType IDENTIFIER parameterExtra
@@ -953,10 +965,10 @@ state 74
     COMMA           shift and go to state 69
     CPARENTHESIS    reduce using rule 2 (empty -> .)
 
-    parameterExtra                 shift and go to state 75
+    parameterExtra                 shift and go to state 76
     empty                          shift and go to state 70
 
-state 75
+state 76
 
     (22) parameterExtra -> COMMA variableType IDENTIFIER parameterExtra .
 
