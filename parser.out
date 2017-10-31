@@ -14,7 +14,6 @@ Unused terminals:
     DISPLAY
     TRUE
     FALSE
-    RETURN
     GREATER
     LESSER
     EQUALITY
@@ -55,30 +54,39 @@ Rule 29    parameter -> empty
 Rule 30    parameterExtra -> COMMA variableType IDENTIFIER parameterExtra
 Rule 31    parameterExtra -> empty
 Rule 32    statement -> empty
-Rule 33    main -> START variables statement FINISH
-Rule 34    expression -> expression PLUS term
-Rule 35    expression -> expression MINUS term
-Rule 36    expression -> term
-Rule 37    term -> term MULTIPLICATION factor
-Rule 38    term -> term DIVISION factor
-Rule 39    term -> factor
-Rule 40    factor -> NUMBERVALUE
-Rule 41    factor -> NONZEROINT
-Rule 42    factor -> WORDSVALUE
-Rule 43    factor -> LETTERVALUE
-Rule 44    factor -> OPARENTHESIS expression CPARENTHESIS
+Rule 33    assign -> location ASSIGNATION expression
+Rule 34    location -> IDENTIFIER
+Rule 35    location -> expression OBRACKETS expression CBRACKETS
+Rule 36    call -> IDENTIFIER OPARENTHESIS actuals CPARENTHESIS
+Rule 37    actuals -> expression commaExpressionList
+Rule 38    commaExpressionList -> empty
+Rule 39    commaExpression -> COMMA expression
+Rule 40    return -> RETURN returnExpression SEMICOLON
+Rule 41    returnExpression -> expression
+Rule 42    main -> START variables statement FINISH
+Rule 43    expression -> expression PLUS term
+Rule 44    expression -> expression MINUS term
+Rule 45    expression -> term
+Rule 46    term -> term MULTIPLICATION factor
+Rule 47    term -> term DIVISION factor
+Rule 48    term -> factor
+Rule 49    factor -> NUMBERVALUE
+Rule 50    factor -> NONZEROINT
+Rule 51    factor -> WORDSVALUE
+Rule 52    factor -> LETTERVALUE
+Rule 53    factor -> OPARENTHESIS expression CPARENTHESIS
 
 Terminals, with rules where they appear
 
 AND                  : 
-ASSIGNATION          : 6 7 10 11
+ASSIGNATION          : 6 7 10 11 33
 BLOCKS               : 18
-CBRACKETS            : 7 11 13
-COMMA                : 10 11 12 13 16 30
-CPARENTHESIS         : 27 44
+CBRACKETS            : 7 11 13 35
+COMMA                : 10 11 12 13 16 30 39
+CPARENTHESIS         : 27 36 53
 DEFINE               : 20
 DISPLAY              : 
-DIVISION             : 38
+DIVISION             : 47
 ELSE                 : 
 ENDBLOCKS            : 18
 ENDDEFINE            : 20
@@ -88,59 +96,67 @@ ENDVARIABLES         : 4
 ENDWHILE             : 
 EQUALITY             : 
 FALSE                : 
-FINISH               : 33
+FINISH               : 42
 GREATER              : 
-IDENTIFIER           : 6 7 8 10 11 12 13 20 28 30
+IDENTIFIER           : 6 7 8 10 11 12 13 20 28 30 34 36
 IF                   : 
 LESSER               : 
 LETTER               : 26
-LETTERVALUE          : 43
-MINUS                : 35
-MULTIPLICATION       : 37
+LETTERVALUE          : 52
+MINUS                : 44
+MULTIPLICATION       : 46
 NEWLINE              : 
-NONZEROINT           : 15 16 41
+NONZEROINT           : 15 16 50
 NOT                  : 
 NUMBER               : 24
-NUMBERVALUE          : 40
-OBRACKETS            : 7 11 13
-OPARENTHESIS         : 27 44
+NUMBERVALUE          : 49
+OBRACKETS            : 7 11 13 35
+OPARENTHESIS         : 27 36 53
 OR                   : 
-PLUS                 : 34
+PLUS                 : 43
 PROCEDURE            : 22
 PROGRAM              : 1
-RETURN               : 
-SEMICOLON            : 6 7 8
-START                : 33
+RETURN               : 40
+SEMICOLON            : 6 7 8 40
+START                : 42
 TOGGLE               : 
 TRUE                 : 
 VARIABLES            : 4
 WHILE                : 
 WORDS                : 25
-WORDSVALUE           : 42
+WORDSVALUE           : 51
 error                : 
 
 Nonterminals, with rules where they appear
 
+actuals              : 36
 arrayIndexes         : 7 11 13
 arrayIndexesExtra    : 15 16
+assign               : 
 block                : 18 20
 blockType            : 20
 blocks               : 3
+call                 : 
+commaExpression      : 
+commaExpressionList  : 37
 declaration          : 4 6 7 8
 declarationExtra     : 6 7 8 10 11 12 13
-empty                : 5 9 14 17 19 21 29 31 32
-expression           : 6 7 10 11 34 35 44
-factor               : 37 38 39
+empty                : 5 9 14 17 19 21 29 31 32 38
+expression           : 6 7 10 11 33 35 35 37 39 41 43 44 53
+factor               : 46 47 48
+location             : 33
 main                 : 3
 parameter            : 27
 parameterExtra       : 28 30
 parameters           : 20
 program              : 1
+return               : 
+returnExpression     : 40
 simple               : 0
-statement            : 20 33
-term                 : 34 35 36 37 38
+statement            : 20 42
+term                 : 43 44 45 46 47
 variableType         : 6 7 8 23 28 30
-variables            : 3 20 33
+variables            : 3 20 42
 
 Parsing method: LALR
 
@@ -236,7 +252,7 @@ state 7
 state 8
 
     (3) program -> variables blocks . main
-    (33) main -> . START variables statement FINISH
+    (42) main -> . START variables statement FINISH
 
     START           shift and go to state 18
 
@@ -315,7 +331,7 @@ state 17
 
 state 18
 
-    (33) main -> START . variables statement FINISH
+    (42) main -> START . variables statement FINISH
     (4) variables -> . VARIABLES declaration ENDVARIABLES
     (5) variables -> . empty
     (2) empty -> .
@@ -389,7 +405,7 @@ state 23
 
 state 24
 
-    (33) main -> START variables . statement FINISH
+    (42) main -> START variables . statement FINISH
     (32) statement -> . empty
     (2) empty -> .
 
@@ -429,17 +445,17 @@ state 28
 state 29
 
     (6) declaration -> variableType IDENTIFIER ASSIGNATION . expression declarationExtra SEMICOLON declaration
-    (34) expression -> . expression PLUS term
-    (35) expression -> . expression MINUS term
-    (36) expression -> . term
-    (37) term -> . term MULTIPLICATION factor
-    (38) term -> . term DIVISION factor
-    (39) term -> . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (43) expression -> . expression PLUS term
+    (44) expression -> . expression MINUS term
+    (45) expression -> . term
+    (46) term -> . term MULTIPLICATION factor
+    (47) term -> . term DIVISION factor
+    (48) term -> . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -486,7 +502,7 @@ state 33
 
 state 34
 
-    (33) main -> START variables statement . FINISH
+    (42) main -> START variables statement . FINISH
 
     FINISH          shift and go to state 49
 
@@ -511,8 +527,8 @@ state 36
 state 37
 
     (6) declaration -> variableType IDENTIFIER ASSIGNATION expression . declarationExtra SEMICOLON declaration
-    (34) expression -> expression . PLUS term
-    (35) expression -> expression . MINUS term
+    (43) expression -> expression . PLUS term
+    (44) expression -> expression . MINUS term
     (10) declarationExtra -> . COMMA IDENTIFIER ASSIGNATION expression declarationExtra
     (11) declarationExtra -> . COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra
     (12) declarationExtra -> . COMMA IDENTIFIER declarationExtra
@@ -530,98 +546,98 @@ state 37
 
 state 38
 
-    (36) expression -> term .
-    (37) term -> term . MULTIPLICATION factor
-    (38) term -> term . DIVISION factor
+    (45) expression -> term .
+    (46) term -> term . MULTIPLICATION factor
+    (47) term -> term . DIVISION factor
 
-    PLUS            reduce using rule 36 (expression -> term .)
-    MINUS           reduce using rule 36 (expression -> term .)
-    COMMA           reduce using rule 36 (expression -> term .)
-    SEMICOLON       reduce using rule 36 (expression -> term .)
-    CPARENTHESIS    reduce using rule 36 (expression -> term .)
+    PLUS            reduce using rule 45 (expression -> term .)
+    MINUS           reduce using rule 45 (expression -> term .)
+    COMMA           reduce using rule 45 (expression -> term .)
+    SEMICOLON       reduce using rule 45 (expression -> term .)
+    CPARENTHESIS    reduce using rule 45 (expression -> term .)
     MULTIPLICATION  shift and go to state 55
     DIVISION        shift and go to state 56
 
 
 state 39
 
-    (39) term -> factor .
+    (48) term -> factor .
 
-    MULTIPLICATION  reduce using rule 39 (term -> factor .)
-    DIVISION        reduce using rule 39 (term -> factor .)
-    PLUS            reduce using rule 39 (term -> factor .)
-    MINUS           reduce using rule 39 (term -> factor .)
-    COMMA           reduce using rule 39 (term -> factor .)
-    SEMICOLON       reduce using rule 39 (term -> factor .)
-    CPARENTHESIS    reduce using rule 39 (term -> factor .)
+    MULTIPLICATION  reduce using rule 48 (term -> factor .)
+    DIVISION        reduce using rule 48 (term -> factor .)
+    PLUS            reduce using rule 48 (term -> factor .)
+    MINUS           reduce using rule 48 (term -> factor .)
+    COMMA           reduce using rule 48 (term -> factor .)
+    SEMICOLON       reduce using rule 48 (term -> factor .)
+    CPARENTHESIS    reduce using rule 48 (term -> factor .)
 
 
 state 40
 
-    (40) factor -> NUMBERVALUE .
+    (49) factor -> NUMBERVALUE .
 
-    MULTIPLICATION  reduce using rule 40 (factor -> NUMBERVALUE .)
-    DIVISION        reduce using rule 40 (factor -> NUMBERVALUE .)
-    PLUS            reduce using rule 40 (factor -> NUMBERVALUE .)
-    MINUS           reduce using rule 40 (factor -> NUMBERVALUE .)
-    COMMA           reduce using rule 40 (factor -> NUMBERVALUE .)
-    SEMICOLON       reduce using rule 40 (factor -> NUMBERVALUE .)
-    CPARENTHESIS    reduce using rule 40 (factor -> NUMBERVALUE .)
+    MULTIPLICATION  reduce using rule 49 (factor -> NUMBERVALUE .)
+    DIVISION        reduce using rule 49 (factor -> NUMBERVALUE .)
+    PLUS            reduce using rule 49 (factor -> NUMBERVALUE .)
+    MINUS           reduce using rule 49 (factor -> NUMBERVALUE .)
+    COMMA           reduce using rule 49 (factor -> NUMBERVALUE .)
+    SEMICOLON       reduce using rule 49 (factor -> NUMBERVALUE .)
+    CPARENTHESIS    reduce using rule 49 (factor -> NUMBERVALUE .)
 
 
 state 41
 
-    (41) factor -> NONZEROINT .
+    (50) factor -> NONZEROINT .
 
-    MULTIPLICATION  reduce using rule 41 (factor -> NONZEROINT .)
-    DIVISION        reduce using rule 41 (factor -> NONZEROINT .)
-    PLUS            reduce using rule 41 (factor -> NONZEROINT .)
-    MINUS           reduce using rule 41 (factor -> NONZEROINT .)
-    COMMA           reduce using rule 41 (factor -> NONZEROINT .)
-    SEMICOLON       reduce using rule 41 (factor -> NONZEROINT .)
-    CPARENTHESIS    reduce using rule 41 (factor -> NONZEROINT .)
+    MULTIPLICATION  reduce using rule 50 (factor -> NONZEROINT .)
+    DIVISION        reduce using rule 50 (factor -> NONZEROINT .)
+    PLUS            reduce using rule 50 (factor -> NONZEROINT .)
+    MINUS           reduce using rule 50 (factor -> NONZEROINT .)
+    COMMA           reduce using rule 50 (factor -> NONZEROINT .)
+    SEMICOLON       reduce using rule 50 (factor -> NONZEROINT .)
+    CPARENTHESIS    reduce using rule 50 (factor -> NONZEROINT .)
 
 
 state 42
 
-    (42) factor -> WORDSVALUE .
+    (51) factor -> WORDSVALUE .
 
-    MULTIPLICATION  reduce using rule 42 (factor -> WORDSVALUE .)
-    DIVISION        reduce using rule 42 (factor -> WORDSVALUE .)
-    PLUS            reduce using rule 42 (factor -> WORDSVALUE .)
-    MINUS           reduce using rule 42 (factor -> WORDSVALUE .)
-    COMMA           reduce using rule 42 (factor -> WORDSVALUE .)
-    SEMICOLON       reduce using rule 42 (factor -> WORDSVALUE .)
-    CPARENTHESIS    reduce using rule 42 (factor -> WORDSVALUE .)
+    MULTIPLICATION  reduce using rule 51 (factor -> WORDSVALUE .)
+    DIVISION        reduce using rule 51 (factor -> WORDSVALUE .)
+    PLUS            reduce using rule 51 (factor -> WORDSVALUE .)
+    MINUS           reduce using rule 51 (factor -> WORDSVALUE .)
+    COMMA           reduce using rule 51 (factor -> WORDSVALUE .)
+    SEMICOLON       reduce using rule 51 (factor -> WORDSVALUE .)
+    CPARENTHESIS    reduce using rule 51 (factor -> WORDSVALUE .)
 
 
 state 43
 
-    (43) factor -> LETTERVALUE .
+    (52) factor -> LETTERVALUE .
 
-    MULTIPLICATION  reduce using rule 43 (factor -> LETTERVALUE .)
-    DIVISION        reduce using rule 43 (factor -> LETTERVALUE .)
-    PLUS            reduce using rule 43 (factor -> LETTERVALUE .)
-    MINUS           reduce using rule 43 (factor -> LETTERVALUE .)
-    COMMA           reduce using rule 43 (factor -> LETTERVALUE .)
-    SEMICOLON       reduce using rule 43 (factor -> LETTERVALUE .)
-    CPARENTHESIS    reduce using rule 43 (factor -> LETTERVALUE .)
+    MULTIPLICATION  reduce using rule 52 (factor -> LETTERVALUE .)
+    DIVISION        reduce using rule 52 (factor -> LETTERVALUE .)
+    PLUS            reduce using rule 52 (factor -> LETTERVALUE .)
+    MINUS           reduce using rule 52 (factor -> LETTERVALUE .)
+    COMMA           reduce using rule 52 (factor -> LETTERVALUE .)
+    SEMICOLON       reduce using rule 52 (factor -> LETTERVALUE .)
+    CPARENTHESIS    reduce using rule 52 (factor -> LETTERVALUE .)
 
 
 state 44
 
-    (44) factor -> OPARENTHESIS . expression CPARENTHESIS
-    (34) expression -> . expression PLUS term
-    (35) expression -> . expression MINUS term
-    (36) expression -> . term
-    (37) term -> . term MULTIPLICATION factor
-    (38) term -> . term DIVISION factor
-    (39) term -> . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (53) factor -> OPARENTHESIS . expression CPARENTHESIS
+    (43) expression -> . expression PLUS term
+    (44) expression -> . expression MINUS term
+    (45) expression -> . term
+    (46) term -> . term MULTIPLICATION factor
+    (47) term -> . term DIVISION factor
+    (48) term -> . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -697,9 +713,9 @@ state 48
 
 state 49
 
-    (33) main -> START variables statement FINISH .
+    (42) main -> START variables statement FINISH .
 
-    ENDPROGRAM      reduce using rule 33 (main -> START variables statement FINISH .)
+    ENDPROGRAM      reduce using rule 42 (main -> START variables statement FINISH .)
 
 
 state 50
@@ -743,15 +759,15 @@ state 52
 
 state 53
 
-    (34) expression -> expression PLUS . term
-    (37) term -> . term MULTIPLICATION factor
-    (38) term -> . term DIVISION factor
-    (39) term -> . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (43) expression -> expression PLUS . term
+    (46) term -> . term MULTIPLICATION factor
+    (47) term -> . term DIVISION factor
+    (48) term -> . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -764,15 +780,15 @@ state 53
 
 state 54
 
-    (35) expression -> expression MINUS . term
-    (37) term -> . term MULTIPLICATION factor
-    (38) term -> . term DIVISION factor
-    (39) term -> . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (44) expression -> expression MINUS . term
+    (46) term -> . term MULTIPLICATION factor
+    (47) term -> . term DIVISION factor
+    (48) term -> . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -785,12 +801,12 @@ state 54
 
 state 55
 
-    (37) term -> term MULTIPLICATION . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (46) term -> term MULTIPLICATION . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -802,12 +818,12 @@ state 55
 
 state 56
 
-    (38) term -> term DIVISION . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (47) term -> term DIVISION . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -819,9 +835,9 @@ state 56
 
 state 57
 
-    (44) factor -> OPARENTHESIS expression . CPARENTHESIS
-    (34) expression -> expression . PLUS term
-    (35) expression -> expression . MINUS term
+    (53) factor -> OPARENTHESIS expression . CPARENTHESIS
+    (43) expression -> expression . PLUS term
+    (44) expression -> expression . MINUS term
 
     CPARENTHESIS    shift and go to state 75
     PLUS            shift and go to state 53
@@ -866,17 +882,17 @@ state 62
 state 63
 
     (10) declarationExtra -> COMMA IDENTIFIER ASSIGNATION . expression declarationExtra
-    (34) expression -> . expression PLUS term
-    (35) expression -> . expression MINUS term
-    (36) expression -> . term
-    (37) term -> . term MULTIPLICATION factor
-    (38) term -> . term DIVISION factor
-    (39) term -> . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (43) expression -> . expression PLUS term
+    (44) expression -> . expression MINUS term
+    (45) expression -> . term
+    (46) term -> . term MULTIPLICATION factor
+    (47) term -> . term DIVISION factor
+    (48) term -> . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -960,87 +976,87 @@ state 70
 
 state 71
 
-    (34) expression -> expression PLUS term .
-    (37) term -> term . MULTIPLICATION factor
-    (38) term -> term . DIVISION factor
+    (43) expression -> expression PLUS term .
+    (46) term -> term . MULTIPLICATION factor
+    (47) term -> term . DIVISION factor
 
-    PLUS            reduce using rule 34 (expression -> expression PLUS term .)
-    MINUS           reduce using rule 34 (expression -> expression PLUS term .)
-    COMMA           reduce using rule 34 (expression -> expression PLUS term .)
-    SEMICOLON       reduce using rule 34 (expression -> expression PLUS term .)
-    CPARENTHESIS    reduce using rule 34 (expression -> expression PLUS term .)
+    PLUS            reduce using rule 43 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 43 (expression -> expression PLUS term .)
+    COMMA           reduce using rule 43 (expression -> expression PLUS term .)
+    SEMICOLON       reduce using rule 43 (expression -> expression PLUS term .)
+    CPARENTHESIS    reduce using rule 43 (expression -> expression PLUS term .)
     MULTIPLICATION  shift and go to state 55
     DIVISION        shift and go to state 56
 
 
 state 72
 
-    (35) expression -> expression MINUS term .
-    (37) term -> term . MULTIPLICATION factor
-    (38) term -> term . DIVISION factor
+    (44) expression -> expression MINUS term .
+    (46) term -> term . MULTIPLICATION factor
+    (47) term -> term . DIVISION factor
 
-    PLUS            reduce using rule 35 (expression -> expression MINUS term .)
-    MINUS           reduce using rule 35 (expression -> expression MINUS term .)
-    COMMA           reduce using rule 35 (expression -> expression MINUS term .)
-    SEMICOLON       reduce using rule 35 (expression -> expression MINUS term .)
-    CPARENTHESIS    reduce using rule 35 (expression -> expression MINUS term .)
+    PLUS            reduce using rule 44 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 44 (expression -> expression MINUS term .)
+    COMMA           reduce using rule 44 (expression -> expression MINUS term .)
+    SEMICOLON       reduce using rule 44 (expression -> expression MINUS term .)
+    CPARENTHESIS    reduce using rule 44 (expression -> expression MINUS term .)
     MULTIPLICATION  shift and go to state 55
     DIVISION        shift and go to state 56
 
 
 state 73
 
-    (37) term -> term MULTIPLICATION factor .
+    (46) term -> term MULTIPLICATION factor .
 
-    MULTIPLICATION  reduce using rule 37 (term -> term MULTIPLICATION factor .)
-    DIVISION        reduce using rule 37 (term -> term MULTIPLICATION factor .)
-    PLUS            reduce using rule 37 (term -> term MULTIPLICATION factor .)
-    MINUS           reduce using rule 37 (term -> term MULTIPLICATION factor .)
-    COMMA           reduce using rule 37 (term -> term MULTIPLICATION factor .)
-    SEMICOLON       reduce using rule 37 (term -> term MULTIPLICATION factor .)
-    CPARENTHESIS    reduce using rule 37 (term -> term MULTIPLICATION factor .)
+    MULTIPLICATION  reduce using rule 46 (term -> term MULTIPLICATION factor .)
+    DIVISION        reduce using rule 46 (term -> term MULTIPLICATION factor .)
+    PLUS            reduce using rule 46 (term -> term MULTIPLICATION factor .)
+    MINUS           reduce using rule 46 (term -> term MULTIPLICATION factor .)
+    COMMA           reduce using rule 46 (term -> term MULTIPLICATION factor .)
+    SEMICOLON       reduce using rule 46 (term -> term MULTIPLICATION factor .)
+    CPARENTHESIS    reduce using rule 46 (term -> term MULTIPLICATION factor .)
 
 
 state 74
 
-    (38) term -> term DIVISION factor .
+    (47) term -> term DIVISION factor .
 
-    MULTIPLICATION  reduce using rule 38 (term -> term DIVISION factor .)
-    DIVISION        reduce using rule 38 (term -> term DIVISION factor .)
-    PLUS            reduce using rule 38 (term -> term DIVISION factor .)
-    MINUS           reduce using rule 38 (term -> term DIVISION factor .)
-    COMMA           reduce using rule 38 (term -> term DIVISION factor .)
-    SEMICOLON       reduce using rule 38 (term -> term DIVISION factor .)
-    CPARENTHESIS    reduce using rule 38 (term -> term DIVISION factor .)
+    MULTIPLICATION  reduce using rule 47 (term -> term DIVISION factor .)
+    DIVISION        reduce using rule 47 (term -> term DIVISION factor .)
+    PLUS            reduce using rule 47 (term -> term DIVISION factor .)
+    MINUS           reduce using rule 47 (term -> term DIVISION factor .)
+    COMMA           reduce using rule 47 (term -> term DIVISION factor .)
+    SEMICOLON       reduce using rule 47 (term -> term DIVISION factor .)
+    CPARENTHESIS    reduce using rule 47 (term -> term DIVISION factor .)
 
 
 state 75
 
-    (44) factor -> OPARENTHESIS expression CPARENTHESIS .
+    (53) factor -> OPARENTHESIS expression CPARENTHESIS .
 
-    MULTIPLICATION  reduce using rule 44 (factor -> OPARENTHESIS expression CPARENTHESIS .)
-    DIVISION        reduce using rule 44 (factor -> OPARENTHESIS expression CPARENTHESIS .)
-    PLUS            reduce using rule 44 (factor -> OPARENTHESIS expression CPARENTHESIS .)
-    MINUS           reduce using rule 44 (factor -> OPARENTHESIS expression CPARENTHESIS .)
-    COMMA           reduce using rule 44 (factor -> OPARENTHESIS expression CPARENTHESIS .)
-    SEMICOLON       reduce using rule 44 (factor -> OPARENTHESIS expression CPARENTHESIS .)
-    CPARENTHESIS    reduce using rule 44 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    MULTIPLICATION  reduce using rule 53 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    DIVISION        reduce using rule 53 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    PLUS            reduce using rule 53 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    MINUS           reduce using rule 53 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    COMMA           reduce using rule 53 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    SEMICOLON       reduce using rule 53 (factor -> OPARENTHESIS expression CPARENTHESIS .)
+    CPARENTHESIS    reduce using rule 53 (factor -> OPARENTHESIS expression CPARENTHESIS .)
 
 
 state 76
 
     (7) declaration -> variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION . expression declarationExtra SEMICOLON declaration
-    (34) expression -> . expression PLUS term
-    (35) expression -> . expression MINUS term
-    (36) expression -> . term
-    (37) term -> . term MULTIPLICATION factor
-    (38) term -> . term DIVISION factor
-    (39) term -> . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (43) expression -> . expression PLUS term
+    (44) expression -> . expression MINUS term
+    (45) expression -> . term
+    (46) term -> . term MULTIPLICATION factor
+    (47) term -> . term DIVISION factor
+    (48) term -> . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -1068,8 +1084,8 @@ state 77
 state 78
 
     (10) declarationExtra -> COMMA IDENTIFIER ASSIGNATION expression . declarationExtra
-    (34) expression -> expression . PLUS term
-    (35) expression -> expression . MINUS term
+    (43) expression -> expression . PLUS term
+    (44) expression -> expression . MINUS term
     (10) declarationExtra -> . COMMA IDENTIFIER ASSIGNATION expression declarationExtra
     (11) declarationExtra -> . COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra
     (12) declarationExtra -> . COMMA IDENTIFIER declarationExtra
@@ -1131,8 +1147,8 @@ state 83
 state 84
 
     (7) declaration -> variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression . declarationExtra SEMICOLON declaration
-    (34) expression -> expression . PLUS term
-    (35) expression -> expression . MINUS term
+    (43) expression -> expression . PLUS term
+    (44) expression -> expression . MINUS term
     (10) declarationExtra -> . COMMA IDENTIFIER ASSIGNATION expression declarationExtra
     (11) declarationExtra -> . COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra
     (12) declarationExtra -> . COMMA IDENTIFIER declarationExtra
@@ -1230,17 +1246,17 @@ state 92
 state 93
 
     (11) declarationExtra -> COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION . expression declarationExtra
-    (34) expression -> . expression PLUS term
-    (35) expression -> . expression MINUS term
-    (36) expression -> . term
-    (37) term -> . term MULTIPLICATION factor
-    (38) term -> . term DIVISION factor
-    (39) term -> . factor
-    (40) factor -> . NUMBERVALUE
-    (41) factor -> . NONZEROINT
-    (42) factor -> . WORDSVALUE
-    (43) factor -> . LETTERVALUE
-    (44) factor -> . OPARENTHESIS expression CPARENTHESIS
+    (43) expression -> . expression PLUS term
+    (44) expression -> . expression MINUS term
+    (45) expression -> . term
+    (46) term -> . term MULTIPLICATION factor
+    (47) term -> . term DIVISION factor
+    (48) term -> . factor
+    (49) factor -> . NUMBERVALUE
+    (50) factor -> . NONZEROINT
+    (51) factor -> . WORDSVALUE
+    (52) factor -> . LETTERVALUE
+    (53) factor -> . OPARENTHESIS expression CPARENTHESIS
 
     NUMBERVALUE     shift and go to state 40
     NONZEROINT      shift and go to state 41
@@ -1297,8 +1313,8 @@ state 97
 state 98
 
     (11) declarationExtra -> COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression . declarationExtra
-    (34) expression -> expression . PLUS term
-    (35) expression -> expression . MINUS term
+    (43) expression -> expression . PLUS term
+    (44) expression -> expression . MINUS term
     (10) declarationExtra -> . COMMA IDENTIFIER ASSIGNATION expression declarationExtra
     (11) declarationExtra -> . COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra
     (12) declarationExtra -> . COMMA IDENTIFIER declarationExtra

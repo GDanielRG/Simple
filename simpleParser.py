@@ -23,7 +23,7 @@ def p_variables(p):
     'variables : VARIABLES declaration ENDVARIABLES' 
     p[0] = ('variables', p[2])
 
-def p_empty_variables(p):
+def p_emptyVariables(p):
     'variables : empty'
     p[0] = p[1]
 
@@ -31,15 +31,15 @@ def p_declaration(p):
     'declaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration' 
     p[0] = ('declaration', p[1], p[2], p[4], p[5], p[7])  
 
-def p_array_declaration(p):
+def p_arrayDeclaration(p):
     'declaration : variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra SEMICOLON declaration' 
-    p[0] = ('array_declaration', p[1], p[2], p[4], p[7], p[8], p[10])  
+    p[0] = ('arrayDeclaration', p[1], p[2], p[4], p[7], p[8], p[10])  
 
-def p_null_declaration(p):
+def p_nullDeclaration(p):
     'declaration : variableType IDENTIFIER declarationExtra SEMICOLON declaration' 
     p[0] = ('declaration', p[1], p[2], p[3], p[5])  
 
-def p_empty_declaration(p):
+def p_emptyDeclaration(p):
     'declaration : empty'
     p[0] = p[1]    
 
@@ -47,19 +47,19 @@ def p_declarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtra'
     p[0] = ('declarationExtra', p[2], p[4], p[5])  
 
-def p_array_declarationExtra(p):
+def p_arrayDeclarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra'
-    p[0] = ('array_declarationExtra', p[2], p[4], p[7], p[8])  
+    p[0] = ('arrayDeclarationExtra', p[2], p[4], p[7], p[8])  
 
-def p_null_declarationExtra(p):
+def p_nullDeclarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER declarationExtra'
     p[0] = ('declarationExtra', p[2], p[3])  
 
-def p_array_null_declarationExtra(p):
+def p_array_nullDeclarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS declarationExtra'
     p[0] = ('declarationExtra', p[2], p[4], p[6])  
 
-def p_empty_declarationExtra(p):
+def p_emptyDeclarationExtra(p):
     'declarationExtra : empty'
     p[0] = p[1]
 
@@ -71,7 +71,7 @@ def p_arrayIndexesExtra(p):
     'arrayIndexesExtra : COMMA NONZEROINT arrayIndexesExtra'
     p[0] = ('arrayIndexesExtra', p[2], p[3])
 
-def p_empty_arrayIndexesExtra(p):
+def p_emptyArrayIndexesExtra(p):
     'arrayIndexesExtra : empty'
     p[0] = p[1]
 
@@ -79,7 +79,7 @@ def p_blocks(p):
     'blocks : BLOCKS block ENDBLOCKS' 
     p[0] = ('blocks', p[2])
 
-def p_empty_blocks(p):
+def p_emptyBlocks(p):
     'blocks : empty' 
     p[0] = p[1]
 
@@ -87,7 +87,7 @@ def p_block(p):
     'block : DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block' 
     p[0] = ('block', p[2], p[3], p[4], p[5], p[6], p[8]) 
 
-def p_empty_block(p):
+def p_emptyBlock(p):
     'block : empty' 
     p[0] = p[1]
 
@@ -111,7 +111,7 @@ def p_parameter(p):
     'parameter : variableType IDENTIFIER parameterExtra' 
     p[0] = ('parameter', p[1], p[2], p[3])    
 
-def p_empty_parameter(p):
+def p_emptyParameter(p):
     'parameter : empty' 
     p[0] = p[1]
 
@@ -119,7 +119,7 @@ def p_parameterExtra(p):
     'parameterExtra : COMMA variableType IDENTIFIER parameterExtra' 
     p[0] = ('parameterExtra', p[2], p[3], p[4]) 
 
-def p_empty_parameterExtra(p):
+def p_emptyParameterExtra(p):
     'parameterExtra : empty' 
     p[0] = p[1]
 
@@ -139,7 +139,7 @@ def p_assign(p):
 def p_location(p):
     'location : IDENTIFIER'
 
-def p_location_bracket(p):
+def p_locationBracket(p):
     'location : expression OBRACKETS expression CBRACKETS'
 
 def p_call(p):
@@ -158,47 +158,47 @@ def p_commaExpression(p):
     'commaExpression : COMMA expression'
 
 def p_return(p):
-    'return : RETURN returnexpression SEMICOLON'
+    'return : RETURN returnExpression SEMICOLON'
 
-def p_return_expression(p):
+def p_returnExpression(p):
     'returnExpression : expression'      
 
 def p_main(p):
     'main : START variables statement FINISH '
     p[0] = ('main', p[2], p[3]) 
 
-def p_expression_plus(p):
+def p_expressionPlus(p):
     'expression : expression PLUS term'
     p[0] = ("+", p[1], p[3])
 
-def p_expression_minus(p):
+def p_expressionMinus(p):
     'expression : expression MINUS term'
     p[0] = ("-", p[1], p[3])
 
-def p_expression_term(p):
+def p_expressionTerm(p):
     'expression : term'
     p[0] = p[1]
 
-def p_term_times(p):
+def p_termTimes(p):
     'term : term MULTIPLICATION factor'
     p[0] = ("*", p[1], p[3])
 
-def p_term_div(p):
+def p_termDiv(p):
     'term : term DIVISION factor'
     p[0] = ("/", p[1], p[3])
 
-def p_term_factor(p):
+def p_termFactor(p):
     'term : factor'
     p[0] = p[1]
 
-def p_factor_num(p):
+def p_factorNum(p):
     '''factor : NUMBERVALUE
                   | NONZEROINT
                   | WORDSVALUE
                   | LETTERVALUE''' 
     p[0] = p[1]
 
-def p_factor_expr(p):
+def p_factorExpr(p):
     'factor : OPARENTHESIS expression CPARENTHESIS'
     p[0] = p[2]
 
