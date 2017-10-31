@@ -3,3 +3,7 @@ ply/__init__.pyc
 ply/lex.pyc
 ply/yacc.pyc
 simpleTokens.pyc
+parser.out
+parsetab.py
+__pycache__/simpleTokens.cpython-36.pyc
+__pycache__/simpleTokens.cpython-36.pyc
