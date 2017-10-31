@@ -31,6 +31,14 @@ def p_declaration(p):
     'declaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration' 
     p[0] = ('declaration', p[1], p[2], p[4], p[5], p[7])  
 
+def p_array_declaration(p):
+    'declaration : variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra SEMICOLON declaration' 
+    p[0] = ('array_declaration', p[1], p[2], p[4], p[7], p[8], p[10])  
+
+def p_null_declaration(p):
+    'declaration : variableType IDENTIFIER declarationExtra SEMICOLON declaration' 
+    p[0] = ('declaration', p[1], p[2], p[3], p[5])  
+
 def p_empty_declaration(p):
     'declaration : empty'
     p[0] = p[1]    
@@ -39,8 +47,32 @@ def p_declarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtra'
     p[0] = ('declarationExtra', p[2], p[4], p[5])  
 
+def p_array_declarationExtra(p):
+    'declarationExtra : COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra'
+    p[0] = ('array_declarationExtra', p[2], p[4], p[7], p[8])  
+
+def p_null_declarationExtra(p):
+    'declarationExtra : COMMA IDENTIFIER declarationExtra'
+    p[0] = ('declarationExtra', p[2], p[3])  
+
+def p_array_null_declarationExtra(p):
+    'declarationExtra : COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS declarationExtra'
+    p[0] = ('declarationExtra', p[2], p[4], p[6])  
+
 def p_empty_declarationExtra(p):
     'declarationExtra : empty'
+    p[0] = p[1]
+
+def p_arrayIndexes(p):
+    'arrayIndexes : NONZEROINT arrayIndexesExtra'
+    p[0] = ('arrayIndexes', p[1], p[2])
+
+def p_arrayIndexesExtra(p):
+    'arrayIndexesExtra : COMMA NONZEROINT arrayIndexesExtra'
+    p[0] = ('arrayIndexesExtra', p[2], p[3])
+
+def p_empty_arrayIndexesExtra(p):
+    'arrayIndexesExtra : empty'
     p[0] = p[1]
 
 def p_blocks(p):
@@ -92,11 +124,13 @@ def p_empty_parameterExtra(p):
     p[0] = p[1]
 
 def p_statement(p):
-    '''statement : assign SEMICOLON 
-                  | call SEMICOLON
-                  | return  SEMICOLON
-                  | ifStmt
-                  | whileStmt''' 
+    'statement : empty' 
+    
+    # '''statement : assign SEMICOLON 
+    #               | call SEMICOLON
+    #               | return  SEMICOLON
+    #               | ifStmt
+    #               | whileStmt''' 
     p[0] = ('statement', p[1]) 
 
 def p_main(p):
@@ -129,6 +163,7 @@ def p_term_factor(p):
 
 def p_factor_num(p):
     '''factor : NUMBERVALUE
+                  | NONZEROINT
                   | WORDSVALUE
                   | LETTERVALUE''' 
     p[0] = p[1]
@@ -148,34 +183,44 @@ def p_error(p):
 # Build the parser
 parser = yacc.yacc()
 # Test it out
+# data = '''program
+# variables
+# number x = 3, y = 5.4, danielito = 4.20;
+# number xd [12] = 3;
+# words mundial = "hola mundo";
+# endvariables
+# blocks
+# define procedure imprimeMultiplicacion(number a, number b)
+# enddefine
+# define number multiplicarConDanielito(number a)
+# enddefine
+# define number juan(number a)
+# variables
+# number k = 10;
+# number x = 0;
+# endvariables
+
+# enddefine
+# define words agregarMundial(words s)
+
+# enddefine
+# endblocks
+# start
+#   variables
+#     number n = 2;
+#     words palabra = "";
+#   endvariables
+
+# finish
+# endprogram
+# '''
 data = '''program
 variables
-number x = 3, y = 5.4, danielito = 4.20;
-number xd = 3;
-words mundial = "hola mundo";
-endvariables
-blocks
-define procedure imprimeMultiplicacion(number a, number b)
-enddefine
-define number multiplicarConDanielito(number a)
-enddefine
-define number juan(number a)
-variables
-number k = 10;
-number x = 0;
-endvariables
+number xd [12,2] = 3, x=3, y;
 
-enddefine
-define words agregarMundial(words s)
-
-enddefine
-endblocks
+endvariables
 start
-  variables
-    number n = 2;
-    words palabra = "";
-  endvariables
-
+  
 finish
 endprogram
 '''
