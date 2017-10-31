@@ -99,6 +99,36 @@ def p_statement(p):
                   | whileStmt''' 
     p[0] = ('statement', p[1]) 
 
+def p_assign(p):
+    'assign : location ASSIGNATION expression'
+
+def p_location(p):
+    'location : IDENTIFIER'
+
+def p_location_bracket(p):
+    'location : expression OBRACKETS expression CBRACKETS'
+
+def p_call(p):
+    'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
+
+def p_actuals(p):
+    'actuals : expression commaExpressionList'
+
+def p_commaExpressionList(p):
+    'commaExpressionList : commaExpression commaExpressionList'  
+
+def p_commaExpressionList(p):
+    'commaExpressionList : empty'
+
+def p_commaExpression(p):
+    'commaExpression : COMMA expression'
+
+def p_return(p):
+    'return : RETURN returnexpression SEMICOLON'
+
+def p_return_expression(p):
+    'returnExpression : expression'      
+
 def p_main(p):
     'main : START variables statement FINISH '
     p[0] = ('main', p[2], p[3]) 
