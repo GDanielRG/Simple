@@ -144,18 +144,8 @@ def p_statement(p):
                    | whileStatement empty statement''' 
     p[0] = ('statement', p[1], p[3]) 
 
-
-
 def p_emptyStatement(p):
-    # 'statement : empty' 
-    
     'statement : empty' 
-    
-    # '''statement : assign SEMICOLON 
-    #               | call SEMICOLON
-    #               | return  SEMICOLON
-    #               | ifStmt
-    #               | whileStmt''' 
     p[0] = p[1]
 
 def p_assign(p):
