@@ -4,8 +4,6 @@ Unused terminals:
 
     NOT
     FLAG
-    ENDIF
-    ENDWHILE
     DISPLAY
     TRUE
     FALSE
@@ -103,7 +101,7 @@ ENDDEFINE            : 20
 ENDIF                : 50
 ENDPROGRAM           : 1
 ENDVARIABLES         : 4
-ENDWHILE             : 
+ENDWHILE             : 53
 EQUALITY             : 66
 FALSE                : 
 FINISH               : 54
@@ -440,8 +438,8 @@ state 24
     (38) assign -> . location ASSIGNATION expression
     (42) call -> . IDENTIFIER OPARENTHESIS actuals CPARENTHESIS
     (47) return -> . RETURN returnExpression SEMICOLON
-    (50) ifStatement -> . IF OPARENTHESIS expression CPARENTHESIS statement elseStatement
-    (53) whileStatement -> . WHILE OPARENTHESIS expression CPARENTHESIS statement
+    (50) ifStatement -> . IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF
+    (53) whileStatement -> . WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE
     (2) empty -> .
     (39) location -> . IDENTIFIER
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
@@ -625,6 +623,8 @@ state 37
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
+    ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     empty                          shift and go to state 64
 
@@ -635,10 +635,8 @@ state 38
     FINISH          reduce using rule 37 (statement -> empty .)
     ENDDEFINE       reduce using rule 37 (statement -> empty .)
     ELSE            reduce using rule 37 (statement -> empty .)
-    IDENTIFIER      reduce using rule 37 (statement -> empty .)
-    RETURN          reduce using rule 37 (statement -> empty .)
-    IF              reduce using rule 37 (statement -> empty .)
-    WHILE           reduce using rule 37 (statement -> empty .)
+    ENDIF           reduce using rule 37 (statement -> empty .)
+    ENDWHILE        reduce using rule 37 (statement -> empty .)
 
 
 state 39
@@ -652,9 +650,9 @@ state 39
     WHILE           reduce using rule 2 (empty -> .)
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
-    ENDWHILE        reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
     ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     empty                          shift and go to state 65
 
@@ -669,9 +667,9 @@ state 40
     WHILE           reduce using rule 2 (empty -> .)
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
-    ENDWHILE        reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
     ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     empty                          shift and go to state 66
 
@@ -738,14 +736,14 @@ state 43
 
 state 44
 
-    (50) ifStatement -> IF . OPARENTHESIS expression CPARENTHESIS statement elseStatement
+    (50) ifStatement -> IF . OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF
 
     OPARENTHESIS    shift and go to state 73
 
 
 state 45
 
-    (53) whileStatement -> WHILE . OPARENTHESIS expression CPARENTHESIS statement
+    (53) whileStatement -> WHILE . OPARENTHESIS expression CPARENTHESIS statement ENDWHILE
 
     OPARENTHESIS    shift and go to state 74
 
@@ -1104,23 +1102,15 @@ state 62
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
     (41) location -> . call
 
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
     IDENTIFIER      shift and go to state 42
     RETURN          shift and go to state 43
     IF              shift and go to state 44
     WHILE           shift and go to state 45
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
-    ENDWHILE        reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
-
-  ! IDENTIFIER      [ reduce using rule 2 (empty -> .) ]
-  ! RETURN          [ reduce using rule 2 (empty -> .) ]
-  ! IF              [ reduce using rule 2 (empty -> .) ]
-  ! WHILE           [ reduce using rule 2 (empty -> .) ]
+    ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     assign                         shift and go to state 35
     statement                      shift and go to state 97
@@ -1150,19 +1140,15 @@ state 63
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
     (41) location -> . call
 
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
     IDENTIFIER      shift and go to state 42
     RETURN          shift and go to state 43
     IF              shift and go to state 44
     WHILE           shift and go to state 45
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
-    ENDWHILE        reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
     ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     call                           shift and go to state 36
     statement                      shift and go to state 98
@@ -1192,19 +1178,15 @@ state 64
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
     (41) location -> . call
 
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
     IDENTIFIER      shift and go to state 42
     RETURN          shift and go to state 43
     IF              shift and go to state 44
     WHILE           shift and go to state 45
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
-    ENDWHILE        reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
     ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     return                         shift and go to state 37
     empty                          shift and go to state 38
@@ -1234,19 +1216,15 @@ state 65
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
     (41) location -> . call
 
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
     IDENTIFIER      shift and go to state 42
     RETURN          shift and go to state 43
     IF              shift and go to state 44
     WHILE           shift and go to state 45
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
-    ENDWHILE        reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
     ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     ifStatement                    shift and go to state 39
     empty                          shift and go to state 38
@@ -1276,19 +1254,15 @@ state 66
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
     (41) location -> . call
 
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
     IDENTIFIER      shift and go to state 42
     RETURN          shift and go to state 43
     IF              shift and go to state 44
     WHILE           shift and go to state 45
     FINISH          reduce using rule 2 (empty -> .)
     ENDDEFINE       reduce using rule 2 (empty -> .)
-    ENDWHILE        reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
     ENDIF           reduce using rule 2 (empty -> .)
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     whileStatement                 shift and go to state 40
     empty                          shift and go to state 38
@@ -1457,7 +1431,7 @@ state 72
 
 state 73
 
-    (50) ifStatement -> IF OPARENTHESIS . expression CPARENTHESIS statement elseStatement
+    (50) ifStatement -> IF OPARENTHESIS . expression CPARENTHESIS statement elseStatement ENDIF
     (55) expression -> . location
     (56) expression -> . binaryExpression
     (57) expression -> . FLAGVALUE
@@ -1494,7 +1468,7 @@ state 73
 
 state 74
 
-    (53) whileStatement -> WHILE OPARENTHESIS . expression CPARENTHESIS statement
+    (53) whileStatement -> WHILE OPARENTHESIS . expression CPARENTHESIS statement ENDWHILE
     (55) expression -> . location
     (56) expression -> . binaryExpression
     (57) expression -> . FLAGVALUE
@@ -2125,10 +2099,8 @@ state 97
     FINISH          reduce using rule 32 (statement -> assign SEMICOLON statement .)
     ENDDEFINE       reduce using rule 32 (statement -> assign SEMICOLON statement .)
     ELSE            reduce using rule 32 (statement -> assign SEMICOLON statement .)
-    IDENTIFIER      reduce using rule 32 (statement -> assign SEMICOLON statement .)
-    RETURN          reduce using rule 32 (statement -> assign SEMICOLON statement .)
-    IF              reduce using rule 32 (statement -> assign SEMICOLON statement .)
-    WHILE           reduce using rule 32 (statement -> assign SEMICOLON statement .)
+    ENDIF           reduce using rule 32 (statement -> assign SEMICOLON statement .)
+    ENDWHILE        reduce using rule 32 (statement -> assign SEMICOLON statement .)
 
 
 state 98
@@ -2138,10 +2110,8 @@ state 98
     FINISH          reduce using rule 33 (statement -> call SEMICOLON statement .)
     ENDDEFINE       reduce using rule 33 (statement -> call SEMICOLON statement .)
     ELSE            reduce using rule 33 (statement -> call SEMICOLON statement .)
-    IDENTIFIER      reduce using rule 33 (statement -> call SEMICOLON statement .)
-    RETURN          reduce using rule 33 (statement -> call SEMICOLON statement .)
-    IF              reduce using rule 33 (statement -> call SEMICOLON statement .)
-    WHILE           reduce using rule 33 (statement -> call SEMICOLON statement .)
+    ENDIF           reduce using rule 33 (statement -> call SEMICOLON statement .)
+    ENDWHILE        reduce using rule 33 (statement -> call SEMICOLON statement .)
 
 
 state 99
@@ -2151,10 +2121,8 @@ state 99
     FINISH          reduce using rule 34 (statement -> return empty statement .)
     ENDDEFINE       reduce using rule 34 (statement -> return empty statement .)
     ELSE            reduce using rule 34 (statement -> return empty statement .)
-    IDENTIFIER      reduce using rule 34 (statement -> return empty statement .)
-    RETURN          reduce using rule 34 (statement -> return empty statement .)
-    IF              reduce using rule 34 (statement -> return empty statement .)
-    WHILE           reduce using rule 34 (statement -> return empty statement .)
+    ENDIF           reduce using rule 34 (statement -> return empty statement .)
+    ENDWHILE        reduce using rule 34 (statement -> return empty statement .)
 
 
 state 100
@@ -2164,10 +2132,8 @@ state 100
     FINISH          reduce using rule 35 (statement -> ifStatement empty statement .)
     ENDDEFINE       reduce using rule 35 (statement -> ifStatement empty statement .)
     ELSE            reduce using rule 35 (statement -> ifStatement empty statement .)
-    IDENTIFIER      reduce using rule 35 (statement -> ifStatement empty statement .)
-    RETURN          reduce using rule 35 (statement -> ifStatement empty statement .)
-    IF              reduce using rule 35 (statement -> ifStatement empty statement .)
-    WHILE           reduce using rule 35 (statement -> ifStatement empty statement .)
+    ENDIF           reduce using rule 35 (statement -> ifStatement empty statement .)
+    ENDWHILE        reduce using rule 35 (statement -> ifStatement empty statement .)
 
 
 state 101
@@ -2177,10 +2143,8 @@ state 101
     FINISH          reduce using rule 36 (statement -> whileStatement empty statement .)
     ENDDEFINE       reduce using rule 36 (statement -> whileStatement empty statement .)
     ELSE            reduce using rule 36 (statement -> whileStatement empty statement .)
-    IDENTIFIER      reduce using rule 36 (statement -> whileStatement empty statement .)
-    RETURN          reduce using rule 36 (statement -> whileStatement empty statement .)
-    IF              reduce using rule 36 (statement -> whileStatement empty statement .)
-    WHILE           reduce using rule 36 (statement -> whileStatement empty statement .)
+    ENDIF           reduce using rule 36 (statement -> whileStatement empty statement .)
+    ENDWHILE        reduce using rule 36 (statement -> whileStatement empty statement .)
 
 
 state 102
@@ -2270,11 +2234,13 @@ state 106
     FINISH          reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
     ENDDEFINE       reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
     ELSE            reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    ENDIF           reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    ENDWHILE        reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
 
 
 state 107
 
-    (50) ifStatement -> IF OPARENTHESIS expression . CPARENTHESIS statement elseStatement
+    (50) ifStatement -> IF OPARENTHESIS expression . CPARENTHESIS statement elseStatement ENDIF
     (62) binaryExpression -> expression . OR expression
     (63) binaryExpression -> expression . AND expression
     (64) binaryExpression -> expression . LESSER expression
@@ -2301,7 +2267,7 @@ state 107
 
 state 108
 
-    (53) whileStatement -> WHILE OPARENTHESIS expression . CPARENTHESIS statement
+    (53) whileStatement -> WHILE OPARENTHESIS expression . CPARENTHESIS statement ENDWHILE
     (62) binaryExpression -> expression . OR expression
     (63) binaryExpression -> expression . AND expression
     (64) binaryExpression -> expression . LESSER expression
@@ -2338,8 +2304,8 @@ state 109
     (38) assign -> . location ASSIGNATION expression
     (42) call -> . IDENTIFIER OPARENTHESIS actuals CPARENTHESIS
     (47) return -> . RETURN returnExpression SEMICOLON
-    (50) ifStatement -> . IF OPARENTHESIS expression CPARENTHESIS statement elseStatement
-    (53) whileStatement -> . WHILE OPARENTHESIS expression CPARENTHESIS statement
+    (50) ifStatement -> . IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF
+    (53) whileStatement -> . WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE
     (2) empty -> .
     (39) location -> . IDENTIFIER
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
@@ -3056,52 +3022,7 @@ state 134
 
 state 135
 
-    (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS . statement elseStatement
-    (32) statement -> . assign SEMICOLON statement
-    (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return empty statement
-    (35) statement -> . ifStatement empty statement
-    (36) statement -> . whileStatement empty statement
-    (37) statement -> . empty
-    (38) assign -> . location ASSIGNATION expression
-    (42) call -> . IDENTIFIER OPARENTHESIS actuals CPARENTHESIS
-    (47) return -> . RETURN returnExpression SEMICOLON
-    (50) ifStatement -> . IF OPARENTHESIS expression CPARENTHESIS statement elseStatement
-    (53) whileStatement -> . WHILE OPARENTHESIS expression CPARENTHESIS statement
-    (2) empty -> .
-    (39) location -> . IDENTIFIER
-    (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
-    (41) location -> . call
-
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-    IDENTIFIER      shift and go to state 42
-    RETURN          shift and go to state 43
-    IF              shift and go to state 44
-    WHILE           shift and go to state 45
-    FINISH          reduce using rule 2 (empty -> .)
-    ENDDEFINE       reduce using rule 2 (empty -> .)
-    ELSE            reduce using rule 2 (empty -> .)
-
-  ! IDENTIFIER      [ reduce using rule 2 (empty -> .) ]
-  ! RETURN          [ reduce using rule 2 (empty -> .) ]
-  ! IF              [ reduce using rule 2 (empty -> .) ]
-  ! WHILE           [ reduce using rule 2 (empty -> .) ]
-
-    statement                      shift and go to state 147
-    assign                         shift and go to state 35
-    call                           shift and go to state 36
-    return                         shift and go to state 37
-    empty                          shift and go to state 38
-    ifStatement                    shift and go to state 39
-    whileStatement                 shift and go to state 40
-    location                       shift and go to state 41
-
-state 136
-
-    (53) whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS . statement
+    (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS . statement elseStatement ENDIF
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
     (34) statement -> . return empty statement
@@ -3118,18 +3039,46 @@ state 136
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
     (41) location -> . call
 
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
     IDENTIFIER      shift and go to state 42
     RETURN          shift and go to state 43
     IF              shift and go to state 44
     WHILE           shift and go to state 45
-    FINISH          reduce using rule 2 (empty -> .)
-    ENDDEFINE       reduce using rule 2 (empty -> .)
     ELSE            reduce using rule 2 (empty -> .)
     ENDIF           reduce using rule 2 (empty -> .)
+
+    statement                      shift and go to state 147
+    assign                         shift and go to state 35
+    call                           shift and go to state 36
+    return                         shift and go to state 37
+    empty                          shift and go to state 38
+    ifStatement                    shift and go to state 39
+    whileStatement                 shift and go to state 40
+    location                       shift and go to state 41
+
+state 136
+
+    (53) whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS . statement ENDWHILE
+    (32) statement -> . assign SEMICOLON statement
+    (33) statement -> . call SEMICOLON statement
+    (34) statement -> . return empty statement
+    (35) statement -> . ifStatement empty statement
+    (36) statement -> . whileStatement empty statement
+    (37) statement -> . empty
+    (38) assign -> . location ASSIGNATION expression
+    (42) call -> . IDENTIFIER OPARENTHESIS actuals CPARENTHESIS
+    (47) return -> . RETURN returnExpression SEMICOLON
+    (50) ifStatement -> . IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF
+    (53) whileStatement -> . WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE
+    (2) empty -> .
+    (39) location -> . IDENTIFIER
+    (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
+    (41) location -> . call
+
+    IDENTIFIER      shift and go to state 42
+    RETURN          shift and go to state 43
+    IF              shift and go to state 44
+    WHILE           shift and go to state 45
+    ENDWHILE        reduce using rule 2 (empty -> .)
 
     statement                      shift and go to state 148
     assign                         shift and go to state 35
@@ -3284,21 +3233,13 @@ state 146
 
 state 147
 
-    (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement . elseStatement
+    (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement . elseStatement ENDIF
     (51) elseStatement -> . ELSE statement
     (52) elseStatement -> . empty
     (2) empty -> .
 
-  ! shift/reduce conflict for ELSE resolved as shift
     ELSE            shift and go to state 157
-    FINISH          reduce using rule 2 (empty -> .)
-    ENDDEFINE       reduce using rule 2 (empty -> .)
-    IDENTIFIER      reduce using rule 2 (empty -> .)
-    RETURN          reduce using rule 2 (empty -> .)
-    IF              reduce using rule 2 (empty -> .)
-    WHILE           reduce using rule 2 (empty -> .)
-
-  ! ELSE            [ reduce using rule 2 (empty -> .) ]
+    ENDIF           reduce using rule 2 (empty -> .)
 
     elseStatement                  shift and go to state 156
     empty                          shift and go to state 158
@@ -3307,13 +3248,7 @@ state 148
 
     (53) whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement . ENDWHILE
 
-    IDENTIFIER      reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement .)
-    RETURN          reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement .)
-    IF              reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement .)
-    WHILE           reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement .)
-    FINISH          reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement .)
-    ENDDEFINE       reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement .)
-    ELSE            reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement .)
+    ENDWHILE        shift and go to state 159
 
 
 state 149
@@ -3326,7 +3261,7 @@ state 149
     DEFINE          shift and go to state 20
     ENDBLOCKS       reduce using rule 2 (empty -> .)
 
-    block                          shift and go to state 159
+    block                          shift and go to state 160
     empty                          shift and go to state 21
 
 state 150
@@ -3347,7 +3282,7 @@ state 151
     WORDS           shift and go to state 15
     LETTER          shift and go to state 16
 
-    variableType                   shift and go to state 160
+    variableType                   shift and go to state 161
 
 state 152
 
@@ -3360,7 +3295,7 @@ state 153
 
     (7) declaration -> variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra . SEMICOLON declaration
 
-    SEMICOLON       shift and go to state 161
+    SEMICOLON       shift and go to state 162
 
 
 state 154
@@ -3395,7 +3330,7 @@ state 154
     OPARENTHESIS    shift and go to state 55
     IDENTIFIER      shift and go to state 47
 
-    expression                     shift and go to state 162
+    expression                     shift and go to state 163
     location                       shift and go to state 49
     binaryExpression               shift and go to state 50
     call                           shift and go to state 56
@@ -3409,25 +3344,12 @@ state 155
 
 state 156
 
-    (53) whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .
+    (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement . ENDIF
 
-    IDENTIFIER      reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement .)
-    RETURN          reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement .)
-    IF              reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement .)
-    WHILE           reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement .)
-    FINISH          reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement .)
-    ENDDEFINE       reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement .)
-    ELSE            reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement .)
+    ENDIF           shift and go to state 164
 
 
 state 157
-
-    (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement . ENDIF
-
-    ENDIF           shift and go to state 166
-
-
-state 161
 
     (51) elseStatement -> ELSE . statement
     (32) statement -> . assign SEMICOLON statement
@@ -3446,24 +3368,13 @@ state 161
     (40) location -> . IDENTIFIER OBRACKETS arrayIndexes CBRACKETS
     (41) location -> . call
 
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
     IDENTIFIER      shift and go to state 42
     RETURN          shift and go to state 43
     IF              shift and go to state 44
     WHILE           shift and go to state 45
-    FINISH          reduce using rule 2 (empty -> .)
-    ENDDEFINE       reduce using rule 2 (empty -> .)
-    ELSE            reduce using rule 2 (empty -> .)
+    ENDIF           reduce using rule 2 (empty -> .)
 
-  ! IDENTIFIER      [ reduce using rule 2 (empty -> .) ]
-  ! RETURN          [ reduce using rule 2 (empty -> .) ]
-  ! IF              [ reduce using rule 2 (empty -> .) ]
-  ! WHILE           [ reduce using rule 2 (empty -> .) ]
-
-    statement                      shift and go to state 163
+    statement                      shift and go to state 165
     assign                         shift and go to state 35
     call                           shift and go to state 36
     return                         shift and go to state 37
@@ -3476,30 +3387,39 @@ state 158
 
     (52) elseStatement -> empty .
 
-    FINISH          reduce using rule 52 (elseStatement -> empty .)
-    ENDDEFINE       reduce using rule 52 (elseStatement -> empty .)
-    ELSE            reduce using rule 52 (elseStatement -> empty .)
-    IDENTIFIER      reduce using rule 52 (elseStatement -> empty .)
-    RETURN          reduce using rule 52 (elseStatement -> empty .)
-    IF              reduce using rule 52 (elseStatement -> empty .)
-    WHILE           reduce using rule 52 (elseStatement -> empty .)
+    ENDIF           reduce using rule 52 (elseStatement -> empty .)
 
 
 state 159
+
+    (53) whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .
+
+    IDENTIFIER      reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    RETURN          reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    IF              reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    WHILE           reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    FINISH          reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    ENDDEFINE       reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    ELSE            reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    ENDIF           reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+    ENDWHILE        reduce using rule 53 (whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE .)
+
+
+state 160
 
     (20) block -> DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block .
 
     ENDBLOCKS       reduce using rule 20 (block -> DEFINE blockType IDENTIFIER parameters variables statement ENDDEFINE block .)
 
 
-state 160
+state 161
 
     (30) parameterExtra -> COMMA variableType . IDENTIFIER parameterExtra
 
-    IDENTIFIER      shift and go to state 164
+    IDENTIFIER      shift and go to state 166
 
 
-state 161
+state 162
 
     (7) declaration -> variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra SEMICOLON . declaration
     (6) declaration -> . variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON declaration
@@ -3517,10 +3437,10 @@ state 161
     ENDVARIABLES    reduce using rule 2 (empty -> .)
 
     variableType                   shift and go to state 12
-    declaration                    shift and go to state 165
+    declaration                    shift and go to state 167
     empty                          shift and go to state 13
 
-state 162
+state 163
 
     (11) declarationExtra -> COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression . declarationExtra
     (62) binaryExpression -> expression . OR expression
@@ -3553,23 +3473,32 @@ state 162
     COMMA           shift and go to state 32
     SEMICOLON       reduce using rule 2 (empty -> .)
 
-    declarationExtra               shift and go to state 166
+    declarationExtra               shift and go to state 168
     empty                          shift and go to state 33
 
-state 163
+state 164
+
+    (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .
+
+    IDENTIFIER      reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    RETURN          reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    IF              reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    WHILE           reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    FINISH          reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    ENDDEFINE       reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    ELSE            reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    ENDIF           reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+    ENDWHILE        reduce using rule 50 (ifStatement -> IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF .)
+
+
+state 165
 
     (51) elseStatement -> ELSE statement .
 
-    FINISH          reduce using rule 51 (elseStatement -> ELSE statement .)
-    ENDDEFINE       reduce using rule 51 (elseStatement -> ELSE statement .)
-    ELSE            reduce using rule 51 (elseStatement -> ELSE statement .)
-    IDENTIFIER      reduce using rule 51 (elseStatement -> ELSE statement .)
-    RETURN          reduce using rule 51 (elseStatement -> ELSE statement .)
-    IF              reduce using rule 51 (elseStatement -> ELSE statement .)
-    WHILE           reduce using rule 51 (elseStatement -> ELSE statement .)
+    ENDIF           reduce using rule 51 (elseStatement -> ELSE statement .)
 
 
-state 164
+state 166
 
     (30) parameterExtra -> COMMA variableType IDENTIFIER . parameterExtra
     (30) parameterExtra -> . COMMA variableType IDENTIFIER parameterExtra
@@ -3579,62 +3508,26 @@ state 164
     COMMA           shift and go to state 151
     CPARENTHESIS    reduce using rule 2 (empty -> .)
 
-    parameterExtra                 shift and go to state 167
+    parameterExtra                 shift and go to state 169
     empty                          shift and go to state 152
 
-state 165
+state 167
 
     (7) declaration -> variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra SEMICOLON declaration .
 
     ENDVARIABLES    reduce using rule 7 (declaration -> variableType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra SEMICOLON declaration .)
 
 
-state 166
+state 168
 
     (11) declarationExtra -> COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra .
 
     SEMICOLON       reduce using rule 11 (declarationExtra -> COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression declarationExtra .)
 
 
-state 167
+state 169
 
     (30) parameterExtra -> COMMA variableType IDENTIFIER parameterExtra .
 
     CPARENTHESIS    reduce using rule 30 (parameterExtra -> COMMA variableType IDENTIFIER parameterExtra .)
 
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: shift/reduce conflict for IDENTIFIER in state 62 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 62 resolved as shift
-WARNING: shift/reduce conflict for IF in state 62 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 62 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 63 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 63 resolved as shift
-WARNING: shift/reduce conflict for IF in state 63 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 63 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 64 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 64 resolved as shift
-WARNING: shift/reduce conflict for IF in state 64 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 64 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 65 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 65 resolved as shift
-WARNING: shift/reduce conflict for IF in state 65 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 65 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 66 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 66 resolved as shift
-WARNING: shift/reduce conflict for IF in state 66 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 66 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 135 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 135 resolved as shift
-WARNING: shift/reduce conflict for IF in state 135 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 135 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 136 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 136 resolved as shift
-WARNING: shift/reduce conflict for IF in state 136 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 136 resolved as shift
-WARNING: shift/reduce conflict for ELSE in state 147 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 157 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 157 resolved as shift
-WARNING: shift/reduce conflict for IF in state 157 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 157 resolved as shift
