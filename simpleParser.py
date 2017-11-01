@@ -111,7 +111,8 @@ def p_blockType(p):
 def p_variableType(p):
     '''variableType : NUMBER 
                   | WORDS
-                  | LETTER''' 
+                  | LETTER
+                  | FLAG''' 
     p[0] = ('variableType', p[1])                  
 
 def p_parameters(p):
@@ -230,6 +231,10 @@ def p_expressionLocation(p):
     'expression : location'
     p[0] = p[1]
 
+def p_expressionUnary(p):
+    'expression : unaryExpression'
+    p[0] = p[1]
+
 def p_expressionBinary(p):
     'expression : binaryExpression'
     p[0] = p[1]
@@ -285,9 +290,9 @@ def p_binaryExpressionModulus(p):
     'binaryExpression : expression MODULUS expression'
     p[0] = ("%", p[1], p[3])
 
-#def p_unaryExpressionNOT(p):
-#   'unaryExpression : NOT'
-#    p[0] = ("NOT", p[1], p[3])
+def p_unaryExpressionNOT(p):
+    'unaryExpression : NOT expression'
+    p[0] = ("NOT", p[2])
 
 
 
@@ -333,10 +338,11 @@ data = '''program
  start
    variables
      number n = 2;
-     words palabra = "";
+     words palabra = "a";
+     flag toggle = true;
    endvariables
 
-   if(x > y) 
+   if(not toggle) 
         x = xd[1];
     else
         while(x < 20)
