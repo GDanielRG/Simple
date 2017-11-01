@@ -47,7 +47,7 @@ Rule 30    parameterExtra -> COMMA variableType IDENTIFIER parameterExtra
 Rule 31    parameterExtra -> empty
 Rule 32    statement -> assign SEMICOLON statement
 Rule 33    statement -> call SEMICOLON statement
-Rule 34    statement -> return SEMICOLON statement
+Rule 34    statement -> return empty statement
 Rule 35    statement -> ifStatement empty statement
 Rule 36    statement -> whileStatement empty statement
 Rule 37    statement -> empty
@@ -131,7 +131,7 @@ PLUS                 : 68
 PROCEDURE            : 22
 PROGRAM              : 1
 RETURN               : 47
-SEMICOLON            : 6 7 8 32 33 34 47
+SEMICOLON            : 6 7 8 32 33 47
 START                : 54
 TRUE                 : 
 VARIABLES            : 4
@@ -156,7 +156,7 @@ commaExpressionList  : 43 44
 declaration          : 4 6 7 8
 declarationExtra     : 6 7 8 10 11 12 13
 elseStatement        : 50
-empty                : 5 9 14 17 19 21 29 31 35 36 37 45 49 52
+empty                : 5 9 14 17 19 21 29 31 34 35 36 37 45 49 52
 expression           : 6 7 10 11 15 16 38 43 46 48 50 53 62 63 63 64 64 65 65 66 66 67 67 68 68 69 69 70 70 71 71 72 72
 ifStatement          : 35
 location             : 38 55
@@ -463,7 +463,7 @@ state 28
     (54) main -> START variables . statement FINISH
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -706,10 +706,18 @@ state 41
 
 state 42
 
-    (34) statement -> return . SEMICOLON statement
+    (34) statement -> return . empty statement
+    (2) empty -> .
 
-    SEMICOLON       shift and go to state 73
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+    RETURN          reduce using rule 2 (empty -> .)
+    IF              reduce using rule 2 (empty -> .)
+    WHILE           reduce using rule 2 (empty -> .)
+    FINISH          reduce using rule 2 (empty -> .)
+    ENDDEFINE       reduce using rule 2 (empty -> .)
+    ELSE            reduce using rule 2 (empty -> .)
 
+    empty                          shift and go to state 73
 
 state 43
 
@@ -1217,7 +1225,7 @@ state 68
     (33) statement -> call SEMICOLON . statement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -1387,10 +1395,10 @@ state 72
 
 state 73
 
-    (34) statement -> return SEMICOLON . statement
+    (34) statement -> return empty . statement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -1435,7 +1443,7 @@ state 74
     (35) statement -> ifStatement empty . statement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -1480,7 +1488,7 @@ state 75
     (36) statement -> whileStatement empty . statement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -1564,7 +1572,7 @@ state 77
     (32) statement -> assign SEMICOLON . statement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -2188,7 +2196,7 @@ state 98
     (20) block -> DEFINE blockType IDENTIFIER parameters variables . statement ENDDEFINE block
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -2242,7 +2250,13 @@ state 102
 
     (47) return -> RETURN returnExpression SEMICOLON .
 
-    SEMICOLON       reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    IDENTIFIER      reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    RETURN          reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    IF              reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    WHILE           reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    FINISH          reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    ENDDEFINE       reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
+    ELSE            reduce using rule 47 (return -> RETURN returnExpression SEMICOLON .)
 
 
 state 103
@@ -2363,15 +2377,15 @@ state 108
 
 state 109
 
-    (34) statement -> return SEMICOLON statement .
+    (34) statement -> return empty statement .
 
-    FINISH          reduce using rule 34 (statement -> return SEMICOLON statement .)
-    ENDDEFINE       reduce using rule 34 (statement -> return SEMICOLON statement .)
-    IDENTIFIER      reduce using rule 34 (statement -> return SEMICOLON statement .)
-    RETURN          reduce using rule 34 (statement -> return SEMICOLON statement .)
-    IF              reduce using rule 34 (statement -> return SEMICOLON statement .)
-    WHILE           reduce using rule 34 (statement -> return SEMICOLON statement .)
-    ELSE            reduce using rule 34 (statement -> return SEMICOLON statement .)
+    FINISH          reduce using rule 34 (statement -> return empty statement .)
+    ENDDEFINE       reduce using rule 34 (statement -> return empty statement .)
+    IDENTIFIER      reduce using rule 34 (statement -> return empty statement .)
+    RETURN          reduce using rule 34 (statement -> return empty statement .)
+    IF              reduce using rule 34 (statement -> return empty statement .)
+    WHILE           reduce using rule 34 (statement -> return empty statement .)
+    ELSE            reduce using rule 34 (statement -> return empty statement .)
 
 
 state 110
@@ -3044,7 +3058,7 @@ state 133
     (53) whileStatement -> WHILE OPARENTHESIS expression CPARENTHESIS . statement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -3199,7 +3213,7 @@ state 140
     (50) ifStatement -> IF OPARENTHESIS expression CPARENTHESIS . statement elseStatement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty
@@ -3508,7 +3522,7 @@ state 160
     (51) elseStatement -> ELSE . statement
     (32) statement -> . assign SEMICOLON statement
     (33) statement -> . call SEMICOLON statement
-    (34) statement -> . return SEMICOLON statement
+    (34) statement -> . return empty statement
     (35) statement -> . ifStatement empty statement
     (36) statement -> . whileStatement empty statement
     (37) statement -> . empty

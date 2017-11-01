@@ -138,7 +138,7 @@ def p_statement(p):
    
     '''statement : assign SEMICOLON statement
                    | call SEMICOLON statement
-                   | return  SEMICOLON statement
+                   | return  empty statement
                    | ifStatement empty statement
                    | whileStatement empty statement''' 
     p[0] = ('statement', p[1], p[3]) 
@@ -304,45 +304,54 @@ def p_error(p):
 
 # Build the parser
 parser = yacc.yacc()
-# Test it out
-# data = '''program
-# variables
-# number x = 3, y = 5.4, danielito = 4.20;
-# number xd [12] = 3;
-# words mundial = "hola mundo";
-# endvariables
-# blocks
-# define procedure imprimeMultiplicacion(number a, number b)
-# enddefine
-# define number multiplicarConDanielito(number a)
-# enddefine
-# define number juan(number a)
-# variables
-# number k = 10;
-# number x = 0;
-# endvariables
 
-# enddefine
-# define words agregarMundial(words s)
-
-# enddefine
-# endblocks
-# start
-#   variables
-#     number n = 2;
-#     words palabra = "";
-#   endvariables
-
-# finish
-# endprogram
-# '''
-
+ #Test it out
 data = '''program
-start
-    xd = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
-finish
-endprogram
-'''
+
+ variables
+ number x = 3, y = 5, danielito = 4;
+ number xd [12] = 3;
+ words mundial = "hola mundo";
+ endvariables
+
+ blocks
+ define procedure imprimeMultiplicacion(number a, number b)
+ enddefine
+ define number multiplicarConDanielito(number a)
+    return (a * danielito);
+ enddefine
+ define number juan(number a)
+ variables
+ number k = 10;
+ number x = 0;
+ endvariables
+
+ enddefine
+ define words agregarMundial(words s)
+
+ enddefine
+ endblocks
+ start
+   variables
+     number n = 2;
+     words palabra = "";
+   endvariables
+
+   if(x > y) 
+        x = xd[1];
+    else
+        x = multiplicarConDanielito(y);
+
+ finish
+ endprogram
+ '''
+
+#data = '''program
+#start
+#    xd = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
+#finish
+#endprogram
+#'''
 
 result = yacc.parse(data)
 print(result)
