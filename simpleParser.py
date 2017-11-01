@@ -321,6 +321,13 @@ data = '''program
  blocks
  define procedure imprimeMultiplicacion(number a, number b)
  enddefine
+ define flag danielitoEsPeor(number a)
+    if (danielito < a)
+        return true;
+    else
+        return false;
+    endif
+ enddefine
  define number multiplicarConDanielito(number a)
     return (a * danielito);
  enddefine
