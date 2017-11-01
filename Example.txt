@@ -1,146 +1,176 @@
-'''program
-variables
-number x = 3, y = 5.4, danielito = 4.20;
-number xd = 3;
-words mundial = "hola mundo";
-endvariables
-blocks
-define procedure imprimeMultiplicacion(number a, number b)
-enddefine
-define number multiplicarConDanielito(number a)
-enddefine
-define number juan(number a)
-variables
-number k = 10;
-number x = 0;
-endvariables
-
-enddefine
-define words agregarMundial(words s)
-
-enddefine
-endblocks
-start
-  variables
-    number n = 2;
-    words palabra = "";
-  endvariables
-
-finish
-endprogram
-'''
-
-('simple', 
-    ('program', 
-        ('variables', 
-            ('declaration', 
-                ('variableType', 'number'), 
-                'x', 
-                3.0, 
-                ('declarationExtra', 
-                    'y', 
-                    5.4, 
-                    ('declarationExtra', 
-                        'danielito', 
-                        4.2, 
+('simple',
+    ('program',
+        ('variables',
+            ('declaration',
+                ('variableType','number'),
+                'x',
+                3.1,
+                ('declarationExtra',
+                    'y',
+                    5.0,
+                    ('declarationExtra',
+                        'danielito',
+                        4.0,
                         None
                     )
-                ), 
-                ('declaration', 
-                    ('variableType', 'number'), 
-                    'xd', 
-                    3.0, 
-                    None, 
-                    ('declaration', 
-                        ('variableType', 'words'), 
-                        'mundial', 
-                        '"hola mundo"', 
-                        None, 
+                ),
+                ('arrayDeclaration',
+                    ('variableType','number'),
+                    'xd',
+                    ('arrayIndexes',12.1,None),
+                    3.0,
+                    None,
+                    ('declaration',
+                        ('variableType','words'),
+                        'mundial',
+                        '"hola mundo"',
+                        None,
                         None
                     )
                 )
             )
-        ), 
-        ('blocks', 
-            ('block', 
-                ('blockType', 'procedure'), 
-                'imprimeMultiplicacion', 
-                ('parameters', 
-                    ('parameter', 
-                        ('variableType', 'number'), 
-                        'a', 
-                        ('parameterExtra', 
-                            ('variableType', 'number'), 
-                            'b', 
+        ),
+        ('blocks',
+            ('block',
+                ('blockType','procedure'),
+                'imprimeMultiplicacion',
+                ('parameters',
+                    ('parameter',
+                        ('variableType','number'),
+                        'a',
+                        ('parameterExtra',
+                            ('variableType','number'),
+                            'b',
                             None
                         )
                     )
-                ), 
-                None, 
-                ('statement', 
-                    None
-                ), 
-                ('block', 
-                    ('blockType', ('variableType','number')), 
-                    'multiplicarConDanielito', 
-                    ('parameters', 
-                        ('parameter', ('variableType', 'number'), 'a', None)
-                    ), 
-                    None, 
-                    ('statement', None), 
-                    ('block', 
-                        ('blockType', ('variableType', 'number')), 
-                        'juan', 
-                        ('parameters', 
-                            ('parameter', ('variableType', 'number'), 'a', None)
-                        ), 
-                        ('variables', 
-                            ('declaration', 
-                                ('variableType', 'number'), 
-                                'k', 
-                                10.0, 
-                                None, 
-                                ('declaration', 
-                                    ('variableType', 'number'), 
-                                    'x', 
-                                    0.0, 
-                                    None, 
-                                    None
+                ),
+                None,
+                None,
+                ('block',
+                    ('blockType',
+                        ('variableType','number')
+                    ),
+                    'multiplicarConDanielito',
+                    ('parameters',
+                        ('parameter',
+                            ('variableType','number'),
+                            'a',
+                            None
+                        )
+                    ),
+                    None,
+                    ('statement',
+                        ('return',
+                            ('expressionOnReturn',
+                                ('*',
+                                    ('identifierOnLocation','a'),
+                                    ('identifierOnLocation','danielito')
                                 )
                             )
-                        ), 
-                        ('statement', None), 
-                        ('block', 
-                            ('blockType', ('variableType', 'words')), 
-                            'agregarMundial', 
-                            ('parameters', 
-                                ('parameter', ('variableType', 'words'), 's', None)
-                            ), 
-                            None, 
-                            ('statement', None), 
+                        ),
+                        None
+                    ),
+                    ('block',
+                        ('blockType',
+                            ('variableType','number')
+                        ),
+                        'juan',
+                        ('parameters',
+                            ('parameter',
+                                ('variableType','number'),
+                                'a',
+                                None
+                            )
+                        ),
+                        ('variables',
+                            ('declaration',
+                                ('variableType','number'),
+                                'k',
+                                10.0,
+                                None,
+                                ('declaration',
+                                    ('variableType','number'),
+                                    'x',
+                                    0.0,
+                                    None,
+                                    Non
+                                )
+                            )
+                        ),
+                        None,
+                        ('block',
+                            ('blockType',
+                                ('variableType','words')
+                            ),
+                            'agregarMundial',
+                            ('parameters',
+                                ('parameter',
+                                    ('variableType','words'),
+                                    's',
+                                    None
+                                )
+                            ),
+                            None,
+                            None,
                             None
                         )
                     )
                 )
             )
-        ), 
-        ('main', 
-            ('variables', 
-                ('declaration', 
-                    ('variableType', 'number'), 
-                    'n', 
-                    2.0, 
-                    None, 
-                    ('declaration', 
-                        ('variableType', 'words'), 
-                        'palabra', 
-                        '""', 
-                        None, 
+        ),
+        ('main',
+            ('variables',
+                ('declaration',
+                    ('variableType','number'),
+                    'n',
+                    2.0,
+                    None,
+                    ('declaration',
+                        ('variableType','words'),
+                        'palabra',
+                        '""',
+                        None,
                         None
                     )
                 )
-            ), 
-            ('statement', None)
+            ),
+            ('statement',
+                ('ifStatment',
+                    ('>',
+                        ('identifierOnLocation','x'),
+                        ('identifierOnLocation','y')
+                    ),
+                    ('statement',
+                        ('assign',
+                            ('identifierOnLocation','x'),
+                            ('bracketLocation',
+                                'xd',
+                                ('arrayIndexes',1.0,None)
+                            )
+                        ),
+                        None
+                    ),
+                    ('elseStatment',
+                        ('statement',
+                            ('assign',
+                                ('identifierOnLocation','x'),
+                                ('callOnLocation',
+                                    ('call',
+                                        'multiplicarConDanielito',
+                                        ('actuals',
+                                            ('identifierOnLocation','y'),
+                                            None
+                                        )
+                                    )
+                                )
+                            ),
+                            None
+                        )
+                    )
+                ),
+                None
+            )
         )
     )
 )

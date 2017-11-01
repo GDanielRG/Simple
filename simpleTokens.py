@@ -15,7 +15,6 @@ reserved = (
 
 # List of token names.   This is always required
 tokens = reserved + (
-   'NONZEROINT',
    'GREATER',
    'LESSER',
    'EQUALITY',
@@ -61,10 +60,6 @@ t_CBRACKETS  = r'\]'
 
 
 # A regular expression rule with some action code
-def t_NONZEROINT(t):
-    r'[1-9][0-9]*'
-    t.value = int(t.value)    
-    return t
 
 def t_NUMBERVALUE(t):
     r'\d+(\.(\d)+)?'
@@ -75,12 +70,6 @@ def t_FLAGVALUE(t):
     r'true|false'
     t.value = bool(t.value)  
     return t
-
-# Whitespace
-# def t_WHITESPACE(t):
-#     r'\s+'
-#     t.lexer.lineno += t.value.count("\n")
-#     return t
 
 # Define a rule so we can track line numbers
 def t_NEWLINE(t):
@@ -98,12 +87,6 @@ def t_IDENTIFIER(t):
     r'[A-Za-z_][\w_]*'
     t.type = reserved_map.get(t.value, "IDENTIFIER")
     return t
-    
-#def t_ID(t):
-#    r'[A-Z][A-Z0-9]*'
-#    if t.value in keywords:
-#        t.type = t.value
-#    return t  
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t'

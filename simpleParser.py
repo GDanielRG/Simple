@@ -208,11 +208,11 @@ def p_emptyReturnExpression(p):
 
 def p_ifStatement(p):
     'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statement elseStatement'
-    p[0] = ('ifStatment', p[3], p[5], p[6]) 
+    p[0] = ('ifStatement', p[3], p[5], p[6]) 
 
 def p_elseStatement(p):
     'elseStatement : ELSE statement'
-    p[0] = ('elseStatment', p[2]) 
+    p[0] = ('elseStatement', p[2]) 
 
 def p_emptyElseStatement(p):
     'elseStatement : empty'
@@ -220,7 +220,7 @@ def p_emptyElseStatement(p):
 
 def p_whileStatement(p):
     'whileStatement : WHILE OPARENTHESIS expression CPARENTHESIS statement'
-    p[0] = ('whileStatment', p[3], p[5]) 
+    p[0] = ('whileStatement', p[3], p[5]) 
 
 def p_main(p):
     'main : START variables statement FINISH '
@@ -235,8 +235,7 @@ def p_expressionBinary(p):
     p[0] = p[1]
 
 def p_expressionTokens(p):
-    '''expression : NONZEROINT 
-                  | FLAGVALUE
+    '''expression : FLAGVALUE
                   | NUMBERVALUE
                   | WORDSVALUE
                   | LETTERVALUE''' 
@@ -309,8 +308,8 @@ parser = yacc.yacc()
 data = '''program
 
  variables
- number x = 3, y = 5, danielito = 4;
- number xd [12] = 3;
+ number x = 3.1, y = 5, danielito = 4;
+ number xd [12.1] = 3;
  words mundial = "hola mundo";
  endvariables
 
