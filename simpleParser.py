@@ -207,7 +207,7 @@ def p_emptyReturnExpression(p):
     p[0] = p[1]  
 
 def p_ifStatement(p):
-    'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statement elseStatement'
+    'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statement elseStatement ENDIF'
     p[0] = ('ifStatment', p[3], p[5], p[6]) 
 
 def p_elseStatement(p):
@@ -219,7 +219,7 @@ def p_emptyElseStatement(p):
     p[0] = p[1]
 
 def p_whileStatement(p):
-    'whileStatement : WHILE OPARENTHESIS expression CPARENTHESIS statement'
+    'whileStatement : WHILE OPARENTHESIS expression CPARENTHESIS statement ENDWHILE'
     p[0] = ('whileStatment', p[3], p[5]) 
 
 def p_main(p):
@@ -340,7 +340,10 @@ data = '''program
    if(x > y) 
         x = xd[1];
     else
-        x = multiplicarConDanielito(y);
+        while(x < 20)
+            x = multiplicarConDanielito(y);
+        endwhile
+    endif
 
  finish
  endprogram
