@@ -6,6 +6,17 @@ import ply.yacc as yacc
 import simpleTokens
 tokens = simpleTokens.tokens
 
+precedence = (
+    ('right', 'ASSIGNATION'),
+    ('left', 'OR'),
+    ('left', 'AND'),
+    ('left', 'EQUALITY'),
+    ('left', 'GREATER', 'LESSER'),
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'MULTIPLICATION', 'DIVISION', 'MODULUS'),
+    ('right','NOT')
+)
+
 
 def p_simple(p):
     'simple : PROGRAM program ENDPROGRAM'
@@ -124,17 +135,15 @@ def p_emptyParameterExtra(p):
     p[0] = p[1]
 
 def p_statement(p):
-    # 'statement : empty' 
-    
+   
     '''statement : assign SEMICOLON statement
-                  | call SEMICOLON statement''' 
-    
-    # '''statement : assign SEMICOLON 
-    #               | call SEMICOLON
-    #               | return  SEMICOLON
-    #               | ifStmt
-    #               | whileStmt''' 
+                   | call SEMICOLON statement
+                   | return  SEMICOLON statement
+                   | ifStatement empty statement
+                   | whileStatement empty statement''' 
     p[0] = ('statement', p[1], p[3]) 
+
+
 
 def p_emptyStatement(p):
     # 'statement : empty' 
@@ -149,13 +158,13 @@ def p_emptyStatement(p):
     p[0] = p[1]
 
 def p_assign(p):
-    'assign : location ASSIGNATION expression'
+    'assign : location ASSIGNATION expression '
     p[0] = ('assign', p[1], p[3]) 
     
 
 def p_location(p):
     'location : IDENTIFIER'
-    p[0] = ('identifier', p[1])
+    p[0] = ('identifierOnLocation', p[1])
     
 def p_locationBracket(p):
     'location : IDENTIFIER OBRACKETS arrayIndexes CBRACKETS'
@@ -163,71 +172,127 @@ def p_locationBracket(p):
 
 def p_locationCall(p):
     'location : call'
-    p[0] = ('bracketLocation', p[1], p[3])     
+    p[0] = ('callOnLocation', p[1])     
 
 def p_call(p):
     'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
+    p[0] = ('call', p[1], p[3])    
 
 def p_actuals(p):
     'actuals : expression commaExpressionList'
+    p[0] = ('actuals', p[1], p[2])   
 
 def p_commaExpressionList(p):
-    'commaExpressionList : commaExpression commaExpressionList'  
+    'commaExpressionList : commaExpression commaExpressionList'
+    p[0] = ('commaExpressionList', p[1], p[2])   
 
 def p_emptyCommaExpressionList(p):
     'commaExpressionList : empty'
+    p[0] = p[1]
 
 def p_commaExpression(p):
     'commaExpression : COMMA expression'
+    p[0] = ('expressionOncommaExpression',p[2])
 
 def p_return(p):
     'return : RETURN returnExpression SEMICOLON'
+    p[0] = ('return', p[2])   
 
 def p_returnExpression(p):
-    'returnExpression : expression'      
+    'returnExpression : expression' 
+    p[0] = ('expressionOnReturn', p[1])    
+
+def p_emptyReturnExpression(p):
+    'returnExpression : empty' 
+    p[0] = p[1]  
+
+def p_ifStatement(p):
+    'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statement elseStatement'
+    p[0] = ('ifStatment', p[3], p[5], p[6]) 
+
+def p_elseStatement(p):
+    'elseStatement : ELSE statement'
+    p[0] = ('elseStatment', p[2]) 
+
+def p_emptyElseStatement(p):
+    'elseStatement : empty'
+    p[0] = p[1]
+
+def p_whileStatement(p):
+    'whileStatement : WHILE OPARENTHESIS expression CPARENTHESIS statement'
+    p[0] = ('whileStatment', p[3], p[5]) 
 
 def p_main(p):
     'main : START variables statement FINISH '
     p[0] = ('main', p[2], p[3]) 
 
-def p_expressionPlus(p):
-    'expression : expression PLUS term'
-    p[0] = ("+", p[1], p[3])
-
-def p_expressionMinus(p):
-    'expression : expression MINUS term'
-    p[0] = ("-", p[1], p[3])
-
-def p_expressionTerm(p):
-    'expression : term'
+def p_expressionLocation(p):
+    'expression : location'
     p[0] = p[1]
 
-def p_termTimes(p):
-    'term : term MULTIPLICATION factor'
-    p[0] = ("*", p[1], p[3])
-
-def p_termDivision(p):
-    'term : term DIVISION factor'
-    p[0] = ("/", p[1], p[3])
-
-def p_termFactor(p):
-    'term : factor'
+def p_expressionBinary(p):
+    'expression : binaryExpression'
     p[0] = p[1]
 
-def p_factorNum(p):
-    '''factor : NONZEROINT 
+def p_expressionTokens(p):
+    '''expression : NONZEROINT 
+                  | FLAGVALUE
                   | NUMBERVALUE
                   | WORDSVALUE
                   | LETTERVALUE''' 
     p[0] = p[1]
 
-def p_factorExpr(p):
-    'factor : OPARENTHESIS expression CPARENTHESIS'
+def p_parentesisExpression(p):
+    'expression : OPARENTHESIS expression CPARENTHESIS'
     p[0] = p[2]
 
-def p_factorLocation(p):
-    'factor : location'
-    p[0] = p[1]
+def p_binaryExpressionOr(p):
+    'binaryExpression : expression OR expression'
+    p[0] = ("OR", p[1], p[3])
+
+def p_binaryExpressionAnd(p):
+    'binaryExpression : expression AND expression'
+    p[0] = ("AND", p[1], p[3])
+
+def p_binaryExpressionLessThan(p):
+    'binaryExpression : expression LESSER expression'
+    p[0] = ("<", p[1], p[3])
+
+def p_binaryExpressionGreaterThan(p):
+    'binaryExpression : expression GREATER expression'
+    p[0] = (">", p[1], p[3])
+
+def p_binaryExpressionEquality(p):
+    'binaryExpression : expression EQUALITY expression'
+    p[0] = (">", p[1], p[3])
+
+def p_binaryExpressionPlus(p):
+    'binaryExpression : expression PLUS expression'
+    p[0] = ("+", p[1], p[3])
+
+def p_binaryExpressionMinus(p):
+    'binaryExpression : expression MINUS expression'
+    p[0] = ("-", p[1], p[3])
+
+def p_binaryExpressionMultiplication(p):
+    'binaryExpression : expression MULTIPLICATION expression'
+    p[0] = ("*", p[1], p[3])
+
+def p_binaryExpressionDivision(p):
+    'binaryExpression : expression DIVISION expression'
+    p[0] = ("/", p[1], p[3])
+
+def p_binaryExpressionModulus(p):
+    'binaryExpression : expression MODULUS expression'
+    p[0] = ("%", p[1], p[3])
+
+#def p_unaryExpressionNOT(p):
+#   'unaryExpression : NOT'
+#    p[0] = ("NOT", p[1], p[3])
+
+
+
+
 
 # Error rule for syntax errors
 def p_error(p):
@@ -271,25 +336,13 @@ parser = yacc.yacc()
 # finish
 # endprogram
 # '''
+
 data = '''program
 start
-    xd = a-b*c/d+e*f-g;
+    xd = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
 finish
 endprogram
 '''
-# data = '''program
-# variables
-# number xd [12,2] = 3, x=3, y;
-
-# endvariables
-# start
-#     xd = 3;
-#     y[2] = 5;
-#     r[2,3,4] = xd;
-#     f = f[1,2];
-# finish
-# endprogram
-# '''
 
 result = yacc.parse(data)
-print(result[0])
+print(result)

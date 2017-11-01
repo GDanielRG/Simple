@@ -9,7 +9,7 @@ import ply.lex as lex
 #List of reserved words that shouldn't be confused for identifiers
 reserved = (
    'NOT','AND','OR','START', 'FINISH', 'WORDS', 'NUMBER','LETTER','PROCEDURE', 
-   'TOGGLE','IF','ENDIF','DEFINE','ENDDEFINE','WHILE','ENDWHILE','ELSE',
+   'FLAG','IF','ENDIF','DEFINE','ENDDEFINE','WHILE','ENDWHILE','ELSE',
    'BLOCKS','ENDBLOCKS','VARIABLES','ENDVARIABLES','PROGRAM','ENDPROGRAM','DISPLAY', 'TRUE', 'FALSE','RETURN'
 )
 
@@ -24,7 +24,9 @@ tokens = reserved + (
    'MINUS',
    'MULTIPLICATION',
    'DIVISION',
+   'MODULUS',
    'NUMBERVALUE',
+   'FLAGVALUE',
    'LETTERVALUE',
    'WORDSVALUE',
    'IDENTIFIER',
@@ -45,6 +47,7 @@ t_EQUALITY    = r'=='
 t_ASSIGNATION   = r'='
 t_PLUS    = r'\+'
 t_MINUS   = r'-'
+t_MODULUS = r'%'
 t_MULTIPLICATION   = r'\*'
 t_DIVISION  = r'/'
 t_OPARENTHESIS  = r'\('
@@ -68,6 +71,17 @@ def t_NUMBERVALUE(t):
     t.value = float(t.value)    
     return t
 
+def t_FLAGVALUE(t):
+    r'true|false'
+    t.value = bool(t.value)  
+    return t
+
+# Whitespace
+# def t_WHITESPACE(t):
+#     r'\s+'
+#     t.lexer.lineno += t.value.count("\n")
+#     return t
+
 # Define a rule so we can track line numbers
 def t_NEWLINE(t):
     r'\n+'
@@ -84,6 +98,12 @@ def t_IDENTIFIER(t):
     r'[A-Za-z_][\w_]*'
     t.type = reserved_map.get(t.value, "IDENTIFIER")
     return t
+    
+#def t_ID(t):
+#    r'[A-Z][A-Z0-9]*'
+#    if t.value in keywords:
+#        t.type = t.value
+#    return t  
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t'
