@@ -64,11 +64,11 @@ def p_emptyDeclarationExtra(p):
     p[0] = p[1]
 
 def p_arrayIndexes(p):
-    'arrayIndexes : NONZEROINT arrayIndexesExtra'
+    'arrayIndexes : expression arrayIndexesExtra'
     p[0] = ('arrayIndexes', p[1], p[2])
 
 def p_arrayIndexesExtra(p):
-    'arrayIndexesExtra : COMMA NONZEROINT arrayIndexesExtra'
+    'arrayIndexesExtra : COMMA expression arrayIndexesExtra'
     p[0] = ('arrayIndexesExtra', p[2], p[3])
 
 def p_emptyArrayIndexesExtra(p):
@@ -124,6 +124,21 @@ def p_emptyParameterExtra(p):
     p[0] = p[1]
 
 def p_statement(p):
+    # 'statement : empty' 
+    
+    '''statement : assign SEMICOLON statement
+                  | call SEMICOLON statement''' 
+    
+    # '''statement : assign SEMICOLON 
+    #               | call SEMICOLON
+    #               | return  SEMICOLON
+    #               | ifStmt
+    #               | whileStmt''' 
+    p[0] = ('statement', p[1], p[3]) 
+
+def p_emptyStatement(p):
+    # 'statement : empty' 
+    
     'statement : empty' 
     
     # '''statement : assign SEMICOLON 
@@ -131,16 +146,24 @@ def p_statement(p):
     #               | return  SEMICOLON
     #               | ifStmt
     #               | whileStmt''' 
-    p[0] = ('statement', p[1]) 
+    p[0] = p[1]
 
 def p_assign(p):
     'assign : location ASSIGNATION expression'
+    p[0] = ('assign', p[1], p[3]) 
+    
 
 def p_location(p):
     'location : IDENTIFIER'
-
+    p[0] = ('identifier', p[1])
+    
 def p_locationBracket(p):
-    'location : expression OBRACKETS arrayIndexes CBRACKETS'
+    'location : IDENTIFIER OBRACKETS arrayIndexes CBRACKETS'
+    p[0] = ('bracketLocation', p[1], p[3])     
+
+def p_locationCall(p):
+    'location : call'
+    p[0] = ('bracketLocation', p[1], p[3])     
 
 def p_call(p):
     'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
@@ -151,7 +174,7 @@ def p_actuals(p):
 def p_commaExpressionList(p):
     'commaExpressionList : commaExpression commaExpressionList'  
 
-def p_commaExpressionList(p):
+def p_emptyCommaExpressionList(p):
     'commaExpressionList : empty'
 
 def p_commaExpression(p):
@@ -183,7 +206,7 @@ def p_termTimes(p):
     'term : term MULTIPLICATION factor'
     p[0] = ("*", p[1], p[3])
 
-def p_termDiv(p):
+def p_termDivision(p):
     'term : term DIVISION factor'
     p[0] = ("/", p[1], p[3])
 
@@ -192,8 +215,8 @@ def p_termFactor(p):
     p[0] = p[1]
 
 def p_factorNum(p):
-    '''factor : NUMBERVALUE
-                  | NONZEROINT
+    '''factor : NONZEROINT 
+                  | NUMBERVALUE
                   | WORDSVALUE
                   | LETTERVALUE''' 
     p[0] = p[1]
@@ -201,6 +224,10 @@ def p_factorNum(p):
 def p_factorExpr(p):
     'factor : OPARENTHESIS expression CPARENTHESIS'
     p[0] = p[2]
+
+def p_factorLocation(p):
+    'factor : location'
+    p[0] = p[1]
 
 # Error rule for syntax errors
 def p_error(p):
@@ -245,15 +272,24 @@ parser = yacc.yacc()
 # endprogram
 # '''
 data = '''program
-variables
-number xd [12,2] = 3, x=3, y;
-
-endvariables
 start
-  
+    xd = a-b*c/d+e*f-g;
 finish
 endprogram
 '''
+# data = '''program
+# variables
+# number xd [12,2] = 3, x=3, y;
+
+# endvariables
+# start
+#     xd = 3;
+#     y[2] = 5;
+#     r[2,3,4] = xd;
+#     f = f[1,2];
+# finish
+# endprogram
+# '''
 
 result = yacc.parse(data)
-print(result)
+print(result[0])
