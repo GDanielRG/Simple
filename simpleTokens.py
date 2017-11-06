@@ -8,7 +8,7 @@ import ply.lex as lex
 
 #List of reserved words that shouldn't be confused for identifiers
 reserved = (
-   'NOT','AND','OR','START', 'FINISH', 'WORDS', 'NUMBER','LETTER','PROCEDURE', 
+   'NOT','AND','OR','START', 'FINISH', 'WORDS', 'NUMBER', 'MANYNUMBERS', 'LETTER','PROCEDURE', 
    'FLAG','IF','ENDIF','DEFINE','ENDDEFINE','WHILE','ENDWHILE','ELSE',
    'BLOCKS','ENDBLOCKS','VARIABLES','ENDVARIABLES','PROGRAM','ENDPROGRAM','DISPLAY','RETURN'
 )
