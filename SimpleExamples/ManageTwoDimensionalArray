@@ -1,0 +1,43 @@
+program
+
+
+variables
+	
+endvariables
+
+blocks
+	define manynumbers addArrayNumbers(manynumbers x, number a, number length)
+		
+		variables
+			numbers i = 1, j = 1;
+			arrayResult[length,length];
+		endvariables
+
+		while(i < (length*length + 1))
+			while( j < lenght + 1)
+				arrayResult[i,j] = x[i,j] + a;
+				j = j + 1;
+			endwhile
+			j = 1;
+		endwhile
+
+		return arrayResult;
+
+	enddefine
+
+endblocks
+
+start
+
+	variables
+		number arrayLength = 5;
+		manynumbers a[arrayLength,arrayLength] = 0;	
+	endvariables
+
+	a = addArrayNumbers(a, 3, arrayLength);
+
+
+finish
+
+
+endprogram

@@ -68,7 +68,10 @@ def t_NUMBERVALUE(t):
 
 def t_FLAGVALUE(t):
     r'true|false'
-    t.value = bool(t.value)  
+    if t.value == 'true':
+      t.value = True
+    else:
+      t.value = False
     return t
 
 # Define a rule so we can track line numbers

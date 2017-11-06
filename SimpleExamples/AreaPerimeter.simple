@@ -1,0 +1,40 @@
+program
+
+
+variables
+	number width, height;
+endvariables
+
+
+blocks
+
+	define number perimeter(number h, number w)
+		return 2 * (h+w);
+	enddefine
+
+	define number area(number h, number w)
+		return (h*w);
+	enddefine
+
+endblocks
+
+
+start
+
+	variables
+		number myPerimeter;
+		number myArea;
+	endvariables
+
+	width = 3;
+	height = 4;
+
+	myArea = area(width,height);
+	myPerimeter = perimeter(3,height);
+
+
+
+finish
+
+
+endprogram

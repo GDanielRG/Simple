@@ -1,0 +1,23 @@
+program
+
+ blocks
+    define number fibonacci(number a)
+        if (x < 2)
+            return x;
+        else
+            return fibonacci(a - 1) + fibonacci(a - 2);
+        endif
+    enddefine
+ endblocks
+
+
+ start
+   variables
+        manynumbers xd[4]
+        number a = 5;
+   endvariables
+
+   a = fibonacci(a);
+
+ finish
+ endprogram
