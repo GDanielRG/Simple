@@ -28,6 +28,16 @@ globalBlocks = list()
 globalExpressionItems = list()
 globalStatements = list()
 
+def flatten(lis):
+    """Given a list, possibly nested to any level, return it flattened."""
+    new_lis = []
+    for item in lis:
+        if type(item) == type([]):
+            new_lis.extend(flatten(item))
+        else:
+            new_lis.append(item)
+    return new_lis
+
 def p_simple(p):
     'simple : PROGRAM program ENDPROGRAM'
     # p[0] = ('simple', p[2])
@@ -273,16 +283,19 @@ def p_emptyParameterExtra(p):
 
 def p_statementPoint(p):
     'statementPoint : statementList' 
-    global globalStatements
-    p[0] = globalStatements
-    globalStatements = list()
+    # global globalStatements
+    # p[0] = globalStatements
+    # globalStatements = list()
+    p[0] = p[1]
 
 def p_statementList(p):
     'statementList : statement statementList' 
+    p[0] = flatten([p[1]] + p[2])
 
 def p_emptyStatementList(p):
     'statementList : empty' 
     # p[0] = ('blocks', p[2])
+    p[0] = list()
 
 
 def p_statement(p):
@@ -291,22 +304,22 @@ def p_statement(p):
                    | return  empty 
                    | ifStatement empty 
                    | whileStatement empty''' 
-    
+    # print('STATEMEeeeeeeent: ' + p[1])
     # p[0] = ('statement', p[1], p[3]) 
+    p[0] = p[1]
 
 def p_emptyStatement(p):
     'statement : empty' 
     # p[0] = p[1]
-    # p[0] = None
+    p[0] = None
 
 def p_assign(p):
     'assign : location ASSIGNATION expression '
     global globalExpressionItems
-    global globalStatements
-    globalStatements.append(ParseTree.Statement('assignment', ParseTree.Expression(globalExpressionItems), None, {'variable': p[0]}))
+    # global globalStatements
+    # globalStatements.append(ParseTree.Statement('assignment', ParseTree.Expression(globalExpressionItems), None, {'variable': p[0]}))
+    p[0] = ParseTree.Statement('assignment', ParseTree.Expression(globalExpressionItems), None, {'variable': p[0]})
     globalExpressionItems = list() 
-    # p[0] = ('assign', p[1], p[3]) 
-    
 
 def p_location(p):
     'location : IDENTIFIER'
@@ -314,14 +327,17 @@ def p_location(p):
     
 def p_locationBracket(p):
     'location : IDENTIFIER OBRACKETS arrayIndexes CBRACKETS'
+    p[0] = p[1]
     # p[0] = ('bracketLocation', p[1], p[3])     
 
 def p_locationCall(p):
     'location : call'
+    p[0] = p[1]
     # p[0] = ('callOnLocation', p[1])     
 
 def p_call(p):
     'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
+    p[0] = p[1]
     # p[0] = ('call', p[1], p[3])    
 
 def p_actuals(p):
@@ -357,9 +373,9 @@ def p_emptyReturnExpression(p):
 def p_ifStatement(p):
     'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statementPoint elseStatement ENDIF'
     global globalExpressionItems
-    globalStatements.append(ParseTree.Statement('if', ParseTree.Expression(globalExpressionItems), p[5], {'else': p[6]}))
+    # globalStatements.append(ParseTree.Statement('if', ParseTree.Expression(globalExpressionItems), p[5], {'else': p[6]}))
     globalExpressionItems = list()
-    # p[0] = ('ifStatement', p[3], p[5], p[6]) 
+    p[0] = ParseTree.Statement('if', ParseTree.Expression(globalExpressionItems), p[5], {'else': p[6]})
 
 def p_elseStatement(p):
     'elseStatement : ELSE statementPoint'
@@ -537,30 +553,32 @@ data ='''
     program
         blocks 
             define number funcionmamalona(number x, flag y)
-                x = y;
+                q = y;
+                if(x==3)
+                    r=4;
+                endif
             enddefine
 
         endblocks
         start
             variables
-                number x=3, y=4, z=3, z=7;
+                number r=3, y=4, z=3, z=7;
                 flag x=true;
                 number x=3;
             endvariables
+                x=r;
             if(r==x)
-                r=x;
-                r=x;
+                w=x;
             else
-                x=r;
+                y=r;
                 if(x==4)
-                    x=r;
+                    c=r;
                 else
-                    x=r;
+                    d=r;
                 endif
-                x=r;
+                e=r;
             endif
-            p=r;
-            p=r;
+            g=r;
         finish
     endprogram'''
 result = yacc.parse(data)

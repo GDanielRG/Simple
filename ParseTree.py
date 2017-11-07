@@ -61,6 +61,11 @@ class Block():
         for variable in self.variables:
             variable.print(indent + 2)
 
+        print(string + 'Statements:')
+        if(self.statements):
+            for statement in self.statements:
+                statement.print(indent + 1)
+
 class Parameter():
     def __init__(self, type, identifier):
         self.type = type
@@ -92,7 +97,7 @@ class Statement():
         self.options = options
     
     def print(self, indent = 0):
-        string = ''
+        string = '' 
         for i in range(indent):
             string+='\t'
         print(string + self.type + ': ' + 'STATEMENT')              
