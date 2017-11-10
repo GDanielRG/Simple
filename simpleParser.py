@@ -322,7 +322,7 @@ def p_expressionTokens(p):
                   | NUMBERVALUE
                   | WORDSVALUE
                   | LETTERVALUE''' 
-    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'constant', p[1], {})
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'constant', p[1], {})]
     
 
 def p_parentesisExpression(p):
