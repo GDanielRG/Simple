@@ -252,20 +252,23 @@ def p_assign(p):
 
 def p_location(p):
     'location : IDENTIFIER'
-    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'variable', p[1], {})
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'variable', p[1], {})]
     
 def p_locationBracket(p):
     'location : IDENTIFIER OBRACKETS arrayIndexes CBRACKETS'
-    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'variable', p[1], {'arrayIndexes':p[3]})
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'variable', p[1], {'arrayIndexes':p[3]})]
 
 def p_call(p):
     'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
-    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters':p[3]})    
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters':p[3]})]
+
+def p_emptyCall(p):
+    'call : IDENTIFIER OPARENTHESIS  CPARENTHESIS'
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters':list()})]
 
 def p_actuals(p):
     'actuals : expression commaExpressionList'
     p[0] = flatten([p[1]] + p[2])
-    
 
 def p_commaExpressionList(p):
     'commaExpressionList : COMMA expression commaExpressionList'
@@ -277,6 +280,9 @@ def p_emptyCommaExpressionList(p):
 
 def p_return(p):
     'return : RETURN expression SEMICOLON'
+    expressionItems = p[2]    
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = ParseTree.Statement(p.lineno(1), 'return', expression, None, {})
 
 def p_emptyReturn(p):
     'return : RETURN SEMICOLON'
@@ -296,6 +302,9 @@ def p_emptyElseStatement(p):
 
 def p_whileStatement(p):
     'whileStatement : WHILE OPARENTHESIS expression CPARENTHESIS statementPoint ENDWHILE'
+    expressionItems = p[3]    
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = ParseTree.Statement(p.lineno(1), 'while', expression, p[5], {})
 
 def p_main(p):
     'main : START variables statementPoint FINISH '
@@ -383,12 +392,28 @@ parser = yacc.yacc()
 data ='''program
         variables
             manynumbers x[x,31] = 3;
+            number k =3;
+            flag f = true;
         endvariables
+        blocks
+            define number tres()
+                RT = 'MEME';
+                return x+3*7 and r*3+1*7;
+            enddefine
+        endblocks
         start
-            meme = 4;
-
+            k = 4;
+            f = k < 3;
+            r = tumama();
+            while(tumama > 3)
+                x = r *3+4;
+            endwhile
         finish
     endprogram'''
     # abc+df*g/-*h+de+f*>abcd-*h/+g+b<and
 result = yacc.parse(data)
 result.print()
+if 'k' in result.variables:
+    print('Si existe')
+else:
+    print('No existe')
