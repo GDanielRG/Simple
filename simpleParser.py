@@ -20,7 +20,6 @@ precedence = (
 errors = list()
 
 globalExpressionItems = list()
-# globalProgram = None
 
 def flatten(lis):
     """Given a list, possibly nested to any level, return it flattened."""
@@ -284,9 +283,9 @@ def p_emptyReturn(p):
 
 def p_ifStatement(p):
     'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statementPoint elseStatement ENDIF'
-    global globalExpressionItems
-    p[0] = ParseTree.Statement(p.lineno(1), 'if', ParseTree.Expression(p.lineno(1), globalExpressionItems), p[5], {'else': p[6]})
-    globalExpressionItems = list()
+    expressionItems = p[3]    
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = ParseTree.Statement(p.lineno(1), 'if', expression, p[5], {'else': p[6]})
 
 def p_elseStatement(p):
     'elseStatement : ELSE statementPoint'
@@ -323,7 +322,8 @@ def p_expressionTokens(p):
                   | NUMBERVALUE
                   | WORDSVALUE
                   | LETTERVALUE''' 
-    p[0] = p[1]
+    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'constant', p[1], {})
+    
 
 def p_parentesisExpression(p):
     'expression : OPARENTHESIS expression CPARENTHESIS'
@@ -385,7 +385,11 @@ data ='''program
             manynumbers x[20] = 3;
         endvariables
         start
-            x = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
+            if(x>3)
+                x = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
+            else
+                meme = 4;
+            endif
 
         finish
     endprogram'''
