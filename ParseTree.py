@@ -1,5 +1,5 @@
 class Program():
-    def __init__(self, variables = list(), blocks = list(), main = None):
+    def __init__(self, variables = None, blocks = list(), main = None):
         self.variables = variables
         self.blocks = blocks
         self.main = main
@@ -8,19 +8,22 @@ class Program():
         print('Program:')
         if(self.variables):            
             print('\tVariables:')
-            for variable in self.variables:
-                variable.print(2)
+            for key,value in self.variables.items():
+                value.print(2)
+
         if(self.blocks):
             print('\tBlocks:')
-            for block in self.blocks:
-                block.print(2)
+            for key,value in self.blocks.items():
+                value.print(2)
+
         if(self.main):
             print('\tMain:')
             if(self.main):
                 self.main.print(2)
 
 class Variable():
-    def __init__(self, type = None, identifier = None, expression = None, options = None):
+    def __init__(self, lineNumber, type = None, identifier = None, expression = None, options = None):
+        self.lineNumber = lineNumber
         self.type = type
         self.identifier = identifier
         self.expression = expression
@@ -28,24 +31,44 @@ class Variable():
     
     def print(self, indent = 0):
         string = ''
-        stre = ''
         for i in range(indent):
             string+='\t'
-        print(string + self.type + ': ' + self.identifier)
+        print(string + self.type + ': ' + self.identifier + ' @' + str(self.lineNumber))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
 
 class Expression():
-	def __init__(self, items = list()):
-		self.items = items
+    def __init__(self, lineNumber, items = list()):
+        self.lineNumber = lineNumber
+        self.items = items
+
+    def print(self, indent = 0):
+        string = ''
+        for i in range(indent):
+            string+='\t'
+        if self.items:
+            print(string + 'Expression items:')            
+            for item in self.items:
+                item.print(indent + 1)
 
 class ExpressionItem():
-	def __init__(self, type = None, operands = list()):
-		self.type = type
-		self.operands = operands
+    def __init__(self, lineNumber, type = None, value = None, options= None):
+        self.lineNumber = lineNumber
+        self.type = type
+        self.value = value
+        self.options = options
+
+    def print(self, indent = 0):
+        string = ''
+        for i in range(indent):
+            string+='\t'     
+        print(string + self.type + ': ' + self.value)
+        if(self.options):
+            print('\t' + string + 'Options: ' + str(self.options))
 
 class Block():
-    def __init__(self, type = None, identifier = None, variables = None, parameters = list(), statements = list()):
+    def __init__(self, lineNumber, type = None, identifier = None, variables = None, parameters = list(), statements = list()):
+        self.lineNumber = lineNumber
         self.type = type
         self.identifier = identifier
         self.variables = variables
@@ -56,23 +79,27 @@ class Block():
         string = ''
         for i in range(indent):
             string+='\t'
-        print(string + self.type + ': ' + self.identifier)
-        print('\t'+ string + 'Variables:')
-        for variable in self.variables:
-            variable.print(indent + 2)
+        print(string + self.type + ': ' + self.identifier + ' @' + str(self.lineNumber))
 
-        print(string + 'Statements:')
+        if(self.variables):
+            print('\t'+ string + 'Variables:')
+            for key,value in self.variables.items():
+                value.print(indent + 2)
+
         if(self.statements):
+            print('\t'+ string + 'Statements:')
             for statement in self.statements:
-                statement.print(indent + 1)
+                statement.print(indent + 2)
 
 class Parameter():
-    def __init__(self, type, identifier):
+    def __init__(self, lineNumber, type, identifier):
+        self.lineNumber = lineNumber
         self.type = type
         self.identifier = identifier
 
 class Main():
-    def __init__(self, variables = None, statements = None):
+    def __init__(self, lineNumber, variables = None, statements = None):
+        self.lineNumber = lineNumber
         self.variables = variables
         self.statements = statements
 
@@ -80,17 +107,21 @@ class Main():
         string = ''
         for i in range(indent):
             string+='\t'
-        print(string + 'Variables:')
-        for variable in self.variables:
-            variable.print(indent + 1)
         
-        print(string + 'Statements:')
+        if(self.variables):
+            print(string + 'Variables:')
+            for key,value in self.variables.items():
+                value.print(indent + 1)
+        
         if(self.statements):
-            for statement in self.statements:
-                statement.print(indent + 1)
+            print(string + 'Statements:')
+            if(self.statements):
+                for statement in self.statements:
+                    statement.print(indent + 1)
 
 class Statement():
-    def __init__(self, type = None, expression = None, statements = None, options = None):
+    def __init__(self, lineNumber, type = None, expression = None, statements = None, options = None):
+        self.lineNumber = lineNumber
         self.type = type
         self.expression = expression
         self.statements = statements
@@ -100,7 +131,10 @@ class Statement():
         string = '' 
         for i in range(indent):
             string+='\t'
-        print(string + self.type + ': ' + 'STATEMENT')              
+        print(string + self.type + ': ')              
+        if(self.expression):
+            print('\t' + string + 'Expression:')
+            self.expression.print(indent + 2)  
         if(self.statements):
             print('\t' + string + 'Statements:')
             for statement in self.statements:

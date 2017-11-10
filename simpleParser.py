@@ -1,5 +1,4 @@
 # Yacc example
-
 import ply.yacc as yacc
 
 # Get the token map from the lexer.  This is required.
@@ -18,15 +17,10 @@ precedence = (
     ('right','NOT')
 )
 
-globalVariableType = ''
-globalBlockType = ''
-globalDeclarations = list()
-globalDeclarationsExtra = list()
-
-globalBlocks = list()
+errors = list()
 
 globalExpressionItems = list()
-globalStatements = list()
+# globalProgram = None
 
 def flatten(lis):
     """Given a list, possibly nested to any level, return it flattened."""
@@ -40,252 +34,195 @@ def flatten(lis):
 
 def p_simple(p):
     'simple : PROGRAM program ENDPROGRAM'
-    # p[0] = ('simple', p[2])
     p[0] = p[2]
 
 def p_empty(p):
     'empty :'
-    # p[0] = None
 
 def p_program(p):
     'program : variables blocks main'
     programNode = ParseTree.Program(p[1], p[2], p[3])
-    # p[0] = ('program', p[1], p[2], p[3])
     p[0] = programNode
 
 def p_variables(p):
     'variables : VARIABLES declarationList ENDVARIABLES'
-    # p[0] = ('variables', p[2])
-    global globalDeclarations
-    p[0] = globalDeclarations
-    globalDeclarations = list()
+    global errors
+    variables = {}
+    declarations = p[2]
+    order = 1
+    for declaration in declarations:
+        if not declaration.identifier in variables:
+            declaration.options['order'] = order
+            variables[declaration.identifier] = declaration
+        else:
+            errors.append('Variable ' + str(declaration.identifier) + ' already declared. Line number: ' + str(declaration.lineNumber))
+        order = order + 1
+    p[0] = variables
 
 def p_emptyVariables(p):
     'variables : empty'
-    # p[0] = p[1]
-    p[0] = list()
+    p[0] = {}
 
 def p_declarationList(p):
     'declarationList : declaration declarationList' 
-    # p[0] = ('declarations', p[1], p[2])
-    
+    p[0] = flatten([p[1]] + p[2])
 
 def p_emptyDeclarationList(p):
     'declarationList : empty'
-    # p[0] = p[1] 
-    # p[0] = None 
-
+    p[0] = list()
 
 def p_declaration(p):
     'declaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON' 
-    global globalDeclarations
-    global globalDeclarationsExtra
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, None)
-    globalDeclarations.append(variable)
-    while(globalDeclarationsExtra):
-        globalDeclarations.append(globalDeclarationsExtra.pop())
-    globalDeclarationsExtra = list()
-        
-    # p[0] = [x for x in globalDeclarations if x is not None]
-    # p[0] = ('declaration', p[1], p[2], p[4], p[5])  
+    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], None, {})
+    extraDeclarations = flatten(p[5])
+    for extraDeclaration in extraDeclarations:
+        extraDeclaration.type = p[1]
+    variables = [variable] + extraDeclarations
+    p[0] = variables
 
 def p_arrayDeclaration(p):
     'declaration : arrayType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression arrayDeclarationExtra SEMICOLON' 
-    global globalDeclarations
-    global globalDeclarationsExtra
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, {'arrayIndexes': p[4]})
-    globalDeclarations.append(variable)
-    while(globalDeclarationsExtra):
-        globalDeclarations.append(globalDeclarationsExtra.pop())
-    globalDeclarationsExtra = list()
-
-    # p[0] = ('arrayDeclaration', p[1], p[2], p[4], p[7], p[8])  
-    # p[0] = [x for x in globalDeclarations if x is not None]
+    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], None, {'arrayIndexes': p[4]})
+    extraDeclarations = flatten(p[8])
+    for extraDeclaration in extraDeclarations:
+        extraDeclaration.type = p[1]
+    variables = [variable] + extraDeclarations
+    p[0] = variables    
 
 def p_nullDeclaration(p):
     'declaration : variableType IDENTIFIER declarationExtra SEMICOLON' 
-    global globalDeclarations
-    global globalDeclarationsExtra
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, None)
-    globalDeclarations.append(variable)
-    while(globalDeclarationsExtra):
-        globalDeclarations.append(globalDeclarationsExtra.pop())
-    globalDeclarationsExtra = list()
+    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], None, {})
+    extraDeclarations = flatten(p[3])
+    for extraDeclaration in extraDeclarations:
+        extraDeclaration.type = p[1]
+    variables = [variable] + extraDeclarations
+    p[0] = variables
 
 def p_arrayNullDeclaration(p):
     'declaration : arrayType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS arrayDeclarationExtra SEMICOLON' 
-    global globalDeclarations
-    global globalDeclarationsExtra
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, {'arrayIndexes': p[4]})
-    globalDeclarations.append(variable)
-    while(globalDeclarationsExtra):
-        globalDeclarations.append(globalDeclarationsExtra.pop())
-    globalDeclarationsExtra = list()
-
-    # p[0] = ('declaration', p[1], p[2], p[3])  
-    # p[0] = [x for x in globalDeclarations if x is not None]    
-
-def p_emptyDeclaration(p):
-    'declaration : empty'
-    # p[0] = p[1]    
-    # p[0] = None    
+    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], None, {'arrayIndexes': p[4]})
+    extraDeclarations = flatten(p[6])
+    for extraDeclaration in extraDeclarations:
+        extraDeclaration.type = p[1]
+    variables = [variable] + extraDeclarations
+    p[0] = variables
 
 def p_declarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtra'
-    global globalDeclarationsExtra
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, None)
-    globalDeclarationsExtra.append(variable)
-
-    # p[0] = ('declarationExtra', p[2], p[4], p[5])  
-    # p[0] = [x for x in globalDeclarations if x is not None]
+    variable = ParseTree.Variable(p.lineno(2), None, p[2], None, {})
+    variables = flatten([variable] + p[5])    
+    p[0] = variables
 
 def p_arrayDeclarationExtra(p):
     'arrayDeclarationExtra : COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression arrayDeclarationExtra'
-    global globalDeclarations
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, {'arrayIndexes': p[4]})
-    globalDeclarationsExtra.append(variable)
-
-    # p[0] = ('arrayDeclarationExtra', p[2], p[4], p[7], p[8])  
-    # p[0] = [x for x in globalDeclarations if x is not None]
+    variable = ParseTree.Variable(p.lineno(2), None, p[2], None, {'arrayIndexes': p[4]})
+    variables = flatten([variable] + p[8])    
+    p[0] = variables
 
 def p_nullDeclarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER declarationExtra'
-    global globalDeclarations
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, None)
-    globalDeclarationsExtra.append(variable)
-
-    # p[0] = ('declarationExtra', p[2], p[3])  
-    # p[0] = [x for x in globalDeclarations if x is not None]
-    
+    variable = ParseTree.Variable(p.lineno(2), None, p[2], None, {})
+    variables = flatten([variable] + p[3])    
+    p[0] = variables
 
 def p_arrayNullDeclarationExtra(p):
     'arrayDeclarationExtra : COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS arrayDeclarationExtra'
-    global globalDeclarations
-    global globalVariableType
-    variable = ParseTree.Variable(globalVariableType, p[2], None, {'arrayIndexes': p[4]})
-    globalDeclarationsExtra.append(variable)
-
-    # p[0] = ('declarationExtra', p[2], p[4], p[6])  
-    # p[0] = [x for x in globalDeclarations if x is not None]
-
+    variable = ParseTree.Variable(p.lineno(2), None, p[2], None, {'arrayIndexes': p[4]})
+    variables = flatten([variable] + p[6])    
+    p[0] = variables
 
 def p_emptyDeclarationExtra(p):
     'declarationExtra : empty'
-    # p[0] = p[1]
-    # p[0] = None
+    p[0] = list()
 
 def p_emptyArrayDeclarationExtra(p):
     'arrayDeclarationExtra : empty'
-    # p[0] = p[1]
-    # p[0] = None
+    p[0] = list()
 
 def p_arrayIndexes(p):
-    'arrayIndexes : NUMBERVALUE arrayIndexesExtra'
-    # p[0] = ('arrayIndexes', p[1], p[2])
-    # p[0] = '1,2,3'
+    'arrayIndexes : expression arrayIndexesExtra'
+    p[0] = flatten([p[1]] + p[2])
 
 def p_arrayIndexesExtra(p):
-    'arrayIndexesExtra : COMMA NUMBERVALUE arrayIndexesExtra'
-    # p[0] = ('arrayIndexesExtra', p[2], p[3])
+    'arrayIndexesExtra : COMMA expression arrayIndexesExtra'
+    p[0] = flatten([p[2]] + p[3])
 
 def p_emptyArrayIndexesExtra(p):
     'arrayIndexesExtra : empty'
-    # p[0] = p[1]
-    # p[0] = None
+    p[0] = list()
 
 def p_blocks(p):
     'blocks : BLOCKS blockList ENDBLOCKS' 
-    global globalBlocks
-    p[0] = globalBlocks
-    globalBlocks = list()
-    # p[0] = ('blocks', p[2])
+    global errors
+    blocks = {}
+    functions = p[2]
+    for function in functions:
+        if not function.identifier in blocks:
+            blocks[function.identifier] = function
+        else:
+            errors.append('Block ' + str(function.identifier) + ' already declared. Line number: ' + str(function.lineNumber))
+    p[0] = blocks
 
 def p_emptyBlocks(p):
     'blocks : empty' 
-    # p[0] = p[1]
-    # p[0] = None
 
 def p_blockList(p):
-    'blockList : block blockList' 
-    # p[0] = ('blocks', p[2])
+    'blockList : block blockList'
+    p[0] = flatten([p[1]] + p[2])     
 
 def p_emptyBlockList(p):
     'blockList : empty' 
-    # p[0] = ('blocks', p[2])
+    p[0] = list()
 
 def p_block(p):
     'block : DEFINE blockType IDENTIFIER parameters variables statementPoint ENDDEFINE' 
-    global globalBlocks
-    global globalBlockType
-    block = ParseTree.Block(globalBlockType, p[3], p[5], None, p[6])
-    globalBlocks.append(block)
-    # p[0] = ('block', p[2], p[3], p[4], p[5], p[6], p[8]) 
+    p[0] = ParseTree.Block(p.lineno(1), p[2], p[3], p[5], None, p[6])
 
 def p_emptyBlock(p):
     'block : empty' 
-    # p[0] = p[1]
-    # p[0] = None
+    p[0] = None
 
 
 def p_blockType(p):
     '''blockType : PROCEDURE
                   | variableType
                   | arrayType''' 
-    # p[0] = ('blockType', p[1])   
-    global globalBlockType              
-    globalBlockType = p[1]
+    p[0] = p[1]
 
 def p_variableType(p):
     '''variableType : NUMBER 
-                  | WORDS
-                  | LETTER
-                  | FLAG''' 
-    # p[0] = ('variableType', p[1])    
-    global globalVariableType              
-    globalVariableType = p[1]
+                    | WORDS
+                    | LETTER
+                    | FLAG''' 
     p[0] = p[1]
 
 def p_arrayType(p):
     'arrayType : MANYNUMBERS' 
-    # p[0] = ('variableType', p[1])    
-    global globalVariableType              
-    globalVariableType = p[1]
     p[0] = p[1]
 
 def p_parameters(p):
     'parameters : OPARENTHESIS parameter CPARENTHESIS'
-    # p[0] = ('parameters', p[2])   
 
 def p_parameter(p):
     'parameter : variableType IDENTIFIER parameterExtra' 
-    # p[0] = ('parameter', p[1], p[2], p[3])    
+
+def p_arrayParameter(p):
+    'parameter : arrayType IDENTIFIER parameterExtra' 
 
 def p_emptyParameter(p):
     'parameter : empty' 
-    # p[0] = p[1]
-    # p[0] = None
 
 def p_parameterExtra(p):
     'parameterExtra : COMMA variableType IDENTIFIER parameterExtra' 
-    # p[0] = ('parameterExtra', p[2], p[3], p[4]) 
+
+def p_arrayParameterExtra(p):
+    'parameterExtra : COMMA arrayType IDENTIFIER parameterExtra' 
 
 def p_emptyParameterExtra(p):
     'parameterExtra : empty' 
-    # p[0] = p[1]
-    # p[0] = None
 
 def p_statementPoint(p):
     'statementPoint : statementList' 
-    # global globalStatements
-    # p[0] = globalStatements
-    # globalStatements = list()
     p[0] = p[1]
 
 def p_statementList(p):
@@ -294,9 +231,7 @@ def p_statementList(p):
 
 def p_emptyStatementList(p):
     'statementList : empty' 
-    # p[0] = ('blocks', p[2])
     p[0] = list()
-
 
 def p_statement(p):
     '''statement : assign SEMICOLON 
@@ -304,120 +239,84 @@ def p_statement(p):
                    | return  empty 
                    | ifStatement empty 
                    | whileStatement empty''' 
-    # print('STATEMEeeeeeeent: ' + p[1])
-    # p[0] = ('statement', p[1], p[3]) 
     p[0] = p[1]
 
 def p_emptyStatement(p):
     'statement : empty' 
-    # p[0] = p[1]
     p[0] = None
 
 def p_assign(p):
     'assign : location ASSIGNATION expression '
-    global globalExpressionItems
-    # global globalStatements
-    # globalStatements.append(ParseTree.Statement('assignment', ParseTree.Expression(globalExpressionItems), None, {'variable': p[0]}))
-    p[0] = ParseTree.Statement('assignment', ParseTree.Expression(globalExpressionItems), None, {'variable': p[0]})
-    globalExpressionItems = list() 
+    expressionItems = p[3]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = ParseTree.Statement(p.lineno(1), 'assignment', expression, None, {'variable': p[1]})
 
 def p_location(p):
     'location : IDENTIFIER'
-    p[0] = p[1]
+    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'variable', p[1], {})
     
 def p_locationBracket(p):
     'location : IDENTIFIER OBRACKETS arrayIndexes CBRACKETS'
-    p[0] = p[1]
-    # p[0] = ('bracketLocation', p[1], p[3])     
-
-def p_locationCall(p):
-    'location : call'
-    p[0] = p[1]
-    # p[0] = ('callOnLocation', p[1])     
+    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'variable', p[1], {'arrayIndexes':p[3]})
 
 def p_call(p):
     'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
-    p[0] = p[1]
-    # p[0] = ('call', p[1], p[3])    
+    p[0] = ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters':p[3]})    
 
 def p_actuals(p):
     'actuals : expression commaExpressionList'
-    # p[0] = ('actuals', p[1], p[2])   
+    p[0] = flatten([p[1]] + p[2])
+    
 
 def p_commaExpressionList(p):
-    'commaExpressionList : commaExpression commaExpressionList'
-    # p[0] = ('commaExpressionList', p[1], p[2])   
+    'commaExpressionList : COMMA expression commaExpressionList'
+    p[0] = flatten([p[2]] + p[3])    
 
 def p_emptyCommaExpressionList(p):
     'commaExpressionList : empty'
-    # p[0] = p[1]
-    # p[0] = None
-
-def p_commaExpression(p):
-    'commaExpression : COMMA expression'
-    # p[0] = ('expressionOncommaExpression',p[2])
+    p[0] = list()
 
 def p_return(p):
-    'return : RETURN returnExpression SEMICOLON'
-    # p[0] = ('return', p[2])   
+    'return : RETURN expression SEMICOLON'
 
-def p_returnExpression(p):
-    'returnExpression : expression' 
-    # p[0] = ('expressionOnReturn', p[1])    
-
-def p_emptyReturnExpression(p):
-    'returnExpression : empty' 
-    # p[0] = p[1]  
-    # p[0] = None  
+def p_emptyReturn(p):
+    'return : RETURN SEMICOLON'
 
 def p_ifStatement(p):
     'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statementPoint elseStatement ENDIF'
     global globalExpressionItems
-    # globalStatements.append(ParseTree.Statement('if', ParseTree.Expression(globalExpressionItems), p[5], {'else': p[6]}))
+    p[0] = ParseTree.Statement(p.lineno(1), 'if', ParseTree.Expression(p.lineno(1), globalExpressionItems), p[5], {'else': p[6]})
     globalExpressionItems = list()
-    p[0] = ParseTree.Statement('if', ParseTree.Expression(globalExpressionItems), p[5], {'else': p[6]})
 
 def p_elseStatement(p):
     'elseStatement : ELSE statementPoint'
-    # global globalStatements
-    p[0] = ParseTree.Statement('else', None, p[2])
-    # globalStatements = list() 
-    # p[0] = statement 
-    # print('else')
-    
+    p[0] = ParseTree.Statement(p.lineno(1), 'else', None, p[2])
 
 def p_emptyElseStatement(p):
     'elseStatement : empty'
-    # global globalStatements
-    # statement = ParseTree.Statement('else', None)
-    # globalStatements = list() 
-    # p[0] = statement 
-    # p[0] = p[1]
-    # p[0] = None
 
 def p_whileStatement(p):
     'whileStatement : WHILE OPARENTHESIS expression CPARENTHESIS statementPoint ENDWHILE'
-    # p[0] = ('whileStatement', p[3], p[5]) 
 
 def p_main(p):
     'main : START variables statementPoint FINISH '
-    # p[0] = ('main', p[2], p[3]) 
-    p[0] = ParseTree.Main(p[2], p[3])
+    p[0] = ParseTree.Main(p.lineno(1), p[2], p[3])
 
 def p_expressionLocation(p):
     'expression : location'
     p[0] = p[1]
-    # p[0] = None
+
+def p_expressionCall(p):
+    'expression : call'
+    p[0] = p[1]
 
 def p_expressionUnary(p):
     'expression : unaryExpression'
     p[0] = p[1]
-    # p[0] = None
 
 def p_expressionBinary(p):
     'expression : binaryExpression'
     p[0] = p[1]
-    # p[0] = None
 
 def p_expressionTokens(p):
     '''expression : FLAGVALUE
@@ -425,7 +324,6 @@ def p_expressionTokens(p):
                   | WORDSVALUE
                   | LETTERVALUE''' 
     p[0] = p[1]
-    # p[0] = None
 
 def p_parentesisExpression(p):
     'expression : OPARENTHESIS expression CPARENTHESIS'
@@ -433,53 +331,43 @@ def p_parentesisExpression(p):
 
 def p_binaryExpressionOr(p):
     'binaryExpression : expression OR expression'
-    p[0] = ("OR", p[1], p[3])
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(1), 'operand', 'or')])
 
 def p_binaryExpressionAnd(p):
     'binaryExpression : expression AND expression'
-    p[0] = ("AND", p[1], p[3])
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(1), 'operand', 'and')])
 
 def p_binaryExpressionLessThan(p):
     'binaryExpression : expression LESSER expression'
-    p[0] = ("<", p[1], p[3])
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(1), 'operand', '<')])
 
 def p_binaryExpressionGreaterThan(p):
     'binaryExpression : expression GREATER expression'
-    p[0] = (">", p[1], p[3])
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(1), 'operand', '>')])
 
 def p_binaryExpressionEquality(p):
     'binaryExpression : expression EQUALITY expression'
-    p[0] = (">", p[1], p[3])
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(1), 'operand', '==')])
 
 def p_binaryExpressionPlus(p):
     'binaryExpression : expression PLUS expression'
-    # p[0] = ("+", p[1], p[3])
-    global globalExpressionItems
-    expressionItem = ParseTree.ExpressionItem('+', [p[1], p[3]])
-    globalExpressionItems.append(expressionItem)
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(2), 'operand', '+')])
 
 def p_binaryExpressionMinus(p):
     'binaryExpression : expression MINUS expression'
-    p[0] = ("-", p[1], p[3])
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(2), 'operand', '-')])
 
 def p_binaryExpressionMultiplication(p):
     'binaryExpression : expression MULTIPLICATION expression'
-    global globalExpressionItems
-    expressionItem = ParseTree.ExpressionItem('*', [p[1], p[3]])
-    globalExpressionItems.append(expressionItem)
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(2), 'operand', '*')])
 
 def p_binaryExpressionDivision(p):
     'binaryExpression : expression DIVISION expression'
-    p[0] = ("/", p[1], p[3])
-
-def p_binaryExpressionModulus(p):
-    'binaryExpression : expression MODULUS expression'
-    p[0] = ("%", p[1], p[3])
+    p[0] = flatten([p[1], p[3], ParseTree.ExpressionItem(p.lineno(2), 'operand', '/')])
 
 def p_unaryExpressionNOT(p):
     'unaryExpression : NOT expression'
-    p[0] = ("NOT", p[2])
-
+    p[0] = flatten([p[2], ParseTree.ExpressionItem(p.lineno(2), 'operand', 'not')])
 
 # Error rule for syntax errors
 def p_error(p):
@@ -492,94 +380,15 @@ def p_error(p):
 # Build the parser
 parser = yacc.yacc()
 
- #Test it out
-# data = '''program
-
-#  variables
-#  number x = 3.1, y = 5, danielito = 4;
-#  manynumbers xd [12.1 - 1] = 3;
-#  words mundial = "hola mundo";
-#  endvariables
-
-#  blocks
-#  define procedure imprimeMultiplicacion(number a, number b)
-#  enddefine
-#  define flag danielitoEsPeor(number a)
-#     if (not danielito < a)
-#         return true;
-#     else
-#         return false;
-#     endif
-#  enddefine
-#  define number multiplicarConDanielito(number a)
-#   variables
-#  manynumbers xq[15];
-#  endvariables
-#     return (a * danielito);
-#  enddefine
-#  define manynumbers juan(number a)
-#  variables
-#  number k = 10;
-#  number x = 0;
-#  endvariables
-
-#  enddefine
-#  define words agregarMundial(words s)
-
-#  enddefine
-#  endblocks
-#  start
-#    variables
-#      number n = 2;
-#      words palabra = "a";
-#      flag toggle = true;
-#    endvariables
-
-#    if(not toggle) 
-#         x = xd[1];
-#     else
-#         while(x < 20)
-#             x = multiplicarConDanielito(y);
-#         endwhile
-#     endif
-
-#  finish
-#  endprogram
-                # r = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
-
-#  '''
- 
-data ='''
-    program
-        blocks 
-            define number funcionmamalona(number x, flag y)
-                q = y;
-                if(x==3)
-                    r=4;
-                endif
-            enddefine
-
-        endblocks
+data ='''program
+        variables
+            manynumbers x[20] = 3;
+        endvariables
         start
-            variables
-                number r=3, y=4, z=3, z=7;
-                flag x=true;
-                number x=3;
-            endvariables
-                x=r;
-            if(r==x)
-                w=x;
-            else
-                y=r;
-                if(x==4)
-                    c=r;
-                else
-                    d=r;
-                endif
-                e=r;
-            endif
-            g=r;
+            x = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
+
         finish
     endprogram'''
+    # abc+df*g/-*h+de+f*>abcd-*h/+g+b<and
 result = yacc.parse(data)
 result.print()
