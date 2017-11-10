@@ -62,7 +62,7 @@ class ExpressionItem():
         string = ''
         for i in range(indent):
             string+='\t'     
-        print(string + self.type + ': ' + self.value)
+        print(string + self.type + ': ' + str(self.value))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
 

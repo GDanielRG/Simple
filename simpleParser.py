@@ -382,14 +382,10 @@ parser = yacc.yacc()
 
 data ='''program
         variables
-            manynumbers x[20] = 3;
+            manynumbers x[x,31] = 3;
         endvariables
         start
-            if(x>3)
-                x = a * ( b + c - d * f / g ) + h > ( d + e ) * f and ( a + b * ( c - d ) / h ) + g < b;
-            else
-                meme = 4;
-            endif
+            meme = 4;
 
         finish
     endprogram'''
