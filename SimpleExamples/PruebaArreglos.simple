@@ -1,0 +1,21 @@
+program
+        variables
+            manynumbers x[x,31] = 3;
+            number k =3;
+            flag f = true;
+        endvariables
+        blocks
+            define number tres()
+                RT = 'MEME';
+                return x+3*7 and r*3+1*7;
+            enddefine
+        endblocks
+        start
+            k = 4;
+            f = k < 3;
+            r = tumama();
+            while(tumama > 3)
+                x = r *3+4;
+            endwhile
+        finish
+    endprogram

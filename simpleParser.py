@@ -234,11 +234,18 @@ def p_emptyStatementList(p):
 
 def p_statement(p):
     '''statement : assign SEMICOLON 
+                   | display SEMICOLON                 
                    | call SEMICOLON 
                    | return  empty 
                    | ifStatement empty 
                    | whileStatement empty''' 
     p[0] = p[1]
+
+def p_display(p):
+    'display : DISPLAY OPARENTHESIS singleActual CPARENTHESIS'
+    
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'display', '', {'parameter':p[3]})]
+
 
 def p_emptyStatement(p):
     'statement : empty' 
@@ -265,6 +272,14 @@ def p_call(p):
 def p_emptyCall(p):
     'call : IDENTIFIER OPARENTHESIS  CPARENTHESIS'
     p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters':list()})]
+
+def p_singleActual(p):
+    'singleActual : expression'
+    p[0] = [p[1]]
+
+def p_singleActualEmpty(p):
+    'singleActual : empty'
+    p[0] = list()
 
 def p_actuals(p):
     'actuals : expression commaExpressionList'
@@ -390,30 +405,44 @@ def p_error(p):
 parser = yacc.yacc()
 
 data ='''program
+
+blocks
+    define number factorial(number n)
         variables
-            manynumbers x[x,31] = 3;
-            number k =3;
-            flag f = true;
-        endvariables
-        blocks
-            define number tres()
-                RT = 'MEME';
-                return x+3*7 and r*3+1*7;
-            enddefine
-        endblocks
-        start
-            k = 4;
-            f = k < 3;
-            r = tumama();
-            while(tumama > 3)
-                x = r *3+4;
-            endwhile
-        finish
-    endprogram'''
+            number temp;
+        endvariables    
+
+        if(n < 1 or n == 1)
+            return 1;
+        endif
+
+        temp = n * factorial(n-1);
+        return temp;    
+    enddefine
+endblocks
+
+start
+
+variables
+    number n = 5, factorialResult;
+endvariables
+
+if(n < 0)
+    display("Hijotelas brodi, necesitas un numero positivo");
+else
+    factorialResult = factorial(n);
+    display("El factorial de n es:");
+    display(factorialResult);
+endif
+
+    display();
+finish
+
+endprogram'''
     # abc+df*g/-*h+de+f*>abcd-*h/+g+b<and
 result = yacc.parse(data)
 result.print()
-if 'k' in result.variables:
-    print('Si existe')
-else:
-    print('No existe')
+# if 'k' in result.variables:
+#     print('Si existe')
+# else:
+#     print('No existe')

@@ -1,0 +1,35 @@
+program
+
+blocks
+    define number factorial(number n)
+        variables
+            number temp;
+        endvariables    
+
+        if(n < 1 or n == 1)
+            return 1;
+        endif
+
+        temp = n * factorial(n-1);
+        return temp;    
+    enddefine
+endblocks
+
+start
+
+variables
+    number n = 5, factorialResult;
+endvariables
+
+if(n < 0)
+    display("Hijotelas brodi, necesitas un numero positivo");
+else
+    factorialResult = factorial(n);
+    display("El factorial de n es:");
+    display(factorialResult);
+endif
+
+    display();
+finish
+
+endprogram
