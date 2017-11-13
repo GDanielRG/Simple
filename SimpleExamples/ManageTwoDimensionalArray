@@ -6,11 +6,11 @@ variables
 endvariables
 
 blocks
-	define manynumbers addArrayNumbers(manynumbers x, number a, number length)
+	define manynumbers addArrayNumbers(manynumbers x, number a)
 		
 		variables
-			numbers i = 1, j = 1;
-			arrayResult[length,length];
+			number i = 1, j = 1;
+			manynumbers arrayResult[5,5];
 		endvariables
 
 		while(i < (length*length + 1))
@@ -30,11 +30,10 @@ endblocks
 start
 
 	variables
-		number arrayLength = 5;
-		manynumbers a[arrayLength,arrayLength] = 0;	
+		manynumbers a[5,5] = 0;	
 	endvariables
 
-	a = addArrayNumbers(a, 3, arrayLength);
+	a = addArrayNumbers(a, 3);
 
 
 finish

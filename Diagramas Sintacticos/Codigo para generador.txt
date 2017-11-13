@@ -1,0 +1,146 @@
+Pagina de generador: https://tabatkins.github.io/railroad-diagrams/generator.html
+
+#simple
+Diagram(
+  Choice(0,
+
+    Sequence(Terminal('PROGRAM'),NonTerminal('program'),Terminal('ENDPROGRAM')))
+        )
+
+
+#program
+Diagram(
+  Choice(0,
+
+    Sequence(NonTerminal('variables'),NonTerminal('blocks'),NonTerminal('main')))
+        )
+
+#variables
+Diagram(
+Optional(
+  Choice(0,
+        Sequence(Terminal('VARIABLES'),NonTerminal('declarationList'),Terminal('ENDVARIABLES')))
+        )
+)
+
+#declarationList
+Diagram(
+Optional(
+  Choice(0,
+        Sequence(NonTerminal('declaration'),NonTerminal('declarationList')))
+        )
+)
+
+#declaration
+
+
+#expresion
+Diagram(
+  Choice(0,
+    NonTerminal('location'),
+    NonTerminal('call'),
+    NonTerminal('unaryExpression'),
+    NonTerminal('binaryExpression'),
+    Sequence(Terminal('('),NonTerminal('expression'),Terminal(')')),
+    Terminal('FLAGVALUE'),
+    Terminal('NUMBERVALUE'),
+    Terminal('WORDSVALUE'),
+    Terminal('LETTERVALUE'))
+        )
+
+#declaration
+Diagram(
+  Choice(0,
+    Sequence(NonTerminal('variableType'),Terminal('IDENTIFIER'),Terminal('ASSIGNATION'),NonTerminal('expression'),NonTerminal('declarationExtra'),Terminal('SEMICOLON')),
+    Sequence(NonTerminal('arrayType'),Terminal('IDENTIFIER'),Terminal('OBRACKETS'),NonTerminal('arrayIndexes'),Terminal('CBRACKETS'),Terminal('ASSIGNATION'),NonTerminal('expression'),NonTerminal('arrayDeclarationExtra'),Terminal('SEMICOLON')),
+    Sequence(NonTerminal('variableType'),Terminal('IDENTIFIER'),NonTerminal('declarationExtra'),Terminal('SEMICOLON')),
+    Sequence(NonTerminal('arrayType'),Terminal('IDENTIFIER'),Terminal('OBRACKETS'),NonTerminal('arrayIndexes'),Terminal('CBRACKETS'),NonTerminal('arrayDeclarationExtra'),Terminal('SEMICOLON')),
+  )
+        )
+
+#declarationExtra
+Diagram(
+Optional(
+  Choice(0,
+    Sequence(Terminal('COMMA'),Terminal('IDENTIFIER'),Terminal('ASSIGNATION'),NonTerminal('expression'),NonTerminal('declarationExtra')),
+    Sequence(Terminal('COMMA'),Terminal('IDENTIFIER'),NonTerminal('declarationExtra'))
+  )
+        ))
+
+#arrayDeclarationExtra
+Diagram(
+Optional(
+  Choice(0,
+    Sequence(Terminal('COMMA'),Terminal('IDENTIFIER'),Terminal('OBRACKETS'),NonTerminal('arrayIndexes'),Terminal('CBRACKETS'),Terminal('ASSIGNATION'),NonTerminal('expression'),NonTerminal('arrayDeclarationExtra')),
+    Sequence(Terminal('COMMA'),Terminal('IDENTIFIER'),Terminal('OBRACKETS'),NonTerminal('arrayIndexes'),Terminal('CBRACKETS'),NonTerminal('arrayDeclarationExtra')),
+  )
+        ))
+
+#arrayIndexes
+Diagram(
+  Choice(0,
+    Sequence(NonTerminal('expression'),NonTerminal('arrayIndexesExtra'))
+  )
+        )
+
+#arrayIndexesExtra
+Diagram(
+Optional(
+  Choice(0,
+    Sequence(Terminal('COMMA'),NonTerminal('expression'),NonTerminal('arrayIndexesExtra')),
+  )
+        ))
+
+#blocks
+Diagram(
+Optional(
+  Choice(0,
+    Sequence(Terminal('BLOCKS'),NonTerminal('blocklist'),Terminal('ENDBLOCKS')),
+  )
+        ))
+
+#blocklist
+Diagram(
+Optional(
+  Choice(0,
+    Sequence(NonTerminal('block'),NonTerminal('blocklist')),
+  )
+        ))
+
+#block
+
+
+#binaryExpression
+Diagram(
+  Choice(0,
+    Sequence(NonTerminal('expression'),Terminal('OR'),NonTerminal('expression')),
+    Sequence(NonTerminal('expression'),Terminal('AND'),NonTerminal('expression')),
+    Sequence(NonTerminal('expression'),Terminal('LESSER'),NonTerminal('expression')),
+    Sequence(NonTerminal('expression'),Terminal('GREATER'),NonTerminal('expression')),
+    Sequence(NonTerminal('expression'),Terminal('EQUALITY'),NonTerminal('expression')),
+    Sequence(NonTerminal('expression'),Terminal('PLUS'),NonTerminal('expression')),
+    Sequence(NonTerminal('expression'),Terminal('MINUS'),NonTerminal('expression')),
+   Sequence(NonTerminal('expression'),Terminal('MULTIPLICATION'),NonTerminal('expression')),
+    Sequence(NonTerminal('expression'),Terminal('DIVISION'),NonTerminal('expression')))
+        )
+
+#statement
+Diagram(
+Optional(
+  Choice(0,
+    Sequence(NonTerminal('asssign'),Terminal('SEMICOLON')),
+    Sequence(NonTerminal('display'),Terminal('SEMICOLON')),
+    Sequence(NonTerminal('call'),Terminal('SEMICOLON')),
+    Sequence(NonTerminal('return')),
+    Sequence(NonTerminal('ifStatement')),
+    Sequence(NonTerminal('whileStatement')))
+        )
+)
+
+
+#asssign
+Diagram(
+  Choice(0,
+
+    Sequence(NonTerminal('location'),Terminal('ASSIGNATION'),NonTerminal('expression')))
+        )
