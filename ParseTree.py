@@ -20,15 +20,6 @@ class Program():
             print('\tMain:')
             if(self.main):
                 self.main.print(2)
-    def createVariableReferences(self):
-        globalVariables = self.variables
-        mainVariables = self.main.variables
-
-        # Main statements
-        for statement in self.main.statements:
-            statement.createVariableReferences(globalVariables, mainVariables)
-            
-                        
 
 class Variable():
     def __init__(self, lineNumber, type = None, identifier = None, expression = None, options = None):
@@ -151,33 +142,6 @@ class Statement():
         
         if(self.options and 'else' in self.options and self.options['else']):
             self.options['else'].print(indent + 1)
-
-
-    def createVariableReferences(self, globalVariables, blockVariables = {}):
-        if(self.expression):
-            for expressionItem in self.expression.items:
-                if(expressionItem.type == 'variable'):
-                    variable = None
-                    if(expressionItem.value in blockVariables):
-                        variable = blockVariables[expressionItem.value]
-                    else:
-                        if(expressionItem.value in globalVariables):
-                            variable = globalVariables[expressionItem.value]
-                    if(variable):
-                        expressionItem.value = variable
-                    else:
-                        print('Variable not found: ' + str(expressionItem.value))
-                if(expressionItem.type == 'constant'):
-                    if(expressionItem.value in globalVariables):
-                        constant = globalVariables[expressionItem.value]
-                    else:
-                        globalVariables[expressionItem.value] = expressionItem.value
-        
-        if(self.statements):
-            for statement in self.statements:
-                statement.createVariableReferences(globalVariables, blockVariables)
-
-
         # print(string + self.type + ': ' + self.identifier)
         # print('\t'+ string + 'Expression:')
         # for variable in self.variables:
