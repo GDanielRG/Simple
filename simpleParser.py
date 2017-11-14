@@ -461,6 +461,7 @@ finish
 endprogram'''
     # abc+df*g/-*h+de+f*>abcd-*h/+g+b<and
 result = yacc.parse(data)
+result.createVariableReferences()
 result.print()
 # if 'k' in result.variables:
 #     print('Si existe')
