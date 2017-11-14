@@ -51,6 +51,15 @@ class Expression():
             for item in self.items:
                 item.print(indent + 1)
 
+    def printInline(self, indent = 0):
+        string = ''
+        for i in range(indent):
+            string+='\t'
+        if self.items:
+            for item in self.items:
+                string += str(item.value)
+        print(string)
+
 class ExpressionItem():
     def __init__(self, lineNumber, type = None, value = None, options= None):
         self.lineNumber = lineNumber
@@ -65,6 +74,7 @@ class ExpressionItem():
         print(string + self.type + ': ' + str(self.value))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
+            
 
 class Block():
     def __init__(self, lineNumber, type = None, identifier = None, variables = None, parameters = list(), statements = list()):

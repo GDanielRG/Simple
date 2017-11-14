@@ -1,0 +1,51 @@
+program
+
+start
+
+	variables
+		manynumbers array[5];
+        number temp, i,j;
+	endvariables
+
+    array[1] = 4;
+    array[2] = 1;
+    array[3] = 6;
+    array[4] = 14;
+    array[5] = 12;
+
+    display("Input array is: ");
+
+    i = 0;
+    while(i < 5)
+        display(array[i]);
+        i = i + 1;    
+    endwhile
+
+    i = 0; 
+    j = 0;
+
+    while(i < 4)
+            while(j < 4)
+                if(array[j] > array[j + 1])
+                    temp = array[j + 1];
+                    array[j] = array [j + 1];
+                    array[j + 1] = temp;
+                endif
+                j = j + 1;    
+            endwhile
+        i = i + 1;  
+    endwhile
+
+    display("Sorted array is: ");
+	i = 0;
+    while(i < 5)
+        display(array[i]);
+        i = i + 1;    
+    endwhile
+
+
+
+finish
+
+
+endprogram
