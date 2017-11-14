@@ -140,11 +140,15 @@ def p_emptyArrayDeclarationExtra(p):
 
 def p_arrayIndexes(p):
     'arrayIndexes : expression arrayIndexesExtra'
-    p[0] = flatten([p[1]] + p[2])
+    expressionItems = p[1]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = [expression] + p[2]
 
 def p_arrayIndexesExtra(p):
     'arrayIndexesExtra : COMMA expression arrayIndexesExtra'
-    p[0] = flatten([p[2]] + p[3])
+    expressionItems = p[2]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = flatten([expression] + p[3])
 
 def p_emptyArrayIndexesExtra(p):
     'arrayIndexesExtra : empty'
@@ -243,9 +247,7 @@ def p_statement(p):
 
 def p_display(p):
     'display : DISPLAY OPARENTHESIS singleActual CPARENTHESIS'
-    
-    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'display', '', {'parameter':p[3]})]
-
+    p[0] = ParseTree.Statement(p.lineno(1), 'display', p[3], None, {})    
 
 def p_emptyStatement(p):
     'statement : empty' 
@@ -275,7 +277,9 @@ def p_emptyCall(p):
 
 def p_singleActual(p):
     'singleActual : expression'
-    p[0] = [p[1]]
+    expressionItems = p[1]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = expression
 
 def p_singleActualEmpty(p):
     'singleActual : empty'
@@ -406,37 +410,53 @@ parser = yacc.yacc()
 
 data ='''program
 
-blocks
-    define number factorial(number n)
-        variables
-            number temp;
-        endvariables    
-
-        if(n < 1 or n == 1)
-            return 1;
-        endif
-
-        temp = n * factorial(n-1);
-        return temp;    
-    enddefine
-endblocks
-
 start
 
-variables
-    number n = 5, factorialResult;
-endvariables
+	variables
+		manynumbers array[5];
+        number temp, i,j;
+	endvariables
 
-if(n < 0)
-    display("Hijotelas brodi, necesitas un numero positivo");
-else
-    factorialResult = factorial(n);
-    display("El factorial de n es:");
-    display(factorialResult);
-endif
+    array[1] = 4;
+    array[2] = 1;
+    array[3] = 6;
+    array[4] = 14;
+    array[5] = 12;
 
-    display();
+    display("Input array is: ");
+
+    i = 0;
+    while(i < 5)
+        display(array[i]);
+        i = i + 1;    
+    endwhile
+
+    i = 0; 
+    j = 0;
+
+    while(i < 4)
+            while(j < 4)
+                if(array[j] > array[j + 1, 2])
+                    temp = array[j + 1];
+                    array[j] = array [j + 1];
+                    array[j + 1] = temp;
+                endif
+                j = j + 1;    
+            endwhile
+        i = i + 1;  
+    endwhile
+
+    display("Sorted array is: ");
+	i = 0;
+    while(i < 5)
+        display(array[i]);
+        i = i + 1;    
+    endwhile
+
+
+
 finish
+
 
 endprogram'''
     # abc+df*g/-*h+de+f*>abcd-*h/+g+b<and
