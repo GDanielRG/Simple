@@ -257,7 +257,11 @@ def p_assign(p):
     'assign : location ASSIGNATION expression '
     expressionItems = p[3]
     expression = ParseTree.Expression(p.lineno(1), expressionItems)
-    p[0] = ParseTree.Statement(p.lineno(1), 'assignment', expression, None, {'variable': p[1]})
+    if(len(p[1])):
+        variable = p[1][0]
+    else:
+        variable = p[1]
+    p[0] = ParseTree.Statement(p.lineno(1), 'assignment', expression, None, {'variable': variable})
 
 def p_location(p):
     'location : IDENTIFIER'
@@ -314,7 +318,7 @@ def p_ifStatement(p):
 
 def p_elseStatement(p):
     'elseStatement : ELSE statementPoint'
-    p[0] = ParseTree.Statement(p.lineno(1), 'else', None, p[2])
+    p[0] = ParseTree.Statement(p.lineno(1), 'else', None, p[2], {})
 
 def p_emptyElseStatement(p):
     'elseStatement : empty'
@@ -345,12 +349,21 @@ def p_expressionBinary(p):
     'expression : binaryExpression'
     p[0] = p[1]
 
+def p_flagExpressionTokens(p):
+    'expression : FLAGVALUE' 
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'flagconstant', p[1], {})]
+
+def p_numberExpressionTokens(p):
+    'expression : NUMBERVALUE' 
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'numberconstant', p[1], {})]
+
+def p_wordsExpressionTokens(p):
+    'expression : WORDSVALUE'
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'wordsconstant', p[1], {})]
+
 def p_expressionTokens(p):
-    '''expression : FLAGVALUE
-                  | NUMBERVALUE
-                  | WORDSVALUE
-                  | LETTERVALUE''' 
-    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'constant', p[1], {})]
+    'expression : LETTERVALUE'
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'letterconstant', p[1], {})]
     
 
 def p_parentesisExpression(p):

@@ -42,7 +42,7 @@ class Variable():
         string = ''
         for i in range(indent):
             string+='\t'
-        print(string + self.type + ': ' + self.identifier + ' @' + str(self.lineNumber))
+        print(string + str(self.type) + ': ' + str(self.identifier) + ' @' + str(self.lineNumber))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
 
@@ -161,9 +161,24 @@ class Statement():
         
         if(self.options and 'else' in self.options and self.options['else']):
             self.options['else'].print(indent + 1)
+        
+        if(self.options and 'variable' in self.options and self.options['variable']):
+            self.options['variable'].print(indent + 1)
 
 
     def createVariableReferences(self, globalVariables, blockVariables = {}):
+        if(self.options and 'variable' in self.options and self.options['variable']):
+            expressionItem = self.options['variable']
+            if(expressionItem.value in blockVariables):
+                variable = blockVariables[expressionItem.value]
+            else:
+                if(expressionItem.value in globalVariables):
+                    variable = globalVariables[expressionItem.value]
+            if(variable):
+                expressionItem.value = variable
+            else:
+                print('Variable not found: ' + str(expressionItem.value))
+
         if(self.expression):
             for expressionItem in self.expression.items:
                 if(expressionItem.type == 'variable'):
@@ -177,11 +192,10 @@ class Statement():
                         expressionItem.value = variable
                     else:
                         print('Variable not found: ' + str(expressionItem.value))
-                if(expressionItem.type == 'constant'):
-                    if(expressionItem.value in globalVariables):
-                        constant = globalVariables[expressionItem.value]
-                    else:
-                        globalVariables[expressionItem.value] = Variable(0,expressionItem.value)
+                if(expressionItem.type == 'flagconstant' or expressionItem.type == 'wordsconstant' or expressionItem.type == 'numberconstant' or expressionItem.type == 'letterconstant'):
+                    if(expressionItem.value not in globalVariables):
+                        globalVariables[expressionItem.value] = Variable(0, expressionItem.type, expressionItem.value)
+                    expressionItem.value = globalVariables[expressionItem.value]
         
         if(self.statements):
             for statement in self.statements:
