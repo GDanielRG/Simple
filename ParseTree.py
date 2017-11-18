@@ -1,11 +1,17 @@
 class Program():
-    def __init__(self, variables = None, blocks = list(), main = None):
+    def __init__(self, variables = {}, blocks = {}, main = None):
         self.variables = variables
         self.blocks = blocks
         self.main = main
+        self.constants = {}
 
     def print(self):
         print('Program:')
+        if(self.constants):            
+            print('\tConstants:')
+            for key,value in self.constants.items():
+                value.print(2)
+
         if(self.variables):            
             print('\tVariables:')
             for key,value in self.variables.items():
@@ -23,11 +29,27 @@ class Program():
     def createVariableReferences(self):
         globalVariables = self.variables
         mainVariables = self.main.variables
+        constants = self.constants
+
+        # Global variables
+        if(self.variables):
+            for key, variable in self.variables.items():
+                variable.createVariableReferences(globalVariables, {}, constants)
 
         # Main statements
         for statement in self.main.statements:
-            statement.createVariableReferences(globalVariables, mainVariables)
-            
+            statement.createVariableReferences(globalVariables, mainVariables, constants)
+        
+        
+        # Blocks statements
+        if(self.blocks):
+            for key, block in self.blocks.items():
+                blockVariables = block.variables
+                for statement in block.statements:
+                    statement.createVariableReferences(globalVariables, blockVariables, constants)
+                
+                for variable in block.variables:
+                    variable.createVariableReferences(globalVariables, blockVariables, constants)
                         
 
 class Variable():
@@ -45,6 +67,16 @@ class Variable():
         print(string + str(self.type) + ': ' + str(self.identifier) + ' @' + str(self.lineNumber))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
+    
+    def createVariableReferences(self, globalVariables, blockVariables, constants):
+        if(self.options and 'arrayIndexes' in self.options and self.options['arrayIndexes']):
+            expressions = self.options['arrayIndexes']
+            for expression in expressions:
+                expression.createVariableReferences(globalVariables, blockVariables, constants)
+        if(self.expression):
+            self.expression.createVariableReferences(globalVariables, blockVariables, constants)
+
+        
 
 class Expression():
     def __init__(self, lineNumber, items = list()):
@@ -68,6 +100,25 @@ class Expression():
             for item in self.items:
                 string += str(item.value)
         print(string)
+    
+    def createVariableReferences(self, globalVariables, blockVariables, constants):
+        for expressionItem in self.items:
+            if(expressionItem.type == 'variable'):
+                variable = None
+                if(expressionItem.value in blockVariables):
+                    variable = blockVariables[expressionItem.value]
+                else:
+                    if(expressionItem.value in globalVariables):
+                        variable = globalVariables[expressionItem.value]
+                if(variable):
+                    expressionItem.value = variable
+                else:
+                    print('Variable not found: ' + str(expressionItem.value))
+            if(expressionItem.type == 'flagconstant' or expressionItem.type == 'wordsconstant' or expressionItem.type == 'numberconstant' or expressionItem.type == 'letterconstant'):
+                if(expressionItem.value not in constants):
+                    constants[expressionItem.value] = Variable(0, expressionItem.type, expressionItem.value)
+                expressionItem.value = constants[expressionItem.value]
+            expressionItem.createVariableReferences(globalVariables, blockVariables, constants)
 
 class ExpressionItem():
     def __init__(self, lineNumber, type = None, value = None, options= None):
@@ -83,6 +134,20 @@ class ExpressionItem():
         print(string + self.type + ': ' + str(self.value))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
+    
+    def createVariableReferences(self, globalVariables, blockVariables, constants):
+        if(self.options and 'arrayIndexes' in self.options and self.options['arrayIndexes']):
+            expressions = self.options['arrayIndexes']
+            for expression in expressions:
+                expression.createVariableReferences(globalVariables, blockVariables, constants)
+        
+        if(self.options and 'parameters' in self.options and self.options['parameters']):
+            print(self.options['parameters'])
+            # expressions = self.options['parameters']
+            # for expression in expressions:
+            #     expression.createVariableReferences(globalVariables, blockVariables, constants)
+        
+
 
 
 class Block():
@@ -166,7 +231,7 @@ class Statement():
             self.options['variable'].print(indent + 1)
 
 
-    def createVariableReferences(self, globalVariables, blockVariables = {}):
+    def createVariableReferences(self, globalVariables, blockVariables, constants):
         if(self.options and 'variable' in self.options and self.options['variable']):
             expressionItem = self.options['variable']
             if(expressionItem.value in blockVariables):
@@ -193,13 +258,13 @@ class Statement():
                     else:
                         print('Variable not found: ' + str(expressionItem.value))
                 if(expressionItem.type == 'flagconstant' or expressionItem.type == 'wordsconstant' or expressionItem.type == 'numberconstant' or expressionItem.type == 'letterconstant'):
-                    if(expressionItem.value not in globalVariables):
-                        globalVariables[expressionItem.value] = Variable(0, expressionItem.type, expressionItem.value)
-                    expressionItem.value = globalVariables[expressionItem.value]
+                    if(expressionItem.value not in constants):
+                        constants[expressionItem.value] = Variable(0, expressionItem.type, expressionItem.value)
+                    expressionItem.value = constants[expressionItem.value]
         
         if(self.statements):
             for statement in self.statements:
-                statement.createVariableReferences(globalVariables, blockVariables)
+                statement.createVariableReferences(globalVariables, blockVariables, constants)
 
 
         # print(string + self.type + ': ' + self.identifier)

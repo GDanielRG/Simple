@@ -72,7 +72,9 @@ def p_emptyDeclarationList(p):
 
 def p_declaration(p):
     'declaration : variableType IDENTIFIER ASSIGNATION expression declarationExtra SEMICOLON' 
-    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], None, {})
+    expressionItems = p[4]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], expression, {})
     extraDeclarations = flatten(p[5])
     for extraDeclaration in extraDeclarations:
         extraDeclaration.type = p[1]
@@ -81,7 +83,9 @@ def p_declaration(p):
 
 def p_arrayDeclaration(p):
     'declaration : arrayType IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression arrayDeclarationExtra SEMICOLON' 
-    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], None, {'arrayIndexes': p[4]})
+    expressionItems = p[7]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    variable = ParseTree.Variable(p.lineno(2), p[1], p[2], expression, {'arrayIndexes': p[4]})
     extraDeclarations = flatten(p[8])
     for extraDeclaration in extraDeclarations:
         extraDeclaration.type = p[1]
@@ -108,13 +112,17 @@ def p_arrayNullDeclaration(p):
 
 def p_declarationExtra(p):
     'declarationExtra : COMMA IDENTIFIER ASSIGNATION expression declarationExtra'
-    variable = ParseTree.Variable(p.lineno(2), None, p[2], None, {})
+    expressionItems = p[4]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    variable = ParseTree.Variable(p.lineno(2), None, p[2], expression, {})
     variables = flatten([variable] + p[5])    
     p[0] = variables
 
 def p_arrayDeclarationExtra(p):
     'arrayDeclarationExtra : COMMA IDENTIFIER OBRACKETS arrayIndexes CBRACKETS ASSIGNATION expression arrayDeclarationExtra'
-    variable = ParseTree.Variable(p.lineno(2), None, p[2], None, {'arrayIndexes': p[4]})
+    expressionItems = p[7]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    variable = ParseTree.Variable(p.lineno(2), None, p[2], expression, {'arrayIndexes': p[4]})
     variables = flatten([variable] + p[8])    
     p[0] = variables
 
@@ -423,14 +431,19 @@ parser = yacc.yacc()
 
 data ='''program
 
+	variables
+		manynumbers array[222];
+        number temp, i,j = array[340] + 44444;
+	endvariables
+    blocks
+        define number x(number y)
+            display(y + 999999);
+        enddefine
+    endblocks
 start
 
-	variables
-		manynumbers array[5];
-        number temp, i,j;
-	endvariables
 
-    array[1] = 4;
+    array[1] = array[122];
     array[2] = 1;
     array[3] = 6;
     array[4] = 14;
@@ -452,7 +465,7 @@ start
                 if(array[j] > array[j + 1, 2])
                     temp = array[j + 1];
                     array[j] = array [j + 1];
-                    array[j + 1] = temp;
+                    array[j + 1] = temp + x(j);
                 endif
                 j = j + 1;    
             endwhile
