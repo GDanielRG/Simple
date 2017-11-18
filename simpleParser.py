@@ -512,7 +512,7 @@ if(errors):
     print(errors)
 else:
     result.print()
-    errors = checkSemantics(result)
+    # errors = checkSemantics(result)
 
 
 
