@@ -142,13 +142,8 @@ class ExpressionItem():
                 expression.createVariableReferences(globalVariables, blockVariables, constants)
         
         if(self.options and 'parameters' in self.options and self.options['parameters']):
-            print(self.options['parameters'])
-            # expressions = self.options['parameters']
-            # for expression in expressions:
-            #     expression.createVariableReferences(globalVariables, blockVariables, constants)
-        
-
-
+            for expression in self.options['parameters']:
+                expression.createVariableReferences(globalVariables, blockVariables, constants)
 
 class Block():
     def __init__(self, lineNumber, type = None, identifier = None, variables = None, parameters = list(), statements = list()):
@@ -180,11 +175,11 @@ class Block():
             for statement in self.statements:
                 statement.print(indent + 2)
 
-class Parameter():
-    def __init__(self, lineNumber, type, identifier):
-        self.lineNumber = lineNumber
-        self.type = type
-        self.identifier = identifier
+# class Parameter():
+#     def __init__(self, lineNumber, type, identifier):
+#         self.lineNumber = lineNumber
+#         self.type = type
+#         self.identifier = identifier
 
 class Main():
     def __init__(self, lineNumber, variables = None, statements = None):
@@ -248,6 +243,9 @@ class Statement():
                 expressionItem.value = variable
             else:
                 print('Variable not found: ' + str(expressionItem.value))
+        
+        if(self.options and 'else' in self.options and self.options['else']):
+            self.options['else'].createVariableReferences(globalVariables, blockVariables, constants)
 
         if(self.expression):
             for expressionItem in self.expression.items:
@@ -266,6 +264,8 @@ class Statement():
                     if(expressionItem.value not in constants):
                         constants[expressionItem.value] = Variable(0, expressionItem.type, expressionItem.value)
                     expressionItem.value = constants[expressionItem.value]
+                expressionItem.createVariableReferences(globalVariables, blockVariables, constants)
+                
         
         if(self.statements):
             for statement in self.statements:

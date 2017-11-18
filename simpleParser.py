@@ -294,11 +294,11 @@ def p_locationBracket(p):
 
 def p_call(p):
     'call : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
-    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters':p[3]})]
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters': p[3]})]
 
 def p_emptyCall(p):
     'call : IDENTIFIER OPARENTHESIS  CPARENTHESIS'
-    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters':list()})]
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters': list()})]
 
 def p_singleActual(p):
     'singleActual : expression'
@@ -312,11 +312,15 @@ def p_singleActualEmpty(p):
 
 def p_actuals(p):
     'actuals : expression commaExpressionList'
-    p[0] = flatten([p[1]] + p[2])
+    expressionItems = p[1]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = flatten([expression] + p[2])
 
 def p_commaExpressionList(p):
     'commaExpressionList : COMMA expression commaExpressionList'
-    p[0] = flatten([p[2]] + p[3])    
+    expressionItems = p[2]
+    expression = ParseTree.Expression(p.lineno(1), expressionItems)
+    p[0] = flatten([expression] + p[3])    
 
 def p_emptyCommaExpressionList(p):
     'commaExpressionList : empty'
@@ -468,10 +472,12 @@ start
     display("Input array is: ");
 
     i = 0;
-    while(i < 5)
+    if(i < 5)
         display(array[i]);
         i = i + 1;    
-    endwhile
+    else
+        i = i + 333331;    
+    endif
 
     i = 0; 
     j = 0;
@@ -481,7 +487,7 @@ start
                 if(array[j] > array[j + 1, 2])
                     temp = array[j + 1];
                     array[j] = array [j + 1];
-                    array[j + 1] = temp + x(j);
+                    array[j + 1] = temp + x(j + 4 * 7, 77777777777777777 +4 *8);
                 endif
                 j = j + 1;    
             endwhile
@@ -494,16 +500,20 @@ start
         display(array[i]);
         i = i + 1;    
     endwhile
-
-
-
 finish
-
-
 endprogram'''
+
 result = yacc.parse(data)
 result.createVariableReferences()
+
+# def checkSemantics(programNode):
+    
 if(errors):
     print(errors)
 else:
     result.print()
+    errors = checkSemantics(result)
+
+
+
+
