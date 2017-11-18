@@ -447,60 +447,50 @@ parser = yacc.yacc()
 
 data ='''program
 
-	variables
-		manynumbers array[222];
-        number temp, i,j = array[340] + 44444;
-	endvariables
-    blocks
-        define number x(number y)
+
+variables
+    number length;
+endvariables
+
+blocks
+    define manynumbers addArrayNumbers(manynumbers x, number a)
+        
         variables
-            manynumbers array[222];
-            number temp, z,j = array[340] + 44444;
+            number i = 1, j = 1;
+            manynumbers arrayResult[5,5];
         endvariables
-            display(y + 999999);
-        enddefine
-    endblocks
+
+        while(i < (length*length + 1))
+            while( j < length + 1)
+                arrayResult[i,j] = x[i,j] + a;
+                j = j + 1;
+            endwhile
+            j = 1;
+        endwhile
+
+        return arrayResult;
+
+    enddefine
+
+endblocks
+
 start
 
+    variables
+        manynumbers a[4,4] = 0; 
+        manynumbers c[8,7] = 0; 
+        manynumbers d[9];
+        number b;
+    endvariables
 
-    array[1] = array[122];
-    array[2] = 1;
-    array[3] = 6;
-    array[4] = 14;
-    array[5] = 12;
+    length = 5;
+    a = addArrayNumbers(a, 3);
+    a[2,2] = 4;
 
-    display("Input array is: ");
 
-    i = 0;
-    if(i < 5)
-        display(array[i]);
-        i = i + 1;    
-    else
-        i = i + 333331;    
-    endif
-
-    i = 0; 
-    j = 0;
-
-    while(i < 4)
-            while(j < 4)
-                if(array[j] > array[j + 1, 2])
-                    temp = array[j + 1];
-                    array[j] = array [j + 1];
-                    array[j + 1] = temp + x(j + 4 * 7, 77777777777777777 +4 *8);
-                endif
-                j = j + 1;    
-            endwhile
-        i = i + 1;  
-    endwhile
-
-    display("Sorted array is: ");
-	i = 0;
-    while(i < 5)
-        display(array[i]);
-        i = i + 1;    
-    endwhile
 finish
+
+
 endprogram'''
 
 result = yacc.parse(data)

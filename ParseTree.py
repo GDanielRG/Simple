@@ -28,7 +28,6 @@ class Program():
                 self.main.print(2)
     def createVariableReferences(self):
         globalVariables = self.variables
-        mainVariables = self.main.variables
         constants = self.constants
 
         # Global variables
@@ -36,6 +35,13 @@ class Program():
             for key, variable in self.variables.items():
                 variable.createVariableReferences(globalVariables, {}, constants)
 
+        # Main variables
+        if(self.main.variables):
+            for key, variable in self.main.variables.items():
+                variable.createVariableReferences(globalVariables, {}, constants)
+
+        mainVariables = self.main.variables
+        
         # Main statements
         for statement in self.main.statements:
             statement.createVariableReferences(globalVariables, mainVariables, constants)
