@@ -187,7 +187,13 @@ def p_emptyBlockList(p):
 
 def p_block(p):
     'block : DEFINE blockType IDENTIFIER parameters variables statementPoint ENDDEFINE' 
-    p[0] = ParseTree.Block(p.lineno(1), p[2], p[3], p[5], None, p[6])
+    parameters = {}
+    for parameter in p[4]:
+        if parameter.identifier in p[5]:
+            errors.append('Variable ' + str(parameter.identifier) + ' already declared in function "' + p[3] + '". Line number: ' + str(p.lineno(1)))
+        parameters[parameter.identifier] = parameter
+    
+    p[0] = ParseTree.Block(p.lineno(1), p[2], p[3], {**parameters, **p[5]}, p[4], p[6])
 
 def p_emptyBlock(p):
     'block : empty' 
@@ -213,24 +219,31 @@ def p_arrayType(p):
 
 def p_parameters(p):
     'parameters : OPARENTHESIS parameter CPARENTHESIS'
+    p[0] = flatten(p[2])
 
 def p_parameter(p):
     'parameter : variableType IDENTIFIER parameterExtra' 
+    p[0] = [ParseTree.Variable(p.lineno(1), p[1], p[2], None, {'order': 0})] + p[3]
 
 def p_arrayParameter(p):
     'parameter : arrayType IDENTIFIER parameterExtra' 
+    p[0] = [ParseTree.Variable(p.lineno(1), p[1], p[2], None, {'order': 0})] + p[3]
 
 def p_emptyParameter(p):
     'parameter : empty' 
+    p[0] = list()
 
 def p_parameterExtra(p):
     'parameterExtra : COMMA variableType IDENTIFIER parameterExtra' 
+    p[0] = [ParseTree.Variable(p.lineno(1), p[2], p[3], None, {'order': 0})] + p[4]
 
 def p_arrayParameterExtra(p):
     'parameterExtra : COMMA arrayType IDENTIFIER parameterExtra' 
+    p[0] = [ParseTree.Variable(p.lineno(1), p[2], p[3], None, {'order': 0})] + p[4]
 
 def p_emptyParameterExtra(p):
     'parameterExtra : empty' 
+    p[0] = list()
 
 def p_statementPoint(p):
     'statementPoint : statementList' 
@@ -372,7 +385,6 @@ def p_wordsExpressionTokens(p):
 def p_expressionTokens(p):
     'expression : LETTERVALUE'
     p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'letterconstant', p[1], {})]
-    
 
 def p_parentesisExpression(p):
     'expression : OPARENTHESIS expression CPARENTHESIS'
@@ -437,6 +449,10 @@ data ='''program
 	endvariables
     blocks
         define number x(number y)
+        variables
+            manynumbers array[222];
+            number temp, z,j = array[340] + 44444;
+        endvariables
             display(y + 999999);
         enddefine
     endblocks
@@ -485,11 +501,9 @@ finish
 
 
 endprogram'''
-    # abc+df*g/-*h+de+f*>abcd-*h/+g+b<and
 result = yacc.parse(data)
 result.createVariableReferences()
-result.print()
-# if 'k' in result.variables:
-#     print('Si existe')
-# else:
-#     print('No existe')
+if(errors):
+    print(errors)
+else:
+    result.print()

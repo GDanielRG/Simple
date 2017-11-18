@@ -48,7 +48,7 @@ class Program():
                 for statement in block.statements:
                     statement.createVariableReferences(globalVariables, blockVariables, constants)
                 
-                for variable in block.variables:
+                for key, variable in block.variables.items():
                     variable.createVariableReferences(globalVariables, blockVariables, constants)
                         
 
@@ -169,6 +169,11 @@ class Block():
             print('\t'+ string + 'Variables:')
             for key,value in self.variables.items():
                 value.print(indent + 2)
+        
+        if(self.parameters):
+            print('\t'+ string + 'Parameters:')
+            for parameter in self.parameters:
+                parameter.print(indent + 2)
 
         if(self.statements):
             print('\t'+ string + 'Statements:')
