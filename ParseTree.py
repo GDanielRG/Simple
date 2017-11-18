@@ -41,7 +41,7 @@ class Program():
                 variable.createVariableReferences(globalVariables, {}, constants)
 
         mainVariables = self.main.variables
-        
+
         # Main statements
         for statement in self.main.statements:
             statement.createVariableReferences(globalVariables, mainVariables, constants)
@@ -59,7 +59,7 @@ class Program():
                         
 
 class Variable():
-    def __init__(self, lineNumber, type = None, identifier = None, expression = None, options = None):
+    def __init__(self, lineNumber, type = None, identifier = None, expression = None, options = None, value = None):
         self.lineNumber = lineNumber
         self.type = type
         self.identifier = identifier

@@ -457,6 +457,8 @@ blocks
         
         variables
             number i = 1, j = 1;
+            number x = i;
+            ['=', 'i', None, 'x']
             manynumbers arrayResult[5,5];
         endvariables
 
@@ -495,6 +497,7 @@ endprogram'''
 
 result = yacc.parse(data)
 result.createVariableReferences()
+result.setValuesForVariables()
 
 # def checkSemantics(programNode):
     
@@ -502,7 +505,36 @@ if(errors):
     print(errors)
 else:
     result.print()
-    # errors = checkSemantics(result)
+    errors = checkSemantics(result)
+
+# number a = 1;
+# number b = 7;
+# number c = a + 8;
+# number z =  (a + b - b + c) * b / c
+
+# mem = {
+#     'a' : 1,
+#     'b' : 7,
+#     'c' : None,
+#     'z' : None,
+# }
+
+# quadruples = []
+
+# quadruples.append(['+', 'a',  8, 't1'])
+# quadruples.append(['=', 'c',  None, 't1'])
+# quadruples.append(['+', 'a', 'b','t2'])
+# quadruples.append(['-', 't2','c','t3'])
+# quadruples.append(['+', 't3','c','t4'])
+# quadruples.append(['*', 't4','b','t5'])
+# quadruples.append(['/', 't5','c','t6'])
+# quadruples.append(['=', 't6', None,'z'])
+
+
+# mem['t2'] = mem['a'] + mem[8]
+# .....
+# .....
+# mem['z'] = mem['t6']
 
 
 
