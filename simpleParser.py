@@ -446,25 +446,22 @@ def p_error(p):
 parser = yacc.yacc()
 
 data ='''program
-
-
 variables
     number length;
 endvariables
 
 blocks
+    
     define manynumbers addArrayNumbers(manynumbers x, number a)
         
         variables
             number i = 1, j = 1;
-            number x = i;
-            ['=', 'i', None, 'x']
-            manynumbers arrayResult[5,5];
+            manynumbers arrayResult[5,5,5];
         endvariables
 
         while(i < (length*length + 1))
             while( j < length + 1)
-                arrayResult[i,j] = x[i,j] + a;
+                arrayResult[i,j, 6] = x[i,j] + a;
                 j = j + 1;
             endwhile
             j = 1;
@@ -479,15 +476,15 @@ endblocks
 start
 
     variables
-        manynumbers a[4,4] = 0; 
+        manynumbers a[4,4,4] = 0; 
         manynumbers c[8,7] = 0; 
         manynumbers d[9];
         number b;
     endvariables
 
     length = 5;
-    a = addArrayNumbers(a, 3);
-    a[2,2] = 4;
+    a[2, 4, 4] = addArrayNumbers(a, 3);
+    a[2,2,4] = 4;
 
 
 finish
@@ -497,15 +494,34 @@ endprogram'''
 
 result = yacc.parse(data)
 result.createVariableReferences()
-result.setValuesForVariables()
+# result.setValuesForVariables()
 
-# def checkSemantics(programNode):
+def checkSemantics(programNode):
+    # check for variables with same name as a function
+    variables = set()
+    for key, variable in programNode.variables.items():
+        variables.add(variable.identifier)
+    
+    for key, variable in programNode.main.variables.items():
+        variables.add(variable.identifier)
+    
+    for key, block in programNode.blocks.items():
+        for key, variable in block.variables.items():
+            variables.add(variable.identifier)
+    
+    for key, block in programNode.blocks.items():
+        for variable in variables:
+            if(variable == block.identifier):
+                errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))                
+            
+
     
 if(errors):
     print(errors)
 else:
     result.print()
-    errors = checkSemantics(result)
+    # errors = checkSemantics(result)
+# errors = checkSemantics(result)
 
 # number a = 1;
 # number b = 7;

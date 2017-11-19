@@ -239,6 +239,7 @@ class Statement():
 
     def createVariableReferences(self, globalVariables, blockVariables, constants):
         if(self.options and 'variable' in self.options and self.options['variable']):
+            variable = None
             expressionItem = self.options['variable']
             if(expressionItem.value in blockVariables):
                 variable = blockVariables[expressionItem.value]
@@ -276,6 +277,13 @@ class Statement():
         if(self.statements):
             for statement in self.statements:
                 statement.createVariableReferences(globalVariables, blockVariables, constants)
+        
+        if(self.type == 'assignment'):
+            if(self.options and 'variable' in self.options and self.options['variable']):
+                variable = self.options['variable']
+                if(variable.value.type == "manynumbers"):
+                    if(len(variable.options['arrayIndexes'])!=len(variable.value.options['arrayIndexes'])):
+                        print('Inconsistent dimensions on assignment of variable "' + variable.value.identifier + '". Line number ' + str(variable.lineNumber))
 
 
         # print(string + self.type + ': ' + self.identifier)
