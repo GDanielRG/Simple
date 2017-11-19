@@ -29,7 +29,7 @@ quadruples.append(['+', 'a', '8', '[t1]'])
 quadruples.append(['=', '[t1]',  None, 'c'])
 #empieza el if
 quadruples.append(['>', 'a', 'c', '[t2]'])
-quadruples.append(['gotof', '[t1]',  None, '10'])
+quadruples.append(['gotof', '[t2]',  None, '10'])
 quadruples.append(['+', 'a', 'b','[t3]'])
 quadruples.append(['-', '[t3]','c','[t4]'])
 quadruples.append(['+', '[t4]','c','[t5]'])
@@ -54,18 +54,19 @@ loadedQuadruple = []
 
 #Como alternativa al switch, definimos las funciones por separado
 def gotof():
+	global counterGo
+	global counter
 	print ("numa un gotof")
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
 	else:
 		firstKey ="variables"
 
-	if(isTemporal(quadruples[counter][3])):
-		thirdKey ="temporals"
-	else:
-		thirdKey ="variables"
-
-	mem[thirdKey][quadruples[counter][3]] = mem[firstKey][quadruples[counter][1]] > mem[secondKey][quadruples[counter][2]]
+	if not (mem[firstKey][quadruples[counter][1]]):
+		print([quadruples[counter][3]][0])
+		counter = int([quadruples[counter][3]][0])
+		counterGo = False
+		print("Fallo la condicion y se saltara al cuadruplo " + str(counter))
 
 	print(mem)
 
@@ -243,6 +244,7 @@ options = {'+': plus,
 		   '%' : modulus,
 		   '=': assign,
 		   '>': greater,
+		   '<': lesser,
 		   'gotof' : gotof,
 }
 
