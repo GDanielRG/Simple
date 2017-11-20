@@ -1,9 +1,9 @@
 program
-
+  
  blocks
     define number fibonacci(number a)
-        if (x < 2)
-            return x;
+        if (a < 2)
+            return a;
         else
             return fibonacci(a - 1) + fibonacci(a - 2);
         endif
@@ -13,11 +13,12 @@ program
 
  start
    variables
-        manynumbers xd[4]
+        manynumbers xd[4];
         number a = 5;
    endvariables
 
    a = fibonacci(a);
+   xd[5-4] = a;
 
  finish
  endprogram
