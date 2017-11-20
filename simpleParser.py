@@ -1,5 +1,7 @@
 # Yacc example
 import ply.yacc as yacc
+import sys
+
 
 # Get the token map from the lexer.  This is required.
 import simpleTokens
@@ -189,7 +191,7 @@ def p_block(p):
     'block : DEFINE blockType IDENTIFIER parameters variables statementPoint ENDDEFINE' 
     parameters = {}
     for parameter in p[4]:
-        if parameter.identifier in p[5]:
+        if parameter.identifier in p[5] or parameter.identifier in parameters:
             errors.append('Variable ' + str(parameter.identifier) + ' already declared in function "' + p[3] + '". Line number: ' + str(p.lineno(1)))
         parameters[parameter.identifier] = parameter
     
@@ -445,60 +447,10 @@ def p_error(p):
 # Build the parser
 parser = yacc.yacc()
 
-data ='''program
-variables
-    number length;
-endvariables
-
-blocks
-    
-    define manynumbers addArrayNumbers(manynumbers x, number a)
-        
-        variables
-            number i = 1, j = 1;
-            manynumbers arrayResult[5,5,5];
-        endvariables
-
-        while(i < (length*length + 1))
-            while( j < length + 1)
-                arrayResult[i,j, 6] = x[i,j] + a;
-                j = j + 1;
-            endwhile
-            j = 1;
-        endwhile
-
-        return arrayResult;
-
-    enddefine
-
-endblocks
-
-start
-
-    variables
-        manynumbers a[4,4,4] = 0; 
-        manynumbers c[8,7] = 0; 
-        manynumbers d[9];
-        number b;
-    endvariables
-
-    length = 5;
-    a[2, 4, 4] = addArrayNumbers(a, 3);
-    a[2,2,4] = 4;
-
-
-finish
-
-
-endprogram'''
-
-result = yacc.parse(data)
-result.createVariableReferences()
-# result.setValuesForVariables()
-
 def checkSemantics(programNode):
     # check for variables with same name as a function
     variables = set()
+    errors = list()
     for key, variable in programNode.variables.items():
         variables.add(variable.identifier)
     
@@ -509,18 +461,28 @@ def checkSemantics(programNode):
         for key, variable in block.variables.items():
             variables.add(variable.identifier)
     
+            
     for key, block in programNode.blocks.items():
         for variable in variables:
             if(variable == block.identifier):
-                errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))                
-            
+                errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))
+    return errors
 
+f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
+data = f.read()
+
+result = yacc.parse(data)
+result.createVariableReferences()
+errors = errors + checkSemantics(result)
+# result.setValuesForVariables()         
+
+# print(sys.argv[0]) # prints python_script.py
+# print(sys.argv[1]) # prints var1
     
 if(errors):
     print(errors)
 else:
     result.print()
-    # errors = checkSemantics(result)
 # errors = checkSemantics(result)
 
 # number a = 1;

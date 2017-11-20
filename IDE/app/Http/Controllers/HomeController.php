@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\File;
-
+use File as Filee;
 class HomeController extends Controller
 {
     /**
