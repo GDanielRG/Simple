@@ -479,10 +479,10 @@ errors = errors + checkSemantics(result)
 # print(sys.argv[0]) # prints python_script.py
 # print(sys.argv[1]) # prints var1
     
-if(errors):
-    print(errors)
-else:
-    result.print()
+# if(errors):
+#     print(errors)
+# else:
+#     result.print()
 # errors = checkSemantics(result)
 
 # number a = 1;

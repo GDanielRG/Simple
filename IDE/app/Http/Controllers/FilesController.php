@@ -59,7 +59,8 @@ class FilesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function compile(File $file, Request $request)
-    {
+    {   
+        \Log::info($file);
         $fileName = \Auth::user()->email . $file->id;
         Filee::put($fileName, $request->get('code'));      
         $file->code = $request->get('code');

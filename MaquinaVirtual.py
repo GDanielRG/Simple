@@ -55,15 +55,13 @@ memGlobal = {
     
  }
 
-print(result.variables)
-
 memories.append(memGlobal)
 
 #++++++++++++++++++++++++++++MOCK START++++++++++++++++++++++++++++
 
 #ejemplo de cuadruplo generado
 
-quadruples.append(['goto', None, None, '18']) #voy al main
+quadruples.append(['goto', None, None, '17']) #voy al main
 
 quadruples.append(['<', 'a', '2', '[t1]']) #empieza condicion if
 quadruples.append(['gotof', '[t1]',  None, '6']) 
@@ -128,7 +126,6 @@ def f_era():
 	#quadruples[counter][1]	
 
 	#buscar objeto del block usando elemento #1
-	block = result.blocks[quadruples[counter][1]]
 
 	if(isTemporal(quadruples[counter][1])):
 		newMem = {
@@ -137,6 +134,7 @@ def f_era():
      		'temporals' : {}
 		}
 	else:
+		block = result.blocks[quadruples[counter][1]]
 		#poner el nombre del block en la pila de llaves
 		keyParams.append(block)
 
@@ -150,7 +148,8 @@ def f_era():
 
 	#guardar nueva memoria y contador de parametros en sus pilas respectivas
 	newMems.append(newMem)
-	counterParam.append(counterParam)
+	counterParams.append(counterParam)
+	print(newMem)
 
 def f_param():
 	
