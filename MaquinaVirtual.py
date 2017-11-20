@@ -105,6 +105,26 @@ memories.append(memGlobal)
 
 #ejemplo de cuadruplo generado (Fibonacci)
 
+quadruples.append(['era', [main], None, None])
+quadruples.append(['=', '3.0', None, 'width'])
+quadruples.append(['=', '4.0', None, 'height'])
+quadruples.append(['era', 'area', None, None])
+quadruples.append(['param', 'width', None, None])
+quadruples.append(['param', 'height', None, None])
+quadruples.append(['gosub', 'area', None,?])
+quadruples.append(['=', 'area', None,'[t1]')
+quadruples.append(['era', 'perimeter', None, None])
+quadruples.append(['param', '3.0', None, None])
+quadruples.append(['param', 'height', None, None])
+quadruples.append(['gosub', 'perimeter', None,?])
+quadruples.append(['=', 'perimeter', None,'[t2]')
+quadruples.append(['end', None, None, None)
+quadruples.append(['+', 'h', 'w', '[t1]')
+quadruples.append(['*', '2.0', '[t1]', '[t2]')
+quadruples.append(['return', '[t2]', None, None)
+quadruples.append(['*', 'h', 'w', '[t1]')
+quadruples.append(['return', '[t1]', None, None)
+
 
 
 
