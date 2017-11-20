@@ -1,8 +1,6 @@
 import ParseTree
 import simpleParser
 
-print(simpleParser.result)
-
 result = simpleParser.result
 
 #booleano en caso de que un error detenga el programa, empieza false
@@ -44,10 +42,19 @@ counterParams = list()
 #y tambien necesitamos una pila que memorize la llave de los blocks que se llaman
 keyParams = list()
 
+#creamos un diccionario con funciones
+funDict = {}
+
+#ahora recorremos todas las funciones 
+for key, variable in result.blocks.items():
+	funDict[variable.identifier] = ParseTree.Variable(None,variable.type,variable.identifier)
+
+	
+
 #Esta es la memoria de nuestro programa durante ejecución
 memGlobal = {
 	#Dividimos las variables con las temporales
-	 'variables' : {**simpleParser.result.variables, **simpleParser.result.constants},
+	 'variables' : {**result.variables, **result.constants, **funDict},
 
      'temporals' : {
 
@@ -55,6 +62,9 @@ memGlobal = {
     
  }
 
+
+#for m in simpleParser.result.constants:
+#	print(m)
 
 memories.append(memGlobal)
 
@@ -65,17 +75,17 @@ memories.append(memGlobal)
 
 quadruples.append(['goto', None, None, '17']) #voy al main
 
-quadruples.append(['<', 'a', '2', '[t1]']) #empieza condicion if
+quadruples.append(['<', 'a', '2.0', '[t1]']) #empieza condicion if
 quadruples.append(['gotof', '[t1]',  None, '5']) 
 quadruples.append(['return', 'a',  None, None]) #return
 quadruples.append(['goto', None,  None, '17']) 
 quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
-quadruples.append(['-', 'a', '1','[t2]'])
+quadruples.append(['-', 'a', '1.0','[t2]'])
 quadruples.append(['param', '[t2]', None,'param1'])
 quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
 quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
-quadruples.append(['-', 'a', '2','[t4]'])
+quadruples.append(['-', 'a', '2.0','[t4]'])
 quadruples.append(['param', '[t4]', None,'param1'])
 quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
@@ -83,13 +93,13 @@ quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
 quadruples.append(['return', '[t6]', None,None]) #return
 
 quadruples.append(['era', '[main]', None, None]) #enter the main
-quadruples.append(['=', '5',  None, 'a'])
+quadruples.append(['=', '5.0',  None, 'a'])
 quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
 quadruples.append(['param', 'a', None,'param1'])
 quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
 quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
-quadruples.append(['-', '5', '4','[t2]']) #expresion de xd[5-4]
+quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
 #quadruples.append(['ver', '[t2]', '1', '2']) 
 
 
@@ -140,7 +150,7 @@ def f_era():
 	else:
 		block = result.blocks[quadruples[counter][1]]
 		#poner el nombre del block en la pila de llaves
-		keyParams.append(block)
+		keyParams.append(quadruples[counter][1])
 
 		#creamos una nueva memoria para la pila
 		newMem = {
@@ -149,7 +159,7 @@ def f_era():
 
 	     'temporals' : {}
 		}
-			#guardar nueva memoria y contador de parametros en sus pilas respectivas
+		#guardar nueva memoria y contador de parametros en sus pilas respectivas
 		newMems.append(newMem)
 		counterParams.append(counterParam)
 	print(newMem)
@@ -158,19 +168,21 @@ def f_era():
 
 def f_param():
 	
-	global counterParam
+	global counterParams
 	global newMems
-	positionMemories = 0
+
+	positionMemories = len(memories) - 1
 
 	#necesitamos apuntar al ultimo elemento de la pilas
 	newMemsPosition = len(newMems) - 1
-	counterParamPosition = len(counterParam) - 1
+	counterParamPosition = len(counterParams) - 1
 	keyParamPosition = len(keyParams) - 1
 
 	#necesitamos obtener la key del parametro
-	block = result.blocks[keyParams[keyParamPosition]]
 
-	key = block.parameters[quadruples[counter][3]].identifier
+	block = result.blocks[keyParams[keyParamPosition]]
+	key = block.parameters[counterParams[counterParamPosition]].identifier
+	print(key)
 
 	#necesitamos saber si la expresion sale de una temporal o local
 	if(isTemporal(quadruples[counter][1])):
@@ -180,23 +192,25 @@ def f_param():
 		if(not isLocal(quadruples[counter][1])):
 			positionMemories = 0	
 
+	print(positionMemories)
 	#despues necesitamos asignar la expresion que recibimos a la memoria
-	newMems[newMemsPosition]['variables'][key].value = memories[PositionMemories][firstKey][quadruples[counter][1]].value
+	print(memories[positionMemories][firstKey])
+	newMems[newMemsPosition]['variables'][key].value = memories[positionMemories][firstKey][quadruples[counter][1]].value
 
 	#le sumamos uno al ultimo contador de la pila
-	counterParam[counterParamPosition] += 1
+	counterParams[counterParamPosition] += 1
 
 def f_gosub():
 	global counterGo
 	global counter
-	global pilaSaltos
+	global callPSaltos
 	global newMems
 
 	positionMemories = len(memories) - 1
 	newMemsPosition = len(newMems) - 1
 
 	#poner el counter en el que estoy antes de irme a la otra funcion
-	pilaSaltos.append(counter)
+	callPSaltos.append(counter)
 
 	#metemos la ultima memoria local que creamos a la pila de memorias
 	memories.append(newMems.pop())
@@ -205,24 +219,24 @@ def f_gosub():
 	counter = int([quadruples[counter][3]][0])
 	counterGo = False
 
-	print("Fallo la condicion y se saltara al cuadruplo " + str(counter))
+	print("Saltamos al cuadruplo " + str(counter))
 
 def f_return():
 	global counterGo
 	global counter
 
 	keyParamPosition = len(keyParams) - 1
-	thirdPositionMemories = len(memories) - 1
+	PositionMemories = len(memories) - 1
 
-	if(isTemporal(quadruples[counter][3])):
-		thirdKey ="temporals"
+	if(isTemporal(quadruples[counter][1])):
+		firstKey ="temporals"
 	else:
-		thirdKey ="variables"
-		if(not isLocal(quadruples[counter][3])):
-			thirdPositionMemories = 0
+		firstKey ="variables"
+		if(not isLocal(quadruples[counter][1])):
+			PositionMemories = 0
 
 	#almacenar expresion resultante en la variable global de la funcion
-	memories[0]['variables'][keyParams[keyParamPosition]].value = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value
+	memories[0]['variables'][keyParams[keyParamPosition]].value = memories[PositionMemories][firstKey][quadruples[counter][1]].value
 
 	#remover la ultima llave de block y contador de parametro
 	counterParams.pop()
@@ -231,7 +245,10 @@ def f_return():
 	#evitar que el counter se incremente porque...
 	counterGo = False
 	#regresamos al quadruplo en que nos quedamos mas uno
-	counter = pilaSaltos.pop() + 1
+	counter = callPSaltos.pop() + 1
+
+	#y finalmente popiamos la memoria que ya no vamos a usar
+	memories.pop()
 
 def f_gotof():
 	global counterGo
@@ -575,8 +592,6 @@ def f_modulus():
 
 def f_assign():
 
-	printMemories()
-
 	firstPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
@@ -589,14 +604,24 @@ def f_assign():
 
 	if(isTemporal(quadruples[counter][3])):
 		thirdKey ="temporals"
+		if quadruples[counter][3] in memories[thirdPositionMemories][thirdKey]:
+			print("ok cuck")
+		else:
+			print("AAAA")
+			memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(None,memories[firstPositionMemories][firstKey][quadruples[counter][1]].type,quadruples[counter][3])
+
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+			
+
+	print(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value)
+	print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]])
+	print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]])
 
 	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	printMemories()
-
 
 
 #una vez que declaramos todas las funciones del "switch" 
@@ -643,6 +668,15 @@ def isTemporal(expression):
 		return True
 	return False
 
+#necesitamos un check especial para constantes
+def isConstant(expresion):
+	if(expresion.find('.') != -1):
+		print("expresion no es constante")
+		return False
+	else:
+		return True
+
+
 def printMemories():
 
 	count = 1
@@ -667,6 +701,8 @@ def printMemories():
 		count += 1
 		stringCollectorvariables = ""
 		stringCollectortemporals = ""
+
+
 
 while counter < len(quadruples):
 	if(not giveUp):
