@@ -93,7 +93,7 @@ quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
 quadruples.append(['return', '[t6]', None,None]) #return
 
 quadruples.append(['era', '[main]', None, None]) #enter the main
-quadruples.append(['=', '5.0',  None, 'a'])
+quadruples.append(['=', '7.0',  None, 'a'])
 quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
 quadruples.append(['param', 'a', None,'param1'])
 quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
@@ -152,10 +152,20 @@ def f_era():
 		#poner el nombre del block en la pila de llaves
 		keyParams.append(quadruples[counter][1])
 
+		print(block.variables)
+
+		varDict = {}
+		
+		#necesitamos clonar, no simplemente copiar variables, para nuestra nueva memoria local
+		#recorremos todas las variables 
+		for key, variable in block.variables.items():
+			varDict[key] = ParseTree.Variable(None,variable.type,variable.identifier,variable.expression,variable.options,variable.value)
+
+		print(varDict)
 		#creamos una nueva memoria para la pila
 		newMem = {
 		#Dividimos las variables locales con las temporales
-		 'variables' : block.variables,
+		 'variables' : varDict,
 
 	     'temporals' : {}
 		}
@@ -192,11 +202,13 @@ def f_param():
 		if(not isLocal(quadruples[counter][1])):
 			positionMemories = 0	
 
-	print(positionMemories)
+	print(counterParams)
+	print(counterParams[counterParamPosition])
+	print("En param, se la asignara el valor " + str(memories[positionMemories][firstKey][quadruples[counter][1]].value) + " de " + memories[positionMemories][firstKey][quadruples[counter][1]].identifier + "(en memoria " + str(positionMemories + 1) + ")" + " a " + newMems[newMemsPosition]['variables'][key].identifier)
 	#despues necesitamos asignar la expresion que recibimos a la memoria
 	print(memories[positionMemories][firstKey])
 	newMems[newMemsPosition]['variables'][key].value = memories[positionMemories][firstKey][quadruples[counter][1]].value
-
+	printMemories()
 	#le sumamos uno al ultimo contador de la pila
 	counterParams[counterParamPosition] += 1
 
@@ -213,7 +225,9 @@ def f_gosub():
 	callPSaltos.append(counter)
 
 	#metemos la ultima memoria local que creamos a la pila de memorias
+	print(newMems)
 	memories.append(newMems.pop())
+	print(newMems)
 
 	
 	counter = int([quadruples[counter][3]][0])
@@ -495,6 +509,7 @@ def f_minus():
 
 	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
 	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value - memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	print("Restamos la " + quadruples[counter][1] + " en memoria " + str(firstPositionMemories + 1) + " con la variable " + quadruples[counter][2] + " en memoria " + str(thirdPositionMemories + 1))
 	printMemories()
 
 def f_multiplication():
