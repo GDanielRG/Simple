@@ -47,7 +47,7 @@ keyParams = list()
 #Esta es la memoria de nuestro programa durante ejecución
 memGlobal = {
 	#Dividimos las variables con las temporales
-	 'variables' : simpleParser.result.variables,
+	 'variables' : {**simpleParser.result.variables, **simpleParser.result.constants},
 
      'temporals' : {
 
@@ -55,7 +55,9 @@ memGlobal = {
     
  }
 
+
 memories.append(memGlobal)
+
 
 #++++++++++++++++++++++++++++MOCK START++++++++++++++++++++++++++++
 
@@ -64,18 +66,18 @@ memories.append(memGlobal)
 quadruples.append(['goto', None, None, '17']) #voy al main
 
 quadruples.append(['<', 'a', '2', '[t1]']) #empieza condicion if
-quadruples.append(['gotof', '[t1]',  None, '6']) 
+quadruples.append(['gotof', '[t1]',  None, '5']) 
 quadruples.append(['return', 'a',  None, None]) #return
-quadruples.append(['goto', None,  None, '18']) 
+quadruples.append(['goto', None,  None, '17']) 
 quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
 quadruples.append(['-', 'a', '1','[t2]'])
 quadruples.append(['param', '[t2]', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'2']) #ir a quadruplo 2
+quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
 quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
 quadruples.append(['-', 'a', '2','[t4]'])
 quadruples.append(['param', '[t4]', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'2']) #ir a quadruplo 2
+quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
 quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
 quadruples.append(['return', '[t6]', None,None]) #return
@@ -84,7 +86,7 @@ quadruples.append(['era', '[main]', None, None]) #enter the main
 quadruples.append(['=', '5',  None, 'a'])
 quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
 quadruples.append(['param', 'a', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'2']) #ir a quadruplo 2
+quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
 quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
 quadruples.append(['-', '5', '4','[t2]']) #expresion de xd[5-4]
@@ -133,6 +135,8 @@ def f_era():
 
      		'temporals' : {}
 		}
+		memories.append(newMem)
+
 	else:
 		block = result.blocks[quadruples[counter][1]]
 		#poner el nombre del block en la pila de llaves
@@ -145,11 +149,12 @@ def f_era():
 
 	     'temporals' : {}
 		}
-
-	#guardar nueva memoria y contador de parametros en sus pilas respectivas
-	newMems.append(newMem)
-	counterParams.append(counterParam)
+			#guardar nueva memoria y contador de parametros en sus pilas respectivas
+		newMems.append(newMem)
+		counterParams.append(counterParam)
 	print(newMem)
+
+
 
 def f_param():
 	
