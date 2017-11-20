@@ -65,6 +65,7 @@ class Variable():
         self.identifier = identifier
         self.expression = expression
         self.options = options
+        self.value = value
     
     def print(self, indent = 0):
         string = ''
