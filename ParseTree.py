@@ -122,9 +122,9 @@ class Expression():
                 else:
                     print('Variable not found: ' + str(expressionItem.value))
             if(expressionItem.type == 'flagconstant' or expressionItem.type == 'wordsconstant' or expressionItem.type == 'numberconstant' or expressionItem.type == 'letterconstant'):
-                if(expressionItem.value not in constants):
-                    constants[expressionItem.value] = Variable(0, expressionItem.type, expressionItem.value)
-                expressionItem.value = constants[expressionItem.value]
+                if(str(expressionItem.value) not in constants):
+                    constants[str(expressionItem.value)] = Variable(0, expressionItem.type, str(expressionItem.value),None, None, expressionItem.value)
+                expressionItem.value = constants[str(expressionItem.value)]
             expressionItem.createVariableReferences(globalVariables, blockVariables, constants)
 
 class ExpressionItem():
@@ -269,9 +269,9 @@ class Statement():
                     else:
                         print('Variable not found: ' + str(expressionItem.value))
                 if(expressionItem.type == 'flagconstant' or expressionItem.type == 'wordsconstant' or expressionItem.type == 'numberconstant' or expressionItem.type == 'letterconstant'):
-                    if(expressionItem.value not in constants):
-                        constants[expressionItem.value] = Variable(0, expressionItem.type, expressionItem.value)
-                    expressionItem.value = constants[expressionItem.value]
+                    if(str(expressionItem.value) not in constants):
+                        constants[str(expressionItem.value)] = Variable(0, expressionItem.type, str(expressionItem.value),None, None, expressionItem.value)
+                    expressionItem.value = constants[str(expressionItem.value)]
                 expressionItem.createVariableReferences(globalVariables, blockVariables, constants)
                 
         
