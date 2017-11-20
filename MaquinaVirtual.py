@@ -71,36 +71,39 @@ memories.append(memGlobal)
 
 #++++++++++++++++++++++++++++MOCK START++++++++++++++++++++++++++++
 
-#ejemplo de cuadruplo generado
+#ejemplo de cuadruplo generado (Fibonacci)
 
-quadruples.append(['goto', None, None, '17']) #voy al main
+# quadruples.append(['goto', None, None, '17']) #voy al main
 
-quadruples.append(['<', 'a', '2.0', '[t1]']) #empieza condicion if
-quadruples.append(['gotof', '[t1]',  None, '5']) 
-quadruples.append(['return', 'a',  None, None]) #return
-quadruples.append(['goto', None,  None, '17']) 
-quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
-quadruples.append(['-', 'a', '1.0','[t2]'])
-quadruples.append(['param', '[t2]', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
-quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
-quadruples.append(['-', 'a', '2.0','[t4]'])
-quadruples.append(['param', '[t4]', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
-quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
-quadruples.append(['return', '[t6]', None,None]) #return
+# quadruples.append(['<', 'a', '2.0', '[t1]']) #empieza condicion if
+# quadruples.append(['gotof', '[t1]',  None, '5']) 
+# quadruples.append(['return', 'a',  None, None]) #return
+# quadruples.append(['goto', None,  None, '17']) 
+# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
+# quadruples.append(['-', 'a', '1.0','[t2]'])
+# quadruples.append(['param', '[t2]', None,'param1'])
+# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+# quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
+# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
+# quadruples.append(['-', 'a', '2.0','[t4]'])
+# quadruples.append(['param', '[t4]', None,'param1'])
+# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+# quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
+# quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
+# quadruples.append(['return', '[t6]', None,None]) #return
 
-quadruples.append(['era', '[main]', None, None]) #enter the main
-quadruples.append(['=', '7.0',  None, 'a'])
-quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
-quadruples.append(['param', 'a', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
-quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
-quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
-#quadruples.append(['ver', '[t2]', '1', '2']) 
+# quadruples.append(['era', '[main]', None, None]) #enter the main
+# quadruples.append(['=', '7.0',  None, 'a'])
+# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
+# quadruples.append(['param', 'a', None,'param1'])
+# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+# quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
+# quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
+# quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
+# #quadruples.append(['ver', '[t2]', '1', '2']) 
+
+
+#ejemplo de cuadruplo generado (Fibonacci)
 
 
 
@@ -152,28 +155,23 @@ def f_era():
 		#poner el nombre del block en la pila de llaves
 		keyParams.append(quadruples[counter][1])
 
-		print(block.variables)
-
 		varDict = {}
 		
 		#necesitamos clonar, no simplemente copiar variables, para nuestra nueva memoria local
 		#recorremos todas las variables 
 		for key, variable in block.variables.items():
-			varDict[key] = ParseTree.Variable(None,variable.type,variable.identifier,variable.expression,variable.options,variable.value)
+			varDict[key] = ParseTree.Variable(variable.lineNumber,variable.type,variable.identifier,variable.expression,variable.options,variable.value)
 
-		print(varDict)
 		#creamos una nueva memoria para la pila
 		newMem = {
 		#Dividimos las variables locales con las temporales
 		 'variables' : varDict,
 
 	     'temporals' : {}
-		}
+		}		
 		#guardar nueva memoria y contador de parametros en sus pilas respectivas
 		newMems.append(newMem)
 		counterParams.append(counterParam)
-	print(newMem)
-
 
 
 def f_param():

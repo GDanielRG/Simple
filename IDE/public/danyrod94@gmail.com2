@@ -14,11 +14,11 @@ program
  start
    variables
         manynumbers xd[4];
-        number a = 5;
+        number a = 7;
    endvariables
 
    a = fibonacci(a);
-   xd[5-4] = a;
+   xd[55555-444444] = a;
 
  finish
  endprogram

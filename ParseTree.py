@@ -288,6 +288,9 @@ class Statement():
                     else:
                         if(len(variable.options['arrayIndexes']) != len(variable.value.options['arrayIndexes'])):
                             print('Inconsistent dimensions on assignment of variable "' + variable.value.identifier + '". Line number ' + str(variable.lineNumber))
+            if('arrayIndexes' in self.options['variable'].options and self.options['variable'].options['arrayIndexes']):
+                for expression in self.options['variable'].options['arrayIndexes']:
+                    expression.createVariableReferences(globalVariables, blockVariables, constants)
 
 
         # print(string + self.type + ': ' + self.identifier)
