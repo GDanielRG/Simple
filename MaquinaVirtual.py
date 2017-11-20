@@ -103,27 +103,29 @@ memories.append(memGlobal)
 # #quadruples.append(['ver', '[t2]', '1', '2']) 
 
 
-#ejemplo de cuadruplo generado (Fibonacci)
+#ejemplo de cuadruplo generado (AreaPerimeter)
 
-quadruples.append(['era', [main], None, None])
+quadruples.append(['era', '[main]', None, None])
 quadruples.append(['=', '3.0', None, 'width'])
 quadruples.append(['=', '4.0', None, 'height'])
 quadruples.append(['era', 'area', None, None])
 quadruples.append(['param', 'width', None, None])
 quadruples.append(['param', 'height', None, None])
-quadruples.append(['gosub', 'area', None,?])
-quadruples.append(['=', 'area', None,'[t1]')
+quadruples.append(['gosub', 'area', None,'19'])
+quadruples.append(['=', 'area', None,'[t1]'])
+quadruples.append(['=', '[t1]', None,'myArea'])
 quadruples.append(['era', 'perimeter', None, None])
 quadruples.append(['param', '3.0', None, None])
 quadruples.append(['param', 'height', None, None])
-quadruples.append(['gosub', 'perimeter', None,?])
-quadruples.append(['=', 'perimeter', None,'[t2]')
-quadruples.append(['end', None, None, None)
-quadruples.append(['+', 'h', 'w', '[t1]')
-quadruples.append(['*', '2.0', '[t1]', '[t2]')
-quadruples.append(['return', '[t2]', None, None)
-quadruples.append(['*', 'h', 'w', '[t1]')
-quadruples.append(['return', '[t1]', None, None)
+quadruples.append(['gosub', 'perimeter', None,'16'])
+quadruples.append(['=', 'perimeter', None,'[t2]'])
+quadruples.append(['=', '[t2]', None,'myPerimeter'])
+quadruples.append(['end', None, None, None])
+quadruples.append(['+', 'h', 'w', '[t1]'])
+quadruples.append(['*', '2.0', '[t1]', '[t2]'])
+quadruples.append(['return', '[t2]', None, None])
+quadruples.append(['*', 'h', 'w', '[t1]'])
+quadruples.append(['return', '[t1]', None, None])
 
 
 
@@ -132,6 +134,10 @@ quadruples.append(['return', '[t1]', None, None)
 
 
 #Como alternativa al switch, definimos las funciones por separado
+
+def f_end():
+	global giveUp
+	giveUp = True
 
 def f_display():
 	firstPositionMemories = len(memories) - 1
@@ -680,7 +686,9 @@ options = { #expresiones
 		   'param' : f_param,
 		   'return' : f_return,
 		   #verificacion de arreglo/matriz
-		   'ver' : f_ver
+		   'ver' : f_ver,
+		   #si acaba el programa
+		   'end' : f_end
 }
 
 #funcion para revisar si una variable esta en memoria local o global
@@ -745,6 +753,8 @@ while counter < len(quadruples):
 		options[quadruples[counter][0]]()
 		if(counterGo):
 			counter = counter + 1
+	else:
+		break
 pass
 
 # mem['t2'] = mem['a'] + mem[8]
