@@ -19,3 +19,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/files/{file}', 'FilesController@show');
+Route::post('/files/{file}/compile', 'FilesController@compile');

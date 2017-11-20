@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use File as Filee;
 use App\File;
 use Illuminate\Http\Request;
 use Symfony\Component\Process\Process;
@@ -47,17 +48,30 @@ class FilesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(File $file)
+    {        
+        return view('file', ['file' => $file]);
+    }
+    
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function compile(File $file, Request $request)
     {
-        $process = new Process('python /Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/simpleParser.py');
+        $fileName = \Auth::user()->email . $file->id;
+        Filee::put($fileName, $request->get('code'));      
+        $file->code = $request->get('code');
+        $file->save();
+        $process = new Process('python /Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/simpleParser.py ' . $fileName);
         $process->run();        
         // executes after the command finishes
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
-
-        dd($process->getOutput());
+        return $process->getOutput();
         
-        return view('file', ['file' => $file]);
     }
 
     /**

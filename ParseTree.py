@@ -282,8 +282,11 @@ class Statement():
             if(self.options and 'variable' in self.options and self.options['variable']):
                 variable = self.options['variable']
                 if(variable.value.type == "manynumbers"):
-                    if(len(variable.options['arrayIndexes'])!=len(variable.value.options['arrayIndexes'])):
-                        print('Inconsistent dimensions on assignment of variable "' + variable.value.identifier + '". Line number ' + str(variable.lineNumber))
+                    if('arrayIndexes' not in variable.options):
+                        print('Array assignment not supported: "' + variable.value.identifier + '". Line number ' + str(variable.lineNumber))
+                    else:
+                        if(len(variable.options['arrayIndexes']) != len(variable.value.options['arrayIndexes'])):
+                            print('Inconsistent dimensions on assignment of variable "' + variable.value.identifier + '". Line number ' + str(variable.lineNumber))
 
 
         # print(string + self.type + ': ' + self.identifier)
