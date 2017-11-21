@@ -1,3 +1,4 @@
+'''
 program
   
  blocks
@@ -13,12 +14,18 @@ program
 
  start
    variables
-        manynumbers xd[4];
-        number a = 5;
+        manynumbers xd[5];
+        number a = 7;
    endvariables
 
    a = fibonacci(a);
    xd[5-4] = a;
+   xd[2] = 2;
+   a = xd[5-4] - xd[2];  
+   if(xd[5-4] > xd[2])
+    xd[3] = 420;
+    endif
 
  finish
  endprogram
+'''
