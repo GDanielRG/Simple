@@ -134,13 +134,14 @@ class Expression():
         self.items = items
 
     def print(self, indent = 0):
-        string = ''
-        for i in range(indent):
-            string+='\t'
-        if self.items:
-            print(string + 'Expression items:')            
-            for item in self.items:
-                item.print(indent + 1)
+        # string = ''
+        # for i in range(indent):
+        #     string+='\t'
+        # if self.items:
+        #     print(string + 'Expression items:')            
+        #     for item in self.items:
+        #         item.print(indent + 1)
+        self.printInline(indent)
 
     def printInline(self, indent = 0):
         string = ''
@@ -148,7 +149,7 @@ class Expression():
             string+='\t'
         if self.items:
             for item in self.items:
-                string += str(item.value)
+                string += str(item.type)
         print(string)
     
     def createVariableReferences(self, globalVariables, blockVariables, constants):
@@ -169,6 +170,8 @@ class Expression():
                     constants[str(expressionItem.value)] = Variable(0, expressionItem.type, str(expressionItem.value),None, None, expressionItem.value)
                 expressionItem.value = constants[str(expressionItem.value)]
             expressionItem.createVariableReferences(globalVariables, blockVariables, constants)
+    # def buildQuadruples(self):
+
 
 class ExpressionItem():
     def __init__(self, lineNumber, type = None, value = None, options= None):
