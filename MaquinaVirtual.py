@@ -42,8 +42,17 @@ counterParams = list()
 #y tambien necesitamos una pila que memorize la llave de los blocks que se llaman
 keyParams = list()
 
-#Pila para listas de iteradores
-listasIterador = list()
+#Fila para listas de iteradores
+FilaListasIterador = list()
+
+#lista temporal en lo que danielito implementa bien arrayIndexes
+arrayIndexTemporal = list()
+
+#Guardar Lista de iterador temporal
+ListaIterador = list()
+
+#booleano que solo permite la creacion de una lista de iteradores si esta activa
+crearListaIterador = True
 
 #counterVerifyIterador
 counterVerifyIterador = 0
@@ -105,10 +114,27 @@ quadruples.append(['param', 'a', None,'param1'])
 quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
 quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
-quadruples.append(['-', '5.0', '5.0','[t2]']) #expresion de xd[5-4]
-quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd
-quadruples.append(['endver', None, None, None]) #verificacion acaba
+quadruples.append(['-', '5.0', '2.0','[t2]']) #expresion de xd[5-4]
+quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd en dimension 1
+quadruples.append(['endver', None, None, None]) #verificacion acaba, guardar 
 quadruples.append(['=', 'a', None, 'xd']) #xd[5-4] = a
+
+quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
+quadruples.append(['endver', None, None, None]) #verificacion acaba
+quadruples.append(['=', '2', None, 'xd']) #xd[2] = 2
+
+quadruples.append(['-', '5.0', '2.0','[t3]']) #expresion de xd[5-4]
+quadruples.append(['ver', '[t3]', None, 'xd']) #verificar que 2 exista en xd
+quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+
+quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
+quadruples.append(['endver', None, None, None]) #verificacion acaba
+quadruples.append(['=', '2', None, 'xd']) #xd[2] = 2
+
+
+
+
 quadruples.append(['end',None,None,None]) #finish
 
 
@@ -164,6 +190,9 @@ def f_display():
 def f_ver():
 	#formato cuadruplo 
 	#['ver', 'r' (num iterador), None,'t'(key arreglo)]
+	
+	global giveUp
+	global ListaIterador
 
 #primero creamos parametros para detectar donde esta la key del arreglo
 	firstPositionMemories = len(memories) - 1
@@ -192,19 +221,33 @@ def f_ver():
 	#print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador])
 	print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value)
 
+ 	#insertamos el iterador a la lista de iteradores actual
+	ListaIterador.append(int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value)-1)
+
+
 	#comparar numero de arrayIndex[counter] con r(num iterador)
 	if (int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) > 0 and int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) <= memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value):
 		print ("good")
 	else:
 		print("IIIIN THE AAAAAARMS")
+		giveUp = True
 	
 	#SUMAR contador de verify
 	counterVerifyIterador += 1
 
 
+
 def f_endver():
 	#formato cuadruplo 
 	#['ver', None, None,None]
+
+	global ListaIterador
+	global FilaListasIterador
+
+	#hay que vaciar ListaIterador despues de guardarla en FilaListasIterador
+	FilaListasIterador.append(ListaIterador)
+	print(ListaIterador)
+	ListaIterador = list()
 
 	#el contador global se hara 0 aqui 
 	global counterVerifyIterador
@@ -717,30 +760,98 @@ def f_modulus():
 
 def f_assign():
 
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#TEMPORAL EN LO QUE DANIELITO PONE BIEN LOS ARRAYINDEXES
+			contadorTemporal = 0
+			for key, variable in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN TEMPORALES
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+
 
 
 	if(isTemporal(quadruples[counter][3])):
 		thirdKey ="temporals"
 		if not quadruples[counter][3] in memories[thirdPositionMemories][thirdKey]:
 			memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(None,memories[firstPositionMemories][firstKey][quadruples[counter][1]].type,quadruples[counter][3])
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
-	
+		#si es arreglo, vamos a necesitar
+		if(isArray(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]])):
+			
+			#TEMPORAL EN LO QUE DANIELITO PONE BIEN LOS ARRAYINDEXES
+			contadorTemporal = 0
+			for key in memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN TEMPORALES
+			print(arrayIndexTemporal)
+			#vamos a necesitar el offsetValue para thirdVariable[thirdoffset]
+			thirdOffset = offsetCalculator(arrayIndexTemporal)
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+			
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+			
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+	if thirdOffset is None:
+		thirdVariable.value = firstValue
+	else:
+		print("pergas")
+		print(thirdVariable.value)
+		thirdVariable.value[thirdOffset] = firstValue
+
 	printMemories()
+
 
 
 #una vez que declaramos todas las funciones del "switch" 
@@ -772,6 +883,39 @@ options = { #expresiones
 		   #si acaba el programa
 		   'end' : f_end
 }
+
+#funcion para sacar el offset para el arreglo aplanado
+#su parametro es una lista, la cual es los arrayIndexes
+#esta funcion tambien toma la primer de la fila de FilaListasIterador, y lo popea al acabar
+def offsetCalculator(myArrayIndexes):
+
+	global FilaListasIterador
+
+	#total empieza en 0
+	total = 0
+
+	#agarramos una copia de la lista de iteradores, haciendo pop
+	miListaIteradores = FilaListasIterador.pop(0)
+	
+	#empezando ciclos
+	i = 0
+	while (i < len(miListaIteradores)):
+		multB = miListaIteradores[i] 
+		j = len(myArrayIndexes) - 1 #iterador para siguiente ciclo
+		while(j > i):
+			multB *= myArrayIndexes[j]
+			j -= 1
+			
+		total += multB
+
+		i += 1 
+
+	#FilaListasIterador
+	print("aaaaaa")
+	print(total)
+
+	return total
+
 
 #funcion para revisar si una variable esta en memoria local o global
 def isLocal(expression):
