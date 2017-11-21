@@ -3,6 +3,11 @@ def isConstant(string):
         return True
     return False
 
+def isArray(string):
+    if(string == 'manynumbers'):
+        return True
+    return False
+
 class Program():
     def __init__(self, variables = {}, blocks = {}, main = None):
         self.variables = variables
@@ -67,17 +72,32 @@ class Program():
             if(variable.expression):
                 if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
                     variable.value = variable.expression.items[0].value.value
+            if(isArray(variable.type)):
+                size = 1
+                for expression in variable.options['arrayIndexes']:
+                    size *= expression.items[0].value.value
+                variable.value = [None] * int(size)
         
         for key, variable in self.main.variables.items():
             if(variable.expression):
                 if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
                     variable.value = variable.expression.items[0].value.value
+            if(isArray(variable.type)):
+                size = 1
+                for expression in variable.options['arrayIndexes']:
+                    size *= expression.items[0].value.value
+                variable.value = [None] * int(size)
         
         for key, block in self.blocks.items():
             for key, variable in block.variables.items():
                 if(variable.expression):
                     if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
                         variable.value = variable.expression.items[0].value.value
+                if(isArray(variable.type)):
+                    size = 1
+                    for expression in variable.options['arrayIndexes']:
+                        size *= expression.items[0].value.value
+                    variable.value = [None] * int(size)
             
                         
 
