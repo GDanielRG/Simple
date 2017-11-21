@@ -8,12 +8,21 @@ program
             return fibonacci(a - 1) + fibonacci(a - 2);
         endif
     enddefine
+    
+        define number fibonacci2(number a)
+        if (a < 2)
+            return a;
+        else
+            return fibonacci(a - 1) + fibonacci(a - 2);
+        endif
+    enddefine
+    
  endblocks
 
 
  start
    variables
-        manynumbers xd[4, 3, 5];
+        manynumbers xd[4];
         number a = 5;
    endvariables
 

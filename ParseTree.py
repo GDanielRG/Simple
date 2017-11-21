@@ -337,6 +337,10 @@ class Statement():
             if('arrayIndexes' in self.options['variable'].options and self.options['variable'].options['arrayIndexes']):
                 for expression in self.options['variable'].options['arrayIndexes']:
                     expression.createVariableReferences(globalVariables, blockVariables, constants)
+        
+        if(self.options and 'parameters' in self.options and self.options['parameters']):
+            for expression in self.options['parameters']:
+                expression.createVariableReferences(globalVariables, blockVariables, constants)
 
 
         # print(string + self.type + ': ' + self.identifier)
