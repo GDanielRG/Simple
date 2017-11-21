@@ -269,8 +269,8 @@ def p_statement(p):
     p[0] = p[1]
 
 def p_display(p):
-    'display : DISPLAY OPARENTHESIS singleActual CPARENTHESIS'
-    p[0] = ParseTree.Statement(p.lineno(1), 'display', p[3], None, {})    
+    'display : DISPLAY OPARENTHESIS actuals CPARENTHESIS'
+    p[0] = ParseTree.Statement(p.lineno(1), 'display', None, None, {'parameters': p[3]})    
 
 def p_emptyStatement(p):
     'statement : empty' 
