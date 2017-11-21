@@ -1,3 +1,8 @@
+def isConstant(string):
+    if(string == 'numberconstant' or string == 'wordsconstant' or string == 'letterconstant' or string == 'flagconstant'):
+        return True
+    return False
+
 class Program():
     def __init__(self, variables = {}, blocks = {}, main = None):
         self.variables = variables
@@ -56,6 +61,24 @@ class Program():
                 
                 for key, variable in block.variables.items():
                     variable.createVariableReferences(globalVariables, blockVariables, constants)
+        
+    def setValuesForVariables(self):
+        for key, variable in self.variables.items():
+            if(variable.expression):
+                if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
+                    variable.value = variable.expression.items[0].value.value
+        
+        for key, variable in self.main.variables.items():
+            if(variable.expression):
+                if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
+                    variable.value = variable.expression.items[0].value.value
+        
+        for key, block in self.blocks.items():
+            for key, variable in block.variables.items():
+                if(variable.expression):
+                    if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
+                        variable.value = variable.expression.items[0].value.value
+            
                         
 
 class Variable():
@@ -71,7 +94,7 @@ class Variable():
         string = ''
         for i in range(indent):
             string+='\t'
-        print(string + str(self.type) + ': ' + str(self.identifier) + ' @' + str(self.lineNumber))
+        print(string + str(self.type) + ': ' + str(self.identifier) + '= ' + str(self.value) + ' @' + str(self.lineNumber))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
     

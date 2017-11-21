@@ -473,8 +473,8 @@ data = f.read()
 
 result = yacc.parse(data)
 result.createVariableReferences()
+result.setValuesForVariables()         
 errors = errors + checkSemantics(result)
-# result.setValuesForVariables()         
 
 # print(sys.argv[0]) # prints python_script.py
 # print(sys.argv[1]) # prints var1
