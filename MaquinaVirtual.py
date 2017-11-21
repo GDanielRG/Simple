@@ -114,25 +114,41 @@ quadruples.append(['param', 'a', None,'param1'])
 quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
 quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
-quadruples.append(['-', '5.0', '2.0','[t2]']) #expresion de xd[5-4]
+quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
 quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd en dimension 1
 quadruples.append(['endver', None, None, None]) #verificacion acaba, guardar 
 quadruples.append(['=', 'a', None, 'xd']) #xd[5-4] = a
 
 quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
 quadruples.append(['endver', None, None, None]) #verificacion acaba
-quadruples.append(['=', '2', None, 'xd']) #xd[2] = 2
+quadruples.append(['=', '2.0', None, 'xd']) #xd[2] = 2
 
-quadruples.append(['-', '5.0', '2.0','[t3]']) #expresion de xd[5-4]
+quadruples.append(['-', '5.0', '4.0','[t3]']) #expresion de xd[5-4]
 quadruples.append(['ver', '[t3]', None, 'xd']) #verificar que 2 exista en xd
 quadruples.append(['endver', None, None, None]) #verificacion acaba
 
 
 quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
 quadruples.append(['endver', None, None, None]) #verificacion acaba
-quadruples.append(['=', '2', None, 'xd']) #xd[2] = 2
 
+quadruples.append(['-', 'xd', 'xd', '[t4]']) #suma de xd[5-4] + xd[2]
+quadruples.append(['=', '[t4]', None, 'a']) #suma igual a a
+#37
 
+quadruples.append(['-', '5.0', '4.0','[t5]']) #expresion de xd[5-4] #38
+quadruples.append(['ver', '[t5]', None, 'xd']) #verificar que 2 exista en xd
+quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
+quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+quadruples.append(['<', 'xd', 'xd', '[t6]']) #comparacion de xd[5-4] > xd[2]
+quadruples.append(['gotof', '[t6]', None,'48']) #ir a quadruplo 48
+
+quadruples.append(['ver', '3.0', None, 'xd']) #verificar que 2 exista en xd
+quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+quadruples.append(['=', '420.0', None, 'xd']) #xd[3] = 420
 
 
 quadruples.append(['end',None,None,None]) #finish
@@ -433,95 +449,326 @@ def f_goto():
 
 def f_equality():
 
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
 
 	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value is memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue is secondValue
+
 	printMemories()
 
 def f_and():
 
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
 
 	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value and memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue and secondValue
+
 	printMemories()
 
 def f_or():
 
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
 
 	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value or memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue or secondValue
+
 	printMemories()
 
 def f_not():
@@ -540,36 +787,18 @@ def f_not():
 
 def f_greater():
 
-	firstPositionMemories = len(memories) - 1
-	secondPositionMemories = len(memories) - 1
-	thirdPositionMemories = len(memories) - 1
+	global arrayIndexTemporal
 
-	if(isTemporal(quadruples[counter][1])):
-		firstKey ="temporals"
-	else:
-		firstKey ="variables"
-		if(not isLocal(quadruples[counter][1])):
-			firstPositionMemories = 0
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
 
-	if(isTemporal(quadruples[counter][2])):
-		secondKey ="temporals"
-	else:
-		secondKey ="variables"
-		if(not isLocal(quadruples[counter][2])):
-			secondPositionMemories = 0
-
-	if(isTemporal(quadruples[counter][3])):
-		thirdKey ="temporals"
-	else:
-		thirdKey ="variables"
-		if(not isLocal(quadruples[counter][3])):
-			thirdPositionMemories = 0
-
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value > memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
-	printMemories()
-
-def f_lesser():
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
 
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
@@ -577,185 +806,740 @@ def f_lesser():
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
 
-	if(isTemporal(quadruples[counter][3])):
-		thirdKey ="temporals"
-	else:
-		thirdKey ="variables"
-		if(not isLocal(quadruples[counter][3])):
-			thirdPositionMemories = 0
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value < memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
-	printMemories()
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
 
-def f_plus():
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
 
-	firstPositionMemories = len(memories) - 1
-	secondPositionMemories = len(memories) - 1
-	thirdPositionMemories = len(memories) - 1
-
-	if(isTemporal(quadruples[counter][1])):
-		firstKey ="temporals"
-	else:
-		firstKey ="variables"
-		if(not isLocal(quadruples[counter][1])):
-			firstPositionMemories = 0
-
-	if(isTemporal(quadruples[counter][2])):
-		secondKey ="temporals"
-	else:
-		secondKey ="variables"
-		if(not isLocal(quadruples[counter][2])):
-			secondPositionMemories = 0
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 
 
 	if(isTemporal(quadruples[counter][3])):
 		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue > secondValue
+
+	printMemories()
+
+def f_lesser():
+
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
+	firstPositionMemories = len(memories) - 1
+	secondPositionMemories = len(memories) - 1
+	thirdPositionMemories = len(memories) - 1
+
+	if(isTemporal(quadruples[counter][1])):
+		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+	else:
+		firstKey ="variables"
+		if(not isLocal(quadruples[counter][1])):
+			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+
+	if(isTemporal(quadruples[counter][2])):
+		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	else:
+		secondKey ="variables"
+		if(not isLocal(quadruples[counter][2])):
+			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
+
+	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
+		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
+	else:
+		thirdKey ="variables"
+		if(not isLocal(quadruples[counter][3])):
+			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
+
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue < secondValue
+
+	printMemories()
+
+
+def f_plus():
+
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
+	firstPositionMemories = len(memories) - 1
+	secondPositionMemories = len(memories) - 1
+	thirdPositionMemories = len(memories) - 1
+
+	if(isTemporal(quadruples[counter][1])):
+		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+	else:
+		firstKey ="variables"
+		if(not isLocal(quadruples[counter][1])):
+			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+
+	if(isTemporal(quadruples[counter][2])):
+		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	else:
+		secondKey ="variables"
+		if(not isLocal(quadruples[counter][2])):
+			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
+
+	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
+		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
+	else:
+		thirdKey ="variables"
+		if(not isLocal(quadruples[counter][3])):
+			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
+
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue + secondValue
+
 	printMemories()
 	
 def f_minus():
 
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
 
 	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value - memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
-	print("Restamos la " + quadruples[counter][1] + " en memoria " + str(firstPositionMemories + 1) + " con la variable " + quadruples[counter][2] + " en memoria " + str(thirdPositionMemories + 1))
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value - memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue - secondValue
+
 	printMemories()
 
 def f_multiplication():
 
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
 
 	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value * memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue * secondValue
+
 	printMemories()
 
 def f_division():
 	
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
 
 	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value / memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue / secondValue
+
 	printMemories()
 
 def f_modulus():
 	
+	global arrayIndexTemporal
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+	secondValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	secondOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
 	secondPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
 	if(isTemporal(quadruples[counter][2])):
 		secondKey ="temporals"
+		secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	else:
 		secondKey ="variables"
 		if(not isLocal(quadruples[counter][2])):
 			secondPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[secondPositionMemories][secondKey][quadruples[counter][2]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#
+			contadorTemporal = 0
+			for key in memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[secondPositionMemories][secondKey][quadruples[counter][2]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN 
+
+			#vamos a necesitar el offsetValue para firstValue
+			secondOffset = offsetCalculator(arrayIndexTemporal)
+
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value[secondOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			secondValue = memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+
 
 	if(isTemporal(quadruples[counter][3])):
+		#si el tercero es temporal (en una suma no deberia serlo)
 		thirdKey ="temporals"
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+		#sin importar lo que pase igual vamos a recibir el objeto expression
+		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value % memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	thirdVariable.value = firstValue % secondValue
+
 	printMemories()
 
 def f_assign():
@@ -790,7 +1574,7 @@ def f_assign():
 			contadorTemporal = 0
 			for key, variable in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
 				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
-				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
 				contadorTemporal += 1
 			
 			#FIN TEMPORALES
@@ -915,6 +1699,7 @@ def offsetCalculator(myArrayIndexes):
 	print(total)
 
 	return total
+
 
 
 #funcion para revisar si una variable esta en memoria local o global
