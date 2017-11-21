@@ -42,6 +42,12 @@ counterParams = list()
 #y tambien necesitamos una pila que memorize la llave de los blocks que se llaman
 keyParams = list()
 
+#Pila para listas de iteradores
+listasIterador = list()
+
+#counterListasIterador
+#counterListasIterador = list()
+
 #creamos un diccionario con funciones
 funDict = {}
 
@@ -73,59 +79,61 @@ memories.append(memGlobal)
 
 #ejemplo de cuadruplo generado (Fibonacci)
 
-# quadruples.append(['goto', None, None, '17']) #voy al main
+quadruples.append(['goto', None, None, '17']) #voy al main
 
-# quadruples.append(['<', 'a', '2.0', '[t1]']) #empieza condicion if
-# quadruples.append(['gotof', '[t1]',  None, '5']) 
-# quadruples.append(['return', 'a',  None, None]) #return
-# quadruples.append(['goto', None,  None, '17']) 
-# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
-# quadruples.append(['-', 'a', '1.0','[t2]'])
-# quadruples.append(['param', '[t2]', None,'param1'])
-# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-# quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
-# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
-# quadruples.append(['-', 'a', '2.0','[t4]'])
-# quadruples.append(['param', '[t4]', None,'param1'])
-# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-# quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
-# quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
-# quadruples.append(['return', '[t6]', None,None]) #return
+quadruples.append(['<', 'a', '2.0', '[t1]']) #empieza condicion if
+quadruples.append(['gotof', '[t1]',  None, '5']) 
+quadruples.append(['return', 'a',  None, None]) #return
+quadruples.append(['goto', None,  None, '17']) 
+quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
+quadruples.append(['-', 'a', '1.0','[t2]'])
+quadruples.append(['param', '[t2]', None,'param1'])
+quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
+quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
+quadruples.append(['-', 'a', '2.0','[t4]'])
+quadruples.append(['param', '[t4]', None,'param1'])
+quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
+quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
+quadruples.append(['return', '[t6]', None,None]) #return
 
-# quadruples.append(['era', '[main]', None, None]) #enter the main
-# quadruples.append(['=', '7.0',  None, 'a'])
-# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
-# quadruples.append(['param', 'a', None,'param1'])
-# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-# quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
-# quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
-# quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
-# #quadruples.append(['ver', '[t2]', '1', '2']) 
+quadruples.append(['era', '[main]', None, None]) #enter the main
+quadruples.append(['=', '7.0',  None, 'a'])
+quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
+quadruples.append(['param', 'a', None,'param1'])
+quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
+quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
+quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
+quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd
+quadruples.append(['=', 'a', None, 'xd']) #xd[5-4] = a
+quadruples.append(['end',None,None,None]) #finish
 
 
 #ejemplo de cuadruplo generado (AreaPerimeter)
 
-quadruples.append(['era', '[main]', None, None])
-quadruples.append(['=', '3.0', None, 'width'])
-quadruples.append(['=', '4.0', None, 'height'])
-quadruples.append(['era', 'area', None, None])
-quadruples.append(['param', 'width', None, None])
-quadruples.append(['param', 'height', None, None])
-quadruples.append(['gosub', 'area', None,'19'])
-quadruples.append(['=', 'area', None,'[t1]'])
-quadruples.append(['=', '[t1]', None,'myArea'])
-quadruples.append(['era', 'perimeter', None, None])
-quadruples.append(['param', '3.0', None, None])
-quadruples.append(['param', 'height', None, None])
-quadruples.append(['gosub', 'perimeter', None,'16'])
-quadruples.append(['=', 'perimeter', None,'[t2]'])
-quadruples.append(['=', '[t2]', None,'myPerimeter'])
-quadruples.append(['end', None, None, None])
-quadruples.append(['+', 'h', 'w', '[t1]'])
-quadruples.append(['*', '2.0', '[t1]', '[t2]'])
-quadruples.append(['return', '[t2]', None, None])
-quadruples.append(['*', 'h', 'w', '[t1]'])
-quadruples.append(['return', '[t1]', None, None])
+# quadruples.append(['era', '[main]', None, None])
+# quadruples.append(['=', '3.0', None, 'width'])
+# quadruples.append(['=', '4.0', None, 'height'])
+# quadruples.append(['era', 'area', None, None])
+# quadruples.append(['param', 'width', None, None])
+# quadruples.append(['param', 'height', None, None])
+# quadruples.append(['gosub', 'area', None,'19'])
+# quadruples.append(['=', 'area', None,'[t1]'])
+# quadruples.append(['=', '[t1]', None,'myArea'])
+# quadruples.append(['era', 'perimeter', None, None])
+# quadruples.append(['param', '3.0', None, None])
+# quadruples.append(['param', 'height', None, None])
+# quadruples.append(['gosub', 'perimeter', None,'16'])
+# quadruples.append(['=', 'perimeter', None,'[t2]'])
+# quadruples.append(['=', '[t2]', None,'myPerimeter'])
+# quadruples.append(['end', None, None, None])
+# quadruples.append(['+', 'h', 'w', '[t1]'])
+# quadruples.append(['*', '2.0', '[t1]', '[t2]'])
+# quadruples.append(['return', '[t2]', None, None])
+# quadruples.append(['*', 'h', 'w', '[t1]'])
+# quadruples.append(['return', '[t1]', None, None])
 
 
 
@@ -153,7 +161,14 @@ def f_display():
 
 
 def f_ver():
-	firstPositionMemories = 1
+	#formato cuadruplo 
+	#['ver', 'r' (num iterador), None,'t'(key arreglo)]
+
+	global listasIterador
+	
+	#revisar si el numero 'r' entra en el iterador 
+
+	
 
 
 def f_era():
@@ -332,6 +347,37 @@ def f_goto():
 	counter = int([quadruples[counter][3]][0])
 	counterGo = False
 	print("Se saltara al cuadruplo " + str(counter))
+
+def f_equality():
+
+	firstPositionMemories = len(memories) - 1
+	secondPositionMemories = len(memories) - 1
+	thirdPositionMemories = len(memories) - 1
+
+	if(isTemporal(quadruples[counter][1])):
+		firstKey ="temporals"
+	else:
+		firstKey ="variables"
+		if(not isLocal(quadruples[counter][1])):
+			firstPositionMemories = 0
+
+	if(isTemporal(quadruples[counter][2])):
+		secondKey ="temporals"
+	else:
+		secondKey ="variables"
+		if(not isLocal(quadruples[counter][2])):
+			secondPositionMemories = 0
+
+	if(isTemporal(quadruples[counter][3])):
+		thirdKey ="temporals"
+	else:
+		thirdKey ="variables"
+		if(not isLocal(quadruples[counter][3])):
+			thirdPositionMemories = 0
+
+	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
+	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value is memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
+	printMemories()
 
 def f_and():
 
@@ -631,8 +677,16 @@ def f_modulus():
 
 def f_assign():
 
+	listasIteradorPosition = len(listasIterador) - 1
+
+
 	firstPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
+
+	#Variables que se guardan, si recibo una matriz o no
+	firstVariableObj = None
+	secondVariableObj = None
+	thirdVariableObj = None
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
@@ -641,23 +695,26 @@ def f_assign():
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
 
+	#revisar si el valor 1 del quadruplo es arreglo/matriz
+	#aqui empieza el infierno de ifs
+	if isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]]) :
+		print(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier)
+		if()
+		
+
 	if(isTemporal(quadruples[counter][3])):
 		thirdKey ="temporals"
-		if quadruples[counter][3] in memories[thirdPositionMemories][thirdKey]:
-			print("ok cuck")
-		else:
-			print("AAAA")
+		if not quadruples[counter][3] in memories[thirdPositionMemories][thirdKey]:
 			memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(None,memories[firstPositionMemories][firstKey][quadruples[counter][1]].type,quadruples[counter][3])
 
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
-			
-
-	print(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value)
-	print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]])
-	print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]])
+	
+	#revisar si el valor 3 del quadruplo es arreglo/matriz
+	if isArray(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]) :
+		print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].identifier)
 
 	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	printMemories()
@@ -671,6 +728,7 @@ options = { #expresiones
 		   '/': f_division,
 		   '%' : f_modulus,
 		   '=': f_assign,
+		   '==': f_equality,
 		   '>': f_greater,
 		   '<': f_lesser,
 		   'and': f_and,
@@ -717,6 +775,12 @@ def isConstant(expresion):
 	else:
 		return True
 
+def isArray(expresionItem):
+	if(expresionItem.type == "manynumbers"):
+		print("aaa.. " + expresionItem.identifier + " es un arreglo")
+		return True
+	else:
+		return False
 
 def printMemories():
 
