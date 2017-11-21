@@ -45,8 +45,8 @@ keyParams = list()
 #Pila para listas de iteradores
 listasIterador = list()
 
-#counterListasIterador
-#counterListasIterador = list()
+#counterVerifyIterador
+counterVerifyIterador = 0
 
 #creamos un diccionario con funciones
 funDict = {}
@@ -107,6 +107,7 @@ quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
 quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
 quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
 quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd
+quadruples.append(['endver', None, None, None]) #verificacion acaba
 quadruples.append(['=', 'a', None, 'xd']) #xd[5-4] = a
 quadruples.append(['end',None,None,None]) #finish
 
@@ -164,12 +165,51 @@ def f_ver():
 	#formato cuadruplo 
 	#['ver', 'r' (num iterador), None,'t'(key arreglo)]
 
-	global listasIterador
-	
-	#revisar si el numero 'r' entra en el iterador 
+#primero creamos parametros para detectar donde esta la key del arreglo
+	firstPositionMemories = len(memories) - 1
+	thirdPositionMemories = len(memories) - 1
 
-	
+	if(isTemporal(quadruples[counter][1])):
+		firstKey ="temporals"
+	else:
+		firstKey ="variables"
+		if(not isLocal(quadruples[counter][1])):
+			firstPositionMemories = 0
 
+
+	if(isTemporal(quadruples[counter][3])):
+		thirdKey ="temporals"
+	else:
+		thirdKey ="variables"
+		if(not isLocal(quadruples[counter][3])):
+			thirdPositionMemories = 0
+
+	#Aqui se encuentran los arrayIndexes de nuestra memoria 
+	#memories[PositionMemories][thirdKey][quadruples[counter][1]].options['arrayIndexes']
+
+	#necesitaremos un contador global , el cual se hara 0 en endver
+	global counterVerifyIterador
+	#print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador])
+
+
+	#comparar numero de arrayIndex[counter] con r(num iterador)
+	if (int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) > 0 and int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) <= memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value):
+		print ("good")
+	else:
+		print("IIIIN THE AAAAAARMS")
+	
+	#SUMAR contador de verify
+	counterVerifyIterador += 1
+
+
+def f_endver():
+	#formato cuadruplo 
+	#['ver', None, None,None]
+
+	#el contador global se hara 0 aqui 
+	global counterVerifyIterador
+	counterVerifyIterador = 0
+	
 
 def f_era():
 	global newMems
@@ -677,16 +717,8 @@ def f_modulus():
 
 def f_assign():
 
-	listasIteradorPosition = len(listasIterador) - 1
-
-
 	firstPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
-
-	#Variables que se guardan, si recibo una matriz o no
-	firstVariableObj = None
-	secondVariableObj = None
-	thirdVariableObj = None
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
@@ -695,12 +727,6 @@ def f_assign():
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
 
-	#revisar si el valor 1 del quadruplo es arreglo/matriz
-	#aqui empieza el infierno de ifs
-	if isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]]) :
-		print(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier)
-		if()
-		
 
 	if(isTemporal(quadruples[counter][3])):
 		thirdKey ="temporals"
@@ -712,9 +738,6 @@ def f_assign():
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
 	
-	#revisar si el valor 3 del quadruplo es arreglo/matriz
-	if isArray(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]) :
-		print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].identifier)
 
 	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	printMemories()
@@ -745,6 +768,7 @@ options = { #expresiones
 		   'return' : f_return,
 		   #verificacion de arreglo/matriz
 		   'ver' : f_ver,
+		   'endver' : f_endver,
 		   #si acaba el programa
 		   'end' : f_end
 }

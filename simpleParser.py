@@ -468,8 +468,37 @@ def checkSemantics(programNode):
                 errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))
     return errors
 
-f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
-data = f.read()
+#f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
+#data = f.read()
+
+data = '''
+program
+  
+ blocks
+    define number fibonacci(number a)
+        if (a < 2)
+            return a;
+        else
+            return fibonacci(a - 1) + fibonacci(a - 2);
+        endif
+    enddefine
+ endblocks
+
+
+ start
+   variables
+        manynumbers xd[4];
+        number a = 7;
+   endvariables
+
+   a = fibonacci(a);
+   xd[5-4] = a;
+   xd[2] = 2;
+   a = xd[5-4] + xd[2];  
+
+ finish
+ endprogram
+'''
 
 result = yacc.parse(data)
 result.createVariableReferences()
