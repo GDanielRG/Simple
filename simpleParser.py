@@ -487,14 +487,14 @@ program
 
  start
    variables
-        manynumbers xd[4];
+        manynumbers xd[2];
         number a = 7;
    endvariables
 
    a = fibonacci(a);
-   xd[5-4] = a;
+   xd[5-5] = a;
    xd[2] = 2;
-   a = xd[5-4] + xd[2];  
+   a = xd[5-5] + xd[2];  
 
  finish
  endprogram

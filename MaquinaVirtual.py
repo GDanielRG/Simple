@@ -105,7 +105,7 @@ quadruples.append(['param', 'a', None,'param1'])
 quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
 quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
 quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
-quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
+quadruples.append(['-', '5.0', '5.0','[t2]']) #expresion de xd[5-4]
 quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd
 quadruples.append(['endver', None, None, None]) #verificacion acaba
 quadruples.append(['=', 'a', None, 'xd']) #xd[5-4] = a
@@ -190,7 +190,7 @@ def f_ver():
 	#necesitaremos un contador global , el cual se hara 0 en endver
 	global counterVerifyIterador
 	#print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador])
-
+	print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value)
 
 	#comparar numero de arrayIndex[counter] con r(num iterador)
 	if (int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) > 0 and int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) <= memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value):
