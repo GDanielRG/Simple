@@ -26,7 +26,7 @@ program
     endif
 
     while(b < 6)
-        display("xd [",b,"] es: ",xd[b]);
+        display("xp [",b,"] es: ",xd[b]);
         b = b + 1;
     endwhile
 

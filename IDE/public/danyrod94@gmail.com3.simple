@@ -9,7 +9,7 @@ endvariables
 blocks
 
 	define number perimeter(number h, number w)
-		return 2 * (h+w);
+		return 2 * (h+w) /0 ;
 	enddefine
 
 	define number area(number h, number w)

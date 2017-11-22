@@ -61,11 +61,11 @@ class FilesController extends Controller
     public function compile(File $file, Request $request)
     {   
         \Log::info($file);
-        $fileName = \Auth::user()->email . $file->id;
+        $fileName = \Auth::user()->email . $file->id . '.simple';
         Filee::put($fileName, $request->get('code'));      
         $file->code = $request->get('code');
         $file->save();
-        $process = new Process('python /Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/simpleParser.py ' . $fileName);
+        $process = new Process('python /Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/MaquinaVirtual.py ' . $fileName);
         $process->run();        
         // executes after the command finishes
         if (!$process->isSuccessful()) {

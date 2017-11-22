@@ -136,11 +136,6 @@ class Program():
         if(self.blocks):
             for key, block in self.blocks.items():
                 block.firstQuadruple = len(quadruples)
-                counterQuadruple = 0
-                for quadruple in quadruples:
-                    print(str(quadruple) + " " +str(counterQuadruple))
-                    counterQuadruple += 1
-                print('MEMEEEEEE ' + str(block.firstQuadruple))
                 for statement in block.statements:
                     statement.buildQuadruples()
 
@@ -217,9 +212,6 @@ class Expression():
                 if(item.type == 'variable'):
                     if(isArray(item.value.type)):
                         #  if(self.options['variable'].value.type == 'manynumbers'):
-                        print('here')
-                        for e in item.options['arrayIndexes']:
-                            e.items[0].value.print()
                         if('arrayIndexes' in item.options):
                             for expression in item.options['arrayIndexes']:
                                 expression.buildQuadruples()   

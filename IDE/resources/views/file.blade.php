@@ -11,10 +11,15 @@
                 <div class="panel-body">
                     <textarea id="code" class="codemirror-textarea">{{$file->code}}</textarea>
                     <br>
-                    <button type="button" onclick="compile()" class="btn btn-info">Compile</button>
-                    <button type="button" onclick="compileRun()" class="btn btn-primary">Compile and run</button>
-                    <button type="button" onclick="save()" class="btn btn-success">Save</button>
+                    <button type="button" onclick="compile()" class="btn btn-info">Run</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <p id="output"></p>
             </div>
         </div>
     </div>
@@ -39,7 +44,7 @@
                 data: {code: editor.getValue()},
                 success: function(response){ // What to do if we succeed
                     toggleVideo('paused')
-                    alert(response)
+                    $('#output').text(response)
                 },
                 error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                     document.getElementById('video-iframe').contentWindow.postMessage('{"event":"command","func":"setPlaybackRate","args":[' + rate + ', true]}', '*');

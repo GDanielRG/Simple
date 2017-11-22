@@ -21,10 +21,10 @@ errorS = ""
 
 #creamos el quadruplo principal
 quadruples = simpleParser.quadruples
-counterQuadruple = 0
-for quadruple in quadruples:
-	print(str(quadruple) + " " +str(counterQuadruple))
-	counterQuadruple += 1
+# counterQuadruple = 0
+# for quadruple in quadruples:
+# 	print(str(quadruple) + " " +str(counterQuadruple))
+# 	counterQuadruple += 1
 	
 
 #Creación de contador (apuntador) para cuadruplos
@@ -247,18 +247,18 @@ def f_display():
 			#si no es array, sacamos el valor directamente
 			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 
-	print("firstValue es " + str(firstValue))
+	# print("firstValue es " + str(firstValue))
 	stringTemp = ""
 	#si es un string
 	stringTemp = str(firstValue)
 
 	if(isinstance(firstValue,str)):
 		if(str(firstValue[0]) is '"'):
-			print("mememe")
+			# print("mememe")
 			stringTemp = str(firstValue.replace('"',""))
 
 	temporalResultContainer += stringTemp
-	print(temporalResultContainer)
+	# print(temporalResultContainer)
 	
 def f_enddisplay():
 	
@@ -267,7 +267,7 @@ def f_enddisplay():
 
 	myResults.append(temporalResultContainer)
 	temporalResultContainer = ""
-	print(myResults)
+	# print(myResults)
 
 def f_ver():
 	#formato cuadruplo 
@@ -302,7 +302,7 @@ def f_ver():
 	#necesitaremos un contador global , el cual se hara 0 en endver
 	global counterVerifyIterador
 	#print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador])
-	print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value)
+	# print(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value)
 
  	#insertamos el iterador a la lista de iteradores actual
 	ListaIterador.append(int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value)-1)
@@ -310,9 +310,9 @@ def f_ver():
 
 	#comparar numero de arrayIndex[counter] con r(num iterador)
 	if (int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) > 0 and int(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) <= memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].options['arrayIndexes'][counterVerifyIterador].items[0].value.value):
-		print ("good")
+		trace = 1
 	else:
-		print("IIIIN THE AAAAAARMS")
+		# print("IIIIN THE AAAAAARMS")
 		#ver si no es una constante
 		ts = ""
 		if(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value is not quadruples[counter][1]):
@@ -336,7 +336,7 @@ def f_endver():
 
 	#hay que vaciar ListaIterador despues de guardarla en FilaListasIterador
 	FilaListasIterador.append(ListaIterador)
-	print(ListaIterador)
+	# print(ListaIterador)
 	ListaIterador = list()
 
 	#el contador global se hara 0 aqui 
@@ -404,7 +404,7 @@ def f_param():
 
 	block = result.blocks[keyParams[keyParamPosition]]
 	key = block.parameters[counterParams[counterParamPosition]].identifier
-	print(key)
+	# print(key)
 
 	#necesitamos saber si la expresion sale de una temporal o local
 	if(isTemporal(quadruples[counter][1])):
@@ -414,13 +414,13 @@ def f_param():
 		if(not isLocal(quadruples[counter][1])):
 			positionMemories = 0	
 
-	print(counterParams)
-	print(counterParams[counterParamPosition])
-	print("En param, se la asignara el valor " + str(memories[positionMemories][firstKey][quadruples[counter][1]].value) + " de " + memories[positionMemories][firstKey][quadruples[counter][1]].identifier + "(en memoria " + str(positionMemories + 1) + ")" + " a " + newMems[newMemsPosition]['variables'][key].identifier)
+	# print(counterParams)
+	# print(counterParams[counterParamPosition])
+	# print("En param, se la asignara el valor " + str(memories[positionMemories][firstKey][quadruples[counter][1]].value) + " de " + memories[positionMemories][firstKey][quadruples[counter][1]].identifier + "(en memoria " + str(positionMemories + 1) + ")" + " a " + newMems[newMemsPosition]['variables'][key].identifier)
 	#despues necesitamos asignar la expresion que recibimos a la memoria
-	print(memories[positionMemories][firstKey])
+	# print(memories[positionMemories][firstKey])
 	newMems[newMemsPosition]['variables'][key].value = memories[positionMemories][firstKey][quadruples[counter][1]].value
-	printMemories()
+	# printMemories()
 	#le sumamos uno al ultimo contador de la pila
 	counterParams[counterParamPosition] += 1
 
@@ -437,15 +437,15 @@ def f_gosub():
 	callPSaltos.append(counter)
 
 	#metemos la ultima memoria local que creamos a la pila de memorias
-	print(newMems)
+	# print(newMems)
 	memories.append(newMems.pop())
-	print(newMems)
+	# print(newMems)
 
 	
 	counter = result.blocks[quadruples[counter][1]].firstQuadruple
 	counterGo = False
 
-	print("Saltamos al cuadruplo " + str(counter))
+	# print("Saltamos al cuadruplo " + str(counter))
 
 
 def f_return():
@@ -498,7 +498,7 @@ def f_gotof():
 	if not (memories[positionMemories][firstKey][quadruples[counter][1]].value):
 		counter = int([quadruples[counter][3]][0])
 		counterGo = False
-		print("Fallo la condicion y se saltara al cuadruplo " + str(counter))
+		# print("Fallo la condicion y se saltara al cuadruplo " + str(counter))
 
 
 def f_gotov():
@@ -517,7 +517,7 @@ def f_gotov():
 	if (memories[positionMemories][firstKey][quadruples[counter][1]].value):
 		counter = int([quadruples[counter][3]][0])
 		counterGo = False
-		print("la condicion fue un exito y se saltara al cuadruplo " + str(counter))
+		# print("la condicion fue un exito y se saltara al cuadruplo " + str(counter))
 
 def f_goto():
 	global counterGo
@@ -526,7 +526,7 @@ def f_goto():
 
 	counter = int([quadruples[counter][3]][0])
 	counterGo = False
-	print("Se saltara al cuadruplo " + str(counter))
+	# print("Se saltara al cuadruplo " + str(counter))
 
 def f_equality():
 
@@ -650,7 +650,7 @@ def f_equality():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue is secondValue
 
-	printMemories()
+	# printMemories()
 
 def f_and():
 
@@ -774,7 +774,7 @@ def f_and():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue and secondValue
 
-	printMemories()
+	# printMemories()
 
 def f_or():
 
@@ -898,7 +898,7 @@ def f_or():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue or secondValue
 
-	printMemories()
+	# printMemories()
 
 def f_not():
 
@@ -936,7 +936,7 @@ def f_not():
 	else:
 		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is not compatible with operator not."
 
-	printMemories()
+	# printMemories()
 
 def f_greater():
 
@@ -1061,7 +1061,7 @@ def f_greater():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue > secondValue
 
-	printMemories()
+	# printMemories()
 
 def f_lesser():
 
@@ -1185,7 +1185,7 @@ def f_lesser():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue < secondValue
 
-	printMemories()
+	# printMemories()
 
 
 def f_plus():
@@ -1310,7 +1310,7 @@ def f_plus():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue + secondValue
 
-	printMemories()
+	# printMemories()
 	
 def f_minus():
 
@@ -1434,7 +1434,7 @@ def f_minus():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value - memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue - secondValue
 
-	printMemories()
+	# printMemories()
 
 def f_multiplication():
 
@@ -1559,7 +1559,7 @@ def f_multiplication():
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue * secondValue
 
-	printMemories()
+	# printMemories()
 
 def f_division():
 	
@@ -1696,7 +1696,7 @@ def f_division():
 		errorS = "Halting division by Zero! (" + quadruples[counter][1] +  tsOne + "/" + quadruples[counter][2] + tsTwo + ")"
 		giveUp = True
 
-	printMemories()
+	# printMemories()
 
 def f_modulus():
 	
@@ -1832,7 +1832,7 @@ def f_modulus():
 		errorS = "Halting division by Zero! (" + quadruples[counter][1] +  tsOne + "%" + quadruples[counter][2] + tsTwo + ")"
 		giveUp = True
 
-	printMemories()
+	# printMemories()
 
 def f_assign():
 
@@ -1909,7 +1909,7 @@ def f_assign():
 				contadorTemporal += 1
 			
 			#FIN TEMPORALES
-			print(arrayIndexTemporal)
+			# print(arrayIndexTemporal)
 			#vamos a necesitar el offsetValue para thirdVariable[thirdoffset]
 			thirdOffset = offsetCalculator(arrayIndexTemporal)
 			#vaciar arrayIndexTemporal
@@ -1938,10 +1938,10 @@ def f_assign():
 	if thirdOffset is None:
 		thirdVariable.value = firstValue
 	else:
-		print(thirdVariable.value)
+		# print(thirdVariable.value)
 		thirdVariable.value[thirdOffset] = firstValue
 
-	printMemories()
+	# printMemories()
 
 
 
@@ -2005,8 +2005,8 @@ def offsetCalculator(myArrayIndexes):
 		i += 1 
 
 	#FilaListasIterador
-	print("aaaaaa")
-	print(total)
+	# print("aaaaaa")
+	# print(total)
 
 	return total
 
@@ -2015,12 +2015,12 @@ def offsetCalculator(myArrayIndexes):
 #funcion para revisar si una variable esta en memoria local o global
 def isLocal(expression):
 	if(expression in memories[len(memories)-1]['variables']):
-		print(str(expression) + " esta en memoria local")
+		# print(str(expression) + " esta en memoria local")
 		return True
 	if(expression in memories[0]['variables']):
-		print(str(expression) + " esta en memoria global")
+		# print(str(expression) + " esta en memoria global")
 		return False
-	print("expression " +  str(expression) + " not found in memory, help!")
+	# print("expression " +  str(expression) + " not found in memory, help!")
 	return False
 
 
@@ -2033,14 +2033,14 @@ def isTemporal(expression):
 #necesitamos un check especial para constantes
 def isConstant(expresion):
 	if(expresion.find('.') != -1):
-		print("expresion no es constante")
+		# print("expresion no es constante")
 		return False
 	else:
 		return True
 
 def isArray(expresionItem):
 	if(expresionItem.type == "manynumbers"):
-		print("aaa.. " + expresionItem.identifier + " es un arreglo")
+		# print("aaa.. " + expresionItem.identifier + " es un arreglo")
 		return True
 	else:
 		return False
@@ -2074,8 +2074,8 @@ def printMemories():
 while counter < len(quadruples):
 	if(not giveUp):
 		counterGo = True
-		print("-------------")
-		print(quadruples[counter])
+		# print("-------------")
+		# print(quadruples[counter])
 		options[quadruples[counter][0]]()
 		if(counterGo):
 			counter = counter + 1
