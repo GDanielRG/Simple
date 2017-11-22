@@ -1,28 +1,40 @@
 program
-    variables
-        number c = 2;
-        number b = 3 + c * c + 4;
-    endvariables
-  
- blocks
-    define number fibonacci(number a)
-        if (a < 2)
-            return a == b[5];
-        else
-            return fibonacci(a - 1) + fibonacci(a - 2);
-        endif
-    enddefine
-    
- endblocks
 
 
- start
-   variables
-        manynumbers xd[4];
-        number a = 5;
-   endvariables
+variables
+	number width, height;
+endvariables
 
-   a = fibonacci(a);
-   xd[5-4] = a;
- finish
- endprogram
+
+blocks
+
+	define number perimeter(number h, number w)
+		return 2 * (h+w);
+	enddefine
+
+	define number area(number h, number w)
+		return ;
+	enddefine
+
+endblocks
+
+
+start
+
+	variables
+		number myPerimeter;
+		number myArea;
+	endvariables
+
+	width = 3;
+	height = 4;
+
+	myArea = area(width,height);
+	myPerimeter = perimeter(3,height);
+
+
+
+finish
+
+
+endprogram

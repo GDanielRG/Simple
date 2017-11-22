@@ -21,7 +21,11 @@ errorS = ""
 
 #creamos el quadruplo principal
 quadruples = simpleParser.quadruples
-print(quadruples)
+for quadruple in quadruples:
+	print(quadruple)
+for key, block in result.blocks.items():
+	print('Nuevo meme: ' + str(block.firstQuadruple))
+	
 
 #Creación de contador (apuntador) para cuadruplos
 counter = 0

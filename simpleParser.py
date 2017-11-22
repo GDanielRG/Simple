@@ -262,11 +262,19 @@ def p_emptyStatementList(p):
 def p_statement(p):
     '''statement : assign SEMICOLON 
                    | display SEMICOLON                 
-                   | call SEMICOLON 
+                   | statementCall SEMICOLON 
                    | return  empty 
                    | ifStatement empty 
                    | whileStatement empty''' 
     p[0] = p[1]
+
+def p_statementCall(p):
+    'statementCall : IDENTIFIER OPARENTHESIS actuals CPARENTHESIS'
+    p[0] = ParseTree.Statement(p.lineno(1), 'call', None, None, {'parameters': p[3], 'identifier': p[1]})    
+
+def p_emptyStatementCall(p):
+    'statementCall : IDENTIFIER OPARENTHESIS  CPARENTHESIS'
+    p[0] = [ParseTree.ExpressionItem(p.lineno(1), 'call', p[1], {'parameters': list()})]
 
 def p_display(p):
     'display : DISPLAY OPARENTHESIS actuals CPARENTHESIS'
@@ -336,6 +344,7 @@ def p_return(p):
 
 def p_emptyReturn(p):
     'return : RETURN SEMICOLON'
+    p[0] = ParseTree.Statement(p.lineno(1), 'return', None, None, {})
 
 def p_ifStatement(p):
     'ifStatement : IF OPARENTHESIS expression CPARENTHESIS statementPoint elseStatement ENDIF'
@@ -468,61 +477,22 @@ def checkSemantics(programNode):
                 errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))
     return errors
 
-#f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
-#data = f.read()
-
-data = '''
-program
-  
- blocks
-    define number fibonacci(number a)
-        if (a < 2)
-            return a;
-        else
-            return fibonacci(a - 1) + fibonacci(a - 2);
-        endif
-    enddefine
- endblocks
-
-
- start
-   variables
-        manynumbers xd[5];
-        number a = 7, b = 1, c;
-   endvariables
-
-   a = fibonacci(a);
-   xd[5-4] = a;
-   xd[2] = 2;
-   a = xd[5-4] - xd[2];  
-   if(xd[5-4] > xd[2])
-    xd[3] = 420;
-    endif
-
-    while(b < 6)
-        display("xd [",b,"] es: ",xd[b]);
-        b = b + 1;
-    endwhile
-
-    display(a);
-
- finish
- endprogram
-'''
+f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
+data = f.read()
 
 result = yacc.parse(data)
 result.createVariableReferences()
 result.setValuesForVariables()         
+
+result.print()
+print(errors)
 quadruples = result.buildQuadruples()
 errors = errors + checkSemantics(result)
+print(errors)
 
 # print(sys.argv[0]) # prints python_script.py
 # print(sys.argv[1]) # prints var1
     
-# if(errors):
-#     print(errors)
-# else:
-#     result.print()
 
 # number a = 1;
 # number b = 7;
