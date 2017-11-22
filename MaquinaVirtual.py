@@ -70,7 +70,6 @@ funDict = {}
 #ahora recorremos todas las funciones 
 for key, variable in result.blocks.items():
 	funDict[variable.identifier] = ParseTree.Variable(None,variable.type,variable.identifier)
-
 	
 
 #Esta es la memoria de nuestro programa durante ejecución
@@ -442,7 +441,7 @@ def f_gosub():
 	print(newMems)
 
 	
-	counter = int([quadruples[counter][3]][0])
+	counter = result.blocks[quadruples[counter][1]].firstQuadruple
 	counterGo = False
 
 	print("Saltamos al cuadruplo " + str(counter))
