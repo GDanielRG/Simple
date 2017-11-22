@@ -1,4 +1,6 @@
 quadruples = list()
+gotof = list()
+goto = list()
 temporals = 0
 
 def isConstant(string):
@@ -74,28 +76,8 @@ class Program():
                     variable.createVariableReferences(globalVariables, blockVariables, constants, blocks)
         
     def setValuesForVariables(self):
-        for key, variable in self.variables.items():
-            if(variable.expression):
-                if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
-                    variable.value = variable.expression.items[0].value.value
-            if(isArray(variable.type)):
-                size = 1
-                for expression in variable.options['arrayIndexes']:
-                    size *= expression.items[0].value.value
-                variable.value = [None] * int(size)
-        
-        for key, variable in self.main.variables.items():
-            if(variable.expression):
-                if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
-                    variable.value = variable.expression.items[0].value.value
-            if(isArray(variable.type)):
-                size = 1
-                for expression in variable.options['arrayIndexes']:
-                    size *= expression.items[0].value.value
-                variable.value = [None] * int(size)
-        
-        for key, block in self.blocks.items():
-            for key, variable in block.variables.items():
+        if(self.variables):
+            for key, variable in self.variables.items():
                 if(variable.expression):
                     if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
                         variable.value = variable.expression.items[0].value.value
@@ -105,29 +87,57 @@ class Program():
                         size *= expression.items[0].value.value
                     variable.value = [None] * int(size)
 
+        if(self.main.variables):        
+            for key, variable in self.main.variables.items():
+                if(variable.expression):
+                    if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
+                        variable.value = variable.expression.items[0].value.value
+                if(isArray(variable.type)):
+                    size = 1
+                    for expression in variable.options['arrayIndexes']:
+                        size *= expression.items[0].value.value
+                    variable.value = [None] * int(size)
+        
+        if(self.blocks):
+            for key, block in self.blocks.items():
+                for key, variable in block.variables.items():
+                    if(variable.expression):
+                        if(len(variable.expression.items) == 1 and isConstant(variable.expression.items[0].type)):
+                            variable.value = variable.expression.items[0].value.value
+                    if(isArray(variable.type)):
+                        size = 1
+                        for expression in variable.options['arrayIndexes']:
+                            size *= expression.items[0].value.value
+                        variable.value = [None] * int(size)
+
     def buildQuadruples(self):
-        for key, variable in self.variables.items():
-            if(variable.expression):
-                variable.expression.buildQuadruples()
-                t = '[t'+ str(temporals) + ']'
-                quadruples.append(['=', t, None, variable.identifier])
+        if(self.variables):
+            for key, variable in self.variables.items():
+                if(variable.expression):
+                    variable.expression.buildQuadruples()
+                    t = '[t'+ str(temporals) + ']'
+                    quadruples.append(['=', t, None, variable.identifier])
         
         quadruples.append(['era', '[main]', None, None])
-        for key, variable in self.main.variables.items():
-            if(variable.expression):
-                variable.expression.buildQuadruples()
-                t = '[t'+ str(temporals) + ']'
-                quadruples.append(['=', t, None, variable.identifier])
 
-        for statement in self.main.statements:
-            statement.buildQuadruples()
+        if(self.main.variables):
+            for key, variable in self.main.variables.items():
+                if(variable.expression):
+                    variable.expression.buildQuadruples()
+                    t = '[t'+ str(temporals) + ']'
+                    quadruples.append(['=', t, None, variable.identifier])
+
+        if(self.main.statements):
+            for statement in self.main.statements:
+                statement.buildQuadruples()
 
         quadruples.append(['end', None, None, None, None])
 
-        for key, block in self.blocks.items():
-            block.firstQuadruple = len(quadruples)
-            for statement in block.statements:
-                statement.buildQuadruples()
+        if(self.blocks):
+            for key, block in self.blocks.items():
+                block.firstQuadruple = len(quadruples)
+                for statement in block.statements:
+                    statement.buildQuadruples()
 
         
         return quadruples
@@ -247,6 +257,54 @@ class Expression():
                         temporals += 1
                         t = '[t' + str(temporals) + ']'
                         quadruples.append(['*', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == '/'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['/', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == '<'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['<', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == '>'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['>', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == '=='):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['==', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == 'and'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['and', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == 'or'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['or', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == 'not'):
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['not', a, None, t])
                         generalStack.append(t)
                         
                 if(item.type == 'call'):
@@ -385,8 +443,8 @@ class Statement():
             print('\t' + string + 'Identifier: ' + self.options['identifier'])
             
         if(self.options and 'parameters' in self.options and self.options['parameters']):
+            print('\t' + string + 'Parameters:')                
             for expression in self.options['parameters']:
-                print('\t' + string + 'Parameters:')                
                 expression.print(indent + 2)
             
         
@@ -415,7 +473,6 @@ class Statement():
             self.options['else'].createVariableReferences(globalVariables, blockVariables, constants, blocks)
         
         if(self.type == 'call'):
-            print('heyyyyyyyyy')
             block = None
             if(self.options['identifier'] in blocks):
                 block = blocks[self.options['identifier']]
@@ -450,16 +507,16 @@ class Statement():
                 expression.createVariableReferences(globalVariables, blockVariables, constants, blocks)
 
     def buildQuadruples(self):
+
+        global gotof
+        global goto
+
         if(self.type == 'assignment'):
             self.expression.buildQuadruples()
             t = '[t'+ str(temporals) + ']'
             quadruples.append(['=', t, None, self.options['variable'].value.identifier])
         
         if(self.type == 'call'):
-            # self.expression.buildQuadruples()
-            # t = '[t'+ str(temporals) + ']'
-            # quadruples.append(['=', t, None, self.options['variable'].value.identifier])
-
             quadruples.append(['era', self.options['identifier'], None, None])
             counter = 1
             for expression in self.options['parameters']:
@@ -476,11 +533,48 @@ class Statement():
                 quadruples.append(['return', t, None, None])
             else:
                 quadruples.append(['return', None, None, None])
-
-
+       
+        if(self.type == 'if'):
             
-
-
+            if(self.expression):
+                self.expression.buildQuadruples()
+                t = '[t'+ str(temporals) + ']'       
+                gotof.append(len(quadruples))
+                quadruples.append(['gotof', t, None, None])
+            if(self.statements):
+                for statement in self.statements:
+                    statement.buildQuadruples()
+            if(self.options and 'else' in self.options and self.options['else']):
+                goto.append(len(quadruples))                
+                quadruples.append(['goto', t, None, None])
+                quadruples[gotof.pop()][3] = len(quadruples)
+                for statement in self.options['else'].statements:
+                    statement.buildQuadruples()
+                quadruples[goto.pop()][3] = len(quadruples)
+            else:
+                quadruples[gotof.pop()][3] = len(quadruples)
+        
+        if(self.type == 'while'):
+            
+            if(self.expression):
+                goto.append(len(quadruples))
+                self.expression.buildQuadruples()
+                t = '[t'+ str(temporals) + ']'   
+                gotof.append(len(quadruples))                    
+                quadruples.append(['gotof', t, None, None])
+            if(self.statements):
+                for statement in self.statements:
+                    statement.buildQuadruples()
+            quadruples.append(['goto', t, None, goto.pop()])
+            quadruples[gotof.pop()][3] = len(quadruples)
+        
+        if(self.type == 'display'):
+            if(self.options and 'parameters' in self.options and self.options['parameters']):
+                for expression in self.options['parameters']:
+                    expression.buildQuadruples()
+                    t = '[t'+ str(temporals) + ']'
+                    quadruples.append(['display', t, None, None])
+                quadruples.append(['enddisplay', None, None, None])
 
 
         # print(string + self.type + ': ' + self.identifier)

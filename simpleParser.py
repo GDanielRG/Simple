@@ -460,25 +460,28 @@ def checkSemantics(programNode):
     # check for variables with same name as a function
     variables = set()
     errors = list()
-    for key, variable in programNode.variables.items():
-        variables.add(variable.identifier)
-    
-    for key, variable in programNode.main.variables.items():
-        variables.add(variable.identifier)
-    
-    for key, block in programNode.blocks.items():
-        for key, variable in block.variables.items():
+    if(programNode.variables):
+        for key, variable in programNode.variables.items():
             variables.add(variable.identifier)
     
-            
-    for key, block in programNode.blocks.items():
-        for variable in variables:
-            if(variable == block.identifier):
-                errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))
+    if(programNode.main.variables):
+        for key, variable in programNode.main.variables.items():
+            variables.add(variable.identifier)
+
+    if(programNode.blocks):
+        for key, block in programNode.blocks.items():
+            for key, variable in block.variables.items():
+                variables.add(variable.identifier)
+    
+    if(programNode.blocks):
+        for key, block in programNode.blocks.items():
+            for variable in variables:
+                if(variable == block.identifier):
+                    errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))
     return errors
 
-# f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
-f = open("C:\\Users\\Daniel\\Documents\\Projects\\Simple\\IDE\\public\\danyrod94@gmail.com2","r")
+f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
+# f = open("C:\\Users\\Daniel\\Documents\\Projects\\Simple\\IDE\\public\\danyrod94@gmail.com2","r")
 
 data = f.read()
 
@@ -489,40 +492,4 @@ result.setValuesForVariables()
 result.print()
 quadruples = result.buildQuadruples()
 errors = errors + checkSemantics(result)
-
-# print(sys.argv[0]) # prints python_script.py
-# print(sys.argv[1]) # prints var1
-    
-
-# number a = 1;
-# number b = 7;
-# number c = a + 8;
-# number z =  (a + b - b + c) * b / c
-
-# mem = {
-#     'a' : 1,
-#     'b' : 7,
-#     'c' : None,
-#     'z' : None,
-# }
-
-# quadruples = []
-
-# quadruples.append(['+', 'a',  8, 't1'])
-# quadruples.append(['=', 'c',  None, 't1'])
-# quadruples.append(['+', 'a', 'b','t2'])
-# quadruples.append(['-', 't2','c','t3'])
-# quadruples.append(['+', 't3','c','t4'])
-# quadruples.append(['*', 't4','b','t5'])
-# quadruples.append(['/', 't5','c','t6'])
-# quadruples.append(['=', 't6', None,'z'])
-
-
-# mem['t2'] = mem['a'] + mem[8]
-# .....
-# .....
-# mem['z'] = mem['t6']
-
-
-
 

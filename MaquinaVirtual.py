@@ -21,10 +21,10 @@ errorS = ""
 
 #creamos el quadruplo principal
 quadruples = simpleParser.quadruples
+counterQuadruple = 0
 for quadruple in quadruples:
-	print(quadruple)
-for key, block in result.blocks.items():
-	print('Nuevo meme: ' + str(block.firstQuadruple))
+	print(str(quadruple) + " " +str(counterQuadruple))
+	counterQuadruple += 1
 	
 
 #Creación de contador (apuntador) para cuadruplos
@@ -68,8 +68,9 @@ funDict = {}
 
 
 #ahora recorremos todas las funciones 
-for key, variable in result.blocks.items():
-	funDict[variable.identifier] = ParseTree.Variable(None,variable.type,variable.identifier)
+if(result.blocks):
+	for key, variable in result.blocks.items():
+		funDict[variable.identifier] = ParseTree.Variable(None,variable.type,variable.identifier)
 	
 
 #Esta es la memoria de nuestro programa durante ejecución

@@ -1,30 +1,37 @@
 program
   
- blocks
-    define number fibonacci(number a)
-        if (a < 2)
-            return a;
-        else
-            return fibonacci(a - 1) + fibonacci(a - 2);
-        endif
-    enddefine
- endblocks
+ 
 
 
  start
    variables
         manynumbers xd[5];
         number a = 7, b = 1, c;
+        flag meme = false;
    endvariables
 
-   a = fibonacci(a);
-   
-    while(b < 6)
-        display(b);
+   if (not meme)
+        a =3;
+    else
+        b=4+56;
+        if(a > 7)
+            a = 14;
+        endif
+        b = b + 3;
+    endif
+
+    b = 1;
+    
+
+    while(b < 4)
+        if(b > 2)
+            a = a + 3;
+        endif
         b = b + 1;
     endwhile
 
-    display(a);
+    display("El resultado de este meme es ", b + 1 , "jejetl");
+   
 
  finish
  endprogram
