@@ -1919,7 +1919,22 @@ def f_assign():
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	
+	#checar si un elemento esta vacio
+	# if (firstValue is None ):
+	# 	#crear error
+	# 	print("WAAA")
+	# 	errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+	# 	giveUp = True
+	# 	return
 
+	#if (secondValue is None):
+		#crear error
+	#	errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+	#	giveUp = True
+
+
+	#ecuación final
+	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	if thirdOffset is None:
 		thirdVariable.value = firstValue
 	else:
