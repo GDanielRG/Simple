@@ -1,17 +1,13 @@
 program
+    variables
+        number c = 2;
+        number b = 3 + c * c + 4;
+    endvariables
   
  blocks
     define number fibonacci(number a)
         if (a < 2)
-            return a;
-        else
-            return fibonacci(a - 1) + fibonacci(a - 2);
-        endif
-    enddefine
-    
-        define number fibonacci2(number a)
-        if (a < 2)
-            return a;
+            return a == b[5];
         else
             return fibonacci(a - 1) + fibonacci(a - 2);
         endif

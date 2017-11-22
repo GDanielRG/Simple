@@ -19,7 +19,8 @@ myResults = list()
 errors = list()
 
 #creamos el quadruplo principal
-quadruples = []
+quadruples = simpleParser.quadruples
+print(quadruples)
 
 #Creación de contador (apuntador) para cuadruplos
 counter = 0
@@ -88,70 +89,70 @@ memories.append(memGlobal)
 
 #ejemplo de cuadruplo generado (Fibonacci)
 
-quadruples.append(['goto', None, None, '17']) #voy al main
+# quadruples.append(['goto', None, None, '17']) #voy al main
 
-quadruples.append(['<', 'a', '2.0', '[t1]']) #empieza condicion if
-quadruples.append(['gotof', '[t1]',  None, '5']) 
-quadruples.append(['return', 'a',  None, None]) #return
-quadruples.append(['goto', None,  None, '17']) 
-quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
-quadruples.append(['-', 'a', '1.0','[t2]'])
-quadruples.append(['param', '[t2]', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
-quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
-quadruples.append(['-', 'a', '2.0','[t4]'])
-quadruples.append(['param', '[t4]', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
-quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
-quadruples.append(['return', '[t6]', None,None]) #return
+# quadruples.append(['<', 'a', '2.0', '[t1]']) #empieza condicion if
+# quadruples.append(['gotof', '[t1]',  None, '5']) 
+# quadruples.append(['return', 'a',  None, None]) #return
+# quadruples.append(['goto', None,  None, '17']) 
+# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-1)
+# quadruples.append(['-', 'a', '1.0','[t2]'])
+# quadruples.append(['param', '[t2]', None,'param1'])
+# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+# quadruples.append(['=', 'fibonacci', None,'[t3]']) #t3 contiene fibonacci(a-1)
+# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a-2)
+# quadruples.append(['-', 'a', '2.0','[t4]'])
+# quadruples.append(['param', '[t4]', None,'param1'])
+# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+# quadruples.append(['=', 'fibonacci', None,'[t5]']) #t5 contiene fibonacci(a-2)
+# quadruples.append(['+', '[t3]', '[t5]', '[t6]']) #suma de fibonaccis
+# quadruples.append(['return', '[t6]', None,None]) #return
 
-quadruples.append(['era', '[main]', None, None]) #enter the main
-quadruples.append(['=', '7.0',  None, 'a'])
-quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
-quadruples.append(['param', 'a', None,'param1'])
-quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
-quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
-quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
-quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
-quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd en dimension 1
-quadruples.append(['endver', None, None, None]) #verificacion acaba, guardar 
-quadruples.append(['=', 'a', None, 'xd']) #xd[5-4] = a
+# quadruples.append(['era', '[main]', None, None]) #enter the main
+# quadruples.append(['=', '7.0',  None, 'a'])
+# quadruples.append(['era', 'fibonacci', None, None]) #fibonacci(a)
+# quadruples.append(['param', 'a', None,'param1'])
+# quadruples.append(['gosub', 'fibonacci', None,'1']) #ir a quadruplo 2
+# quadruples.append(['=', 'fibonacci', None,'[t1]']) #t1 contiene fibonacci(a)
+# quadruples.append(['=', '[t1]', None,'a']) #t1 contiene fibonacci(a)
+# quadruples.append(['-', '5.0', '4.0','[t2]']) #expresion de xd[5-4]
+# quadruples.append(['ver', '[t2]', None, 'xd']) #verificar que [t2] (5-4) exista en xd en dimension 1
+# quadruples.append(['endver', None, None, None]) #verificacion acaba, guardar 
+# quadruples.append(['=', 'a', None, 'xd']) #xd[5-4] = a
 
-quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
-quadruples.append(['endver', None, None, None]) #verificacion acaba
-quadruples.append(['=', '2.0', None, 'xd']) #xd[2] = 2
+# quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
+# quadruples.append(['endver', None, None, None]) #verificacion acaba
+# quadruples.append(['=', '2.0', None, 'xd']) #xd[2] = 2
 
-quadruples.append(['-', '5.0', '4.0','[t3]']) #expresion de xd[5-4]
-quadruples.append(['ver', '[t3]', None, 'xd']) #verificar que 2 exista en xd
-quadruples.append(['endver', None, None, None]) #verificacion acaba
-
-
-quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
-quadruples.append(['endver', None, None, None]) #verificacion acaba
-
-quadruples.append(['-', 'xd', 'xd', '[t4]']) #suma de xd[5-4] + xd[2]
-quadruples.append(['=', '[t4]', None, 'a']) #suma igual a a
-#37
-
-quadruples.append(['-', '5.0', '4.0','[t5]']) #expresion de xd[5-4] #38
-quadruples.append(['ver', '[t5]', None, 'xd']) #verificar que 2 exista en xd
-quadruples.append(['endver', None, None, None]) #verificacion acaba
-
-quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
-quadruples.append(['endver', None, None, None]) #verificacion acaba
-
-quadruples.append(['<', 'xd', 'xd', '[t6]']) #comparacion de xd[5-4] > xd[2]
-quadruples.append(['gotof', '[t6]', None,'48']) #ir a quadruplo 48
-
-quadruples.append(['ver', '3.0', None, 'xd']) #verificar que 2 exista en xd
-quadruples.append(['endver', None, None, None]) #verificacion acaba
-
-quadruples.append(['=', '420.0', None, 'xd']) #xd[3] = 420
+# quadruples.append(['-', '5.0', '4.0','[t3]']) #expresion de xd[5-4]
+# quadruples.append(['ver', '[t3]', None, 'xd']) #verificar que 2 exista en xd
+# quadruples.append(['endver', None, None, None]) #verificacion acaba
 
 
-quadruples.append(['end',None,None,None]) #finish
+# quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
+# quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+# quadruples.append(['-', 'xd', 'xd', '[t4]']) #suma de xd[5-4] + xd[2]
+# quadruples.append(['=', '[t4]', None, 'a']) #suma igual a a
+# #37
+
+# quadruples.append(['-', '5.0', '4.0','[t5]']) #expresion de xd[5-4] #38
+# quadruples.append(['ver', '[t5]', None, 'xd']) #verificar que 2 exista en xd
+# quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+# quadruples.append(['ver', '2.0', None, 'xd']) #verificar que 2 exista en xd
+# quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+# quadruples.append(['<', 'xd', 'xd', '[t6]']) #comparacion de xd[5-4] > xd[2]
+# quadruples.append(['gotof', '[t6]', None,'48']) #ir a quadruplo 48
+
+# quadruples.append(['ver', '3.0', None, 'xd']) #verificar que 2 exista en xd
+# quadruples.append(['endver', None, None, None]) #verificacion acaba
+
+# quadruples.append(['=', '420.0', None, 'xd']) #xd[3] = 420
+
+
+# quadruples.append(['end',None,None,None]) #finish
 
 
 #ejemplo de cuadruplo generado (AreaPerimeter)

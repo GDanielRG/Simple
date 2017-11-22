@@ -1,3 +1,6 @@
+quadruples = list()
+temporals = 1
+
 def isConstant(string):
     if(string == 'numberconstant' or string == 'wordsconstant' or string == 'letterconstant' or string == 'flagconstant'):
         return True
@@ -14,6 +17,7 @@ class Program():
         self.blocks = blocks
         self.main = main
         self.constants = {}
+        self.quadruples = []
 
     def print(self):
         print('Program:')
@@ -98,6 +102,11 @@ class Program():
                     for expression in variable.options['arrayIndexes']:
                         size *= expression.items[0].value.value
                     variable.value = [None] * int(size)
+    def buildQuadruples(self):
+        for key, variable in self.variables.items():
+            if(variable.expression):
+                variable.expression.buildQuadruples()
+        return quadruples
             
                         
 
@@ -149,7 +158,7 @@ class Expression():
             string+='\t'
         if self.items:
             for item in self.items:
-                string += str(item.type)
+                string += str(item.value)
         print(string)
     
     def createVariableReferences(self, globalVariables, blockVariables, constants):
@@ -170,7 +179,47 @@ class Expression():
                     constants[str(expressionItem.value)] = Variable(0, expressionItem.type, str(expressionItem.value),None, None, expressionItem.value)
                 expressionItem.value = constants[str(expressionItem.value)]
             expressionItem.createVariableReferences(globalVariables, blockVariables, constants)
-    # def buildQuadruples(self):
+
+    def buildQuadruples(self):
+        global temporals
+        generalStack = list()
+        if self.items:
+            for item in self.items:
+                if(isConstant(item.type)):
+                    generalStack.append(str(item.value.identifier))
+                if(item.type == 'variable'):
+                    if(isArray(item.value.type)):
+                        # for(arrayIndex in item.value.options['arrayIndex']):
+                        #     arrayIndex.buildVerQuadruples()
+                        # quadruples.append(['endver', None, None, None])
+                        # item.value.print()
+                        item.value = item.value
+                    else:
+                        generalStack.append( str(item.value.identifier))
+                    # item.print()
+                    # generalStack.append(item.identifier)
+
+                # Item is operand    
+                if(item.type == 'operand'):
+                    if(item.value == '+'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['+', a, b, t])
+                        generalStack.append(t)
+                        temporals += 1
+                    if(item.value == '*'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['*', a, b, t])
+                        generalStack.append(t)
+                        temporals += 1
+
+    # def buildVerQuadruples(self):
+    #     generalStack = list()
+                    
+
 
 
 class ExpressionItem():
@@ -228,11 +277,6 @@ class Block():
             for statement in self.statements:
                 statement.print(indent + 2)
 
-# class Parameter():
-#     def __init__(self, lineNumber, type, identifier):
-#         self.lineNumber = lineNumber
-#         self.type = type
-#         self.identifier = identifier
 
 class Main():
     def __init__(self, lineNumber, variables = None, statements = None):
