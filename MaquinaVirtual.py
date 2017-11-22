@@ -1866,7 +1866,7 @@ def f_assign():
 			
 			#TEMPORAL EN LO QUE DANIELITO PONE BIEN LOS ARRAYINDEXES
 			contadorTemporal = 0
-			for key, variable in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
 				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
 				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
 				contadorTemporal += 1
@@ -1919,22 +1919,7 @@ def f_assign():
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	
-	#checar si un elemento esta vacio
-	if (firstValue is None):
-		#crear error
-		print("WAAA")
-		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
-		giveUp = True
-		return
 
-	#if (secondValue is None):
-		#crear error
-	#	errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
-	#	giveUp = True
-
-
-	#ecuación final
-	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	if thirdOffset is None:
 		thirdVariable.value = firstValue
 	else:

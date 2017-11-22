@@ -136,6 +136,11 @@ class Program():
         if(self.blocks):
             for key, block in self.blocks.items():
                 block.firstQuadruple = len(quadruples)
+                counterQuadruple = 0
+                for quadruple in quadruples:
+                    print(str(quadruple) + " " +str(counterQuadruple))
+                    counterQuadruple += 1
+                print('MEMEEEEEE ' + str(block.firstQuadruple))
                 for statement in block.statements:
                     statement.buildQuadruples()
 
@@ -178,14 +183,14 @@ class Expression():
         self.items = items
 
     def print(self, indent = 0):
-        # string = ''
-        # for i in range(indent):
-        #     string+='\t'
-        # if self.items:
-        #     print(string + 'Expression items:')            
-        #     for item in self.items:
-        #         item.print(indent + 1)
-        self.printInline(indent)
+        string = ''
+        for i in range(indent):
+            string+='\t'
+        if self.items:
+            print(string + 'Expression items:')            
+            for item in self.items:
+                item.print(indent + 1)
+        # self.printInline(indent)
 
     def printInline(self, indent = 0):
         string = ''
@@ -197,31 +202,10 @@ class Expression():
         print(string)
     
     def createVariableReferences(self, globalVariables, blockVariables, constants, blocks):
-        for expressionItem in self.items:
-            if(expressionItem.type == 'call'):
-                block = None
-                if(expressionItem.value in blocks):
-                    block = blocks[expressionItem.value]
-                else:
-                    print('Block not found: ' + str(self.options['identifier']))                                    
-                expressionItem.value = block
 
-            if(expressionItem.type == 'variable'):
-                variable = None
-                if(expressionItem.value in blockVariables):
-                    variable = blockVariables[expressionItem.value]
-                else:
-                    if(expressionItem.value in globalVariables):
-                        variable = globalVariables[expressionItem.value]
-                if(variable):
-                    expressionItem.value = variable
-                else:
-                    print('Variable not found: ' + str(expressionItem.value))
-            if(expressionItem.type == 'flagconstant' or expressionItem.type == 'wordsconstant' or expressionItem.type == 'numberconstant' or expressionItem.type == 'letterconstant'):
-                if(str(expressionItem.value) not in constants):
-                    constants[str(expressionItem.value)] = Variable(0, expressionItem.type, str(expressionItem.value),None, None, expressionItem.value)
-                expressionItem.value = constants[str(expressionItem.value)]
+        for expressionItem in self.items:
             expressionItem.createVariableReferences(globalVariables, blockVariables, constants, blocks)
+
 
     def buildQuadruples(self):
         global temporals
@@ -232,15 +216,25 @@ class Expression():
                     generalStack.append(str(item.value.identifier))
                 if(item.type == 'variable'):
                     if(isArray(item.value.type)):
-                        # for(arrayIndex in item.value.options['arrayIndex']):
-                        #     arrayIndex.buildVerQuadruples()
-                        # quadruples.append(['endver', None, None, None])
-                        # item.value.print()
-                        item.value = item.value
+                        #  if(self.options['variable'].value.type == 'manynumbers'):
+                        print('here')
+                        for e in item.options['arrayIndexes']:
+                            e.items[0].value.print()
+                        if('arrayIndexes' in item.options):
+                            for expression in item.options['arrayIndexes']:
+                                expression.buildQuadruples()   
+                                t = '[t'+ str(temporals) + ']'
+                                quadruples.append(['ver', t, None, item.value.identifier]) 
+                                generalStack.append( str(item.value.identifier))                                
+                        else:
+                            for expression in item.value.options['arrayIndexes']:
+                                expression.buildQuadruples()
+                                t = '[t'+ str(temporals) + ']'
+                                quadruples.append(['ver', t, None, item.value.identifier])
+                        quadruples.append(['endver', None, None, None])
                     else:
                         generalStack.append( str(item.value.identifier))
-                    # item.print()
-                    # generalStack.append(item.identifier)
+
 
                 # Item is operand    
                 if(item.type == 'operand'):
@@ -250,6 +244,13 @@ class Expression():
                         temporals += 1
                         t = '[t' + str(temporals) + ']'
                         quadruples.append(['+', a, b, t])
+                        generalStack.append(t)
+                    if(item.value == '-'):
+                        b = generalStack.pop()
+                        a = generalStack.pop()
+                        temporals += 1
+                        t = '[t' + str(temporals) + ']'
+                        quadruples.append(['-', a, b, t])
                         generalStack.append(t)
                     if(item.value == '*'):
                         b = generalStack.pop()
@@ -354,6 +355,7 @@ class ExpressionItem():
         print(string + self.type + ': ' + str(self.value))
         if(self.options):
             print('\t' + string + 'Options: ' + str(self.options))
+        
     
     def createVariableReferences(self, globalVariables, blockVariables, constants, blocks):
         if(self.options and 'arrayIndexes' in self.options and self.options['arrayIndexes']):
@@ -364,6 +366,31 @@ class ExpressionItem():
         if(self.options and 'parameters' in self.options and self.options['parameters']):
             for expression in self.options['parameters']:
                 expression.createVariableReferences(globalVariables, blockVariables, constants, blocks)
+        if(self.type == 'call'):
+            block = None
+            if(self.value in blocks):
+                block = blocks[self.value]
+            else:
+                print('Block not found: ' + str(self.options['identifier']))                                    
+            self.value = block
+
+        if(self.type == 'variable'):
+            variable = None
+            if(self.value in blockVariables):
+                variable = blockVariables[self.value]
+            else:
+                if(self.value in globalVariables):
+                    variable = globalVariables[self.value]
+            if(variable):
+                self.value = variable
+            else:
+                print('Variable not found: ' + str(self.value))
+            
+
+        if(self.type == 'flagconstant' or self.type == 'wordsconstant' or self.type == 'numberconstant' or self.type == 'letterconstant'):
+            if(str(self.value) not in constants):
+                constants[str(self.value)] = Variable(0, self.type, str(self.value),None, None, self.value)
+            self.value = constants[str(self.value)]
 
 class Block():
     def __init__(self, lineNumber, type = None, identifier = None, variables = None, parameters = list(), statements = list()):
@@ -513,8 +540,15 @@ class Statement():
 
         if(self.type == 'assignment'):
             self.expression.buildQuadruples()
-            t = '[t'+ str(temporals) + ']'
-            quadruples.append(['=', t, None, self.options['variable'].value.identifier])
+            ti = '[t'+ str(temporals) + ']'
+            if(self.options['variable'].value.type == 'manynumbers'):
+                for expression in self.options['variable'].options['arrayIndexes']:
+                    expression.buildQuadruples()
+                    t = '[t'+ str(temporals) + ']'
+                    quadruples.append(['ver', t, None, self.options['variable'].value.identifier])
+                quadruples.append(['endver', None, None, None])
+            quadruples.append(['=', ti, None, self.options['variable'].value.identifier])
+                                                 
         
         if(self.type == 'call'):
             quadruples.append(['era', self.options['identifier'], None, None])
