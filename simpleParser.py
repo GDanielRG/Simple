@@ -485,10 +485,8 @@ result.createVariableReferences()
 result.setValuesForVariables()         
 
 result.print()
-print(errors)
 quadruples = result.buildQuadruples()
 errors = errors + checkSemantics(result)
-print(errors)
 
 # print(sys.argv[0]) # prints python_script.py
 # print(sys.argv[1]) # prints var1
