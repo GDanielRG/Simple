@@ -16,7 +16,8 @@ memories = list()
 
 #listas de cosas que imprimir
 myResults = list()
-errors = list()
+temporalResultContainer = ""
+errorS = ""
 
 #creamos el quadruplo principal
 quadruples = simpleParser.quadruples
@@ -60,6 +61,7 @@ counterVerifyIterador = 0
 
 #creamos un diccionario con funciones
 funDict = {}
+
 
 #ahora recorremos todas las funciones 
 for key, variable in result.blocks.items():
@@ -192,23 +194,83 @@ def f_end():
 	giveUp = True
 
 def f_display():
+	global arrayIndexTemporal
+	global temporalResultContainer
+
+	#NECESITAMOS una referencia al objeto final
+	thirdVariable = None
+	#valor final a usar en ecuacion
+	firstValue = None
+
+	#variables reservadas para offsets en caso de arreglos
+	firstOffset = None
+	thirdOffset = None
+
 	firstPositionMemories = len(memories) - 1
+	thirdPositionMemories = len(memories) - 1
 
 	if(isTemporal(quadruples[counter][1])):
 		firstKey ="temporals"
+		firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	else:
 		firstKey ="variables"
 		if(not isLocal(quadruples[counter][1])):
 			firstPositionMemories = 0
+		#Hay que ver si estamos lidiando con un arreglo o no
+		if(isArray(memories[firstPositionMemories][firstKey][quadruples[counter][1]])):
+			#empieza lo bueno
+			#hay que obtener la direccion resultante para sacar el value que necesitamos del arreglo aplanado
+			
+			#TEMPORAL EN LO QUE DANIELITO PONE BIEN LOS ARRAYINDEXES
+			contadorTemporal = 0
+			for key in memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes']:
+				#.options['arrayIndexes'][counterVerifyIterador].items[0].value.value
+				arrayIndexTemporal.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].options['arrayIndexes'][contadorTemporal].items[0].value.value)
+				contadorTemporal += 1
+			
+			#FIN TEMPORALES
 
-	myResults.append(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value)
+			#vamos a necesitar el offsetValue para firstValue
+			firstOffset = offsetCalculator(arrayIndexTemporal)
 
+			#vaciar arrayIndexTemporal
+			arrayIndexTemporal = list()
+
+			#finalmente le asignamos el elemento del arreglo a firstValue
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value[firstOffset]
+
+		else:
+			#si no es array, sacamos el valor directamente
+			firstValue = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
+
+	print("firstValue es " + str(firstValue))
+	stringTemp = ""
+	#si es un string
+	stringTemp = str(firstValue)
+
+	if(isinstance(firstValue,str)):
+		if(str(firstValue[0]) is '"'):
+			print("mememe")
+			stringTemp = str(firstValue.replace('"',""))
+
+	temporalResultContainer += stringTemp
+	print(temporalResultContainer)
+	
+def f_enddisplay():
+	
+	global myResults
+	global temporalResultContainer
+
+	myResults.append(temporalResultContainer)
+	temporalResultContainer = ""
+	print(myResults)
 
 def f_ver():
 	#formato cuadruplo 
 	#['ver', 'r' (num iterador), None,'t'(key arreglo)]
 	
 	global giveUp
+	global errorS
 	global ListaIterador
 
 #primero creamos parametros para detectar donde esta la key del arreglo
@@ -247,6 +309,13 @@ def f_ver():
 		print ("good")
 	else:
 		print("IIIIN THE AAAAAARMS")
+		#ver si no es una constante
+		ts = ""
+		if(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value is not quadruples[counter][1]):
+			ts = "(" + str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].value) + ")"
+
+		#crear error
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) + ts + " is out of bounds in array " + str(memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].identifier);
 		giveUp = True
 	
 	#SUMAR contador de verify
@@ -443,6 +512,7 @@ def f_gotov():
 def f_goto():
 	global counterGo
 	global counter
+	
 
 	counter = int([quadruples[counter][3]][0])
 	counterGo = False
@@ -451,6 +521,8 @@ def f_goto():
 def f_equality():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -549,6 +621,20 @@ def f_equality():
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
@@ -559,6 +645,8 @@ def f_equality():
 def f_and():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -657,6 +745,20 @@ def f_and():
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return	
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
@@ -667,6 +769,8 @@ def f_and():
 def f_or():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -765,6 +869,20 @@ def f_or():
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+		#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
@@ -789,6 +907,8 @@ def f_not():
 def f_greater():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -887,6 +1007,21 @@ def f_greater():
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
@@ -897,6 +1032,8 @@ def f_greater():
 def f_lesser():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -995,6 +1132,20 @@ def f_lesser():
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
@@ -1006,6 +1157,8 @@ def f_lesser():
 def f_plus():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -1105,6 +1258,20 @@ def f_plus():
 
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
 
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
 	thirdVariable.value = firstValue + secondValue
@@ -1114,6 +1281,8 @@ def f_plus():
 def f_minus():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -1210,6 +1379,20 @@ def f_minus():
 			thirdPositionMemories = 0
 		#sin importar lo que pase igual vamos a recibir el objeto expression
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
+
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
 
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
 
@@ -1222,6 +1405,8 @@ def f_minus():
 def f_multiplication():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -1319,7 +1504,22 @@ def f_multiplication():
 		#sin importar lo que pase igual vamos a recibir el objeto expression
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+	
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
@@ -1330,6 +1530,8 @@ def f_multiplication():
 def f_division():
 	
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -1427,17 +1629,46 @@ def f_division():
 		#sin importar lo que pase igual vamos a recibir el objeto expression
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
+
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
-	thirdVariable.value = firstValue / secondValue
+	if(secondValue != 0):
+		thirdVariable.value = firstValue / secondValue
+	else:
+		tsOne = ""
+		tsTwo = ""
+
+		if(str(firstValue) != quadruples[counter][1]):
+			tsOne = "(" + str(firstValue) + ")"
+		if(str(secondValue) != quadruples[counter][2]):
+			tsTwo = "(" + str(secondValue) + ")"
+
+		errorS = "Halting division by Zero! (" + quadruples[counter][1] +  tsOne + "/" + quadruples[counter][2] + tsTwo + ")"
+		giveUp = True
 
 	printMemories()
 
 def f_modulus():
 	
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -1535,17 +1766,45 @@ def f_modulus():
 		#sin importar lo que pase igual vamos a recibir el objeto expression
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
+		#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	if (secondValue is None):
+		#crear error
+		errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
 	#thirdVariable = ParseTree.Variable(0,"number",quadruples[counter][3],None,None, None)
 
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value + memories[secondPositionMemories][secondKey][quadruples[counter][2]].value
-	thirdVariable.value = firstValue % secondValue
+	if(secondValue != 0):
+		thirdVariable.value = firstValue % secondValue
+	else:
+		tsOne = ""
+		tsTwo = ""
+
+		if(str(firstValue) != quadruples[counter][1]):
+			tsOne = "(" + str(firstValue) + ")"
+		if(str(secondValue) != quadruples[counter][2]):
+			tsTwo = "(" + str(secondValue) + ")"
+
+		errorS = "Halting division by Zero! (" + quadruples[counter][1] +  tsOne + "%" + quadruples[counter][2] + tsTwo + ")"
+		giveUp = True
 
 	printMemories()
 
 def f_assign():
 
 	global arrayIndexTemporal
+	global giveUp
+	global errorS
 
 	#NECESITAMOS una referencia al objeto final
 	thirdVariable = None
@@ -1625,13 +1884,26 @@ def f_assign():
 		#sin importar lo que pase igual vamos a recibir el objeto expression
 		thirdVariable = memories[thirdPositionMemories][thirdKey][quadruples[counter][3]]
 
-			
+	
+	#checar si un elemento esta vacio
+	if (firstValue is None):
+		#crear error
+		print("WAAA")
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
+
+	#if (secondValue is None):
+		#crear error
+	#	errorS = str(memories[secondPositionMemories][secondKey][quadruples[counter][2]].identifier) +  " is trying to be used when it's empty."
+	#	giveUp = True
+
+
 	#ecuación final
 	#memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = memories[firstPositionMemories][firstKey][quadruples[counter][1]].value
 	if thirdOffset is None:
 		thirdVariable.value = firstValue
 	else:
-		print("pergas")
 		print(thirdVariable.value)
 		thirdVariable.value[thirdOffset] = firstValue
 
@@ -1665,6 +1937,9 @@ options = { #expresiones
 		   #verificacion de arreglo/matriz
 		   'ver' : f_ver,
 		   'endver' : f_endver,
+		   #verificacion de arreglo/matriz
+		   'display' : f_display,
+		   'enddisplay' : f_enddisplay,
 		   #si acaba el programa
 		   'end' : f_end
 }
@@ -1762,7 +2037,6 @@ def printMemories():
 		stringCollectortemporals = ""
 
 
-
 while counter < len(quadruples):
 	if(not giveUp):
 		counterGo = True
@@ -1774,6 +2048,13 @@ while counter < len(quadruples):
 	else:
 		break
 pass
+
+#prints que si van a pasar (los demas son de pruebas)
+if (errorS is ""):
+	for n in myResults:
+		print(n)
+else:
+	print(errorS)
 
 # mem['t2'] = mem['a'] + mem[8]
 # .....
