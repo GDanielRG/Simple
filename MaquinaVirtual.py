@@ -902,16 +902,40 @@ def f_or():
 
 def f_not():
 
+	global giveUp
+	global errorS
+
+	firstPositionMemories = len(memories) - 1
 	thirdPositionMemories = len(memories) - 1
 
+	if(isTemporal(quadruples[counter][1])):
+		firstKey ="temporals"
+	else:
+		firstKey ="variables"
+		if(not isLocal(quadruples[counter][1])):
+			firstPositionMemories = 0
+	
 	if(isTemporal(quadruples[counter][3])):
 		thirdKey ="temporals"
 	else:
 		thirdKey ="variables"
 		if(not isLocal(quadruples[counter][3])):
 			thirdPositionMemories = 0
+	
+	#checar si un elemento esta vacio
+	if (memories[firstPositionMemories][firstKey][quadruples[counter][1]].value is None):
+		#crear error
+		
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is trying to be used when it's empty."
+		giveUp = True
+		return
 
-	memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = not memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value 
+	if(memories[firstPositionMemories][firstKey][quadruples[counter][1]].type == "flag") :
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]] = ParseTree.Variable(0,"flag",quadruples[counter][3],None,None, None)
+		memories[thirdPositionMemories][thirdKey][quadruples[counter][3]].value = not memories[firstPositionMemories][firstKey][quadruples[counter][1]].value 
+	else:
+		errorS = str(memories[firstPositionMemories][firstKey][quadruples[counter][1]].identifier) +  " is not compatible with operator not."
+
 	printMemories()
 
 def f_greater():
