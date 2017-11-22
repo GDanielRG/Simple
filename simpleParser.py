@@ -477,7 +477,9 @@ def checkSemantics(programNode):
                 errors.append('Variable contains same name as block "' + variable +'". Line number: ' + str(block.lineNumber))
     return errors
 
-f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
+# f = open("/Users/Daniel/Documents/OneDrive/ITESM/Compiladores/Simple/IDE/public/danyrod94@gmail.com2","r")
+f = open("C:\\Users\\Daniel\\Documents\\Projects\\Simple\\IDE\\public\\danyrod94@gmail.com2","r")
+
 data = f.read()
 
 result = yacc.parse(data)

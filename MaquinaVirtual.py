@@ -70,7 +70,6 @@ funDict = {}
 #ahora recorremos todas las funciones 
 for key, variable in result.blocks.items():
 	funDict[variable.identifier] = ParseTree.Variable(None,variable.type,variable.identifier)
-
 	
 
 #Esta es la memoria de nuestro programa durante ejecución
@@ -442,10 +441,11 @@ def f_gosub():
 	print(newMems)
 
 	
-	counter = int([quadruples[counter][3]][0])
+	counter = result.blocks[quadruples[counter][1]].firstQuadruple
 	counterGo = False
 
 	print("Saltamos al cuadruplo " + str(counter))
+
 
 def f_return():
 	global counterGo
@@ -454,15 +454,20 @@ def f_return():
 	keyParamPosition = len(keyParams) - 1
 	PositionMemories = len(memories) - 1
 
-	if(isTemporal(quadruples[counter][1])):
-		firstKey ="temporals"
-	else:
-		firstKey ="variables"
-		if(not isLocal(quadruples[counter][1])):
-			PositionMemories = 0
+	
+	#Revisar si el return tiene un none o una expression
+	if(quadruples[counter][1] != None):
+		
+		if(isTemporal(quadruples[counter][1])):
+			firstKey ="temporals"
+		else:
+			firstKey ="variables"
+			if(not isLocal(quadruples[counter][1])):
+				PositionMemories = 0
 
-	#almacenar expresion resultante en la variable global de la funcion
-	memories[0]['variables'][keyParams[keyParamPosition]].value = memories[PositionMemories][firstKey][quadruples[counter][1]].value
+
+		#almacenar expresion resultante en la variable global de la funcion
+		memories[0]['variables'][keyParams[keyParamPosition]].value = memories[PositionMemories][firstKey][quadruples[counter][1]].value
 
 	#remover la ultima llave de block y contador de parametro
 	counterParams.pop()
